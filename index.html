@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#11131a">
+  <meta name="description" content="RZOTKIEWKA AI Starter: prosty planer celów, zadań i pomysłów. Działa offline i przechowuje dane lokalnie.">
+  <title>RZOTKIEWKA AI — Starter 0.1</title>
+  <style>
+    :root{color-scheme:dark;--bg:#101218;--panel:#1a1d25;--panel2:#20242d;--line:#343947;--text:#f5f4f4;--muted:#acb0bd;--pink:#fa5d93;--lime:#beee89;--yellow:#f7cc72;--radius:22px}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 8% -8%,#392039 0,transparent 29%),radial-gradient(ellipse at 100% 4%,#263126 0,transparent 27%),var(--bg);color:var(--text);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;min-height:100vh}
+    button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--lime);outline-offset:3px}input,select{min-height:47px;width:100%;border-radius:14px;border:1px solid var(--line);background:#11151b;color:var(--text);padding:11px 13px}input::placeholder{color:#888d9b}
+    .wrap{max-width:1050px;margin:0 auto;padding:22px 18px 105px}.topbar{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:30px}.brand{display:flex;align-items:center;gap:12px}.brandname{font-weight:900;letter-spacing:.055em;line-height:1.05;font-size:1.13rem}.brandsub{font-size:.72rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-top:5px}.logo{width:54px;height:62px;flex:none;filter:drop-shadow(0 5px 18px #f74d8b44)}.tag{border:1px solid #566a51;background:#1f2a25;border-radius:999px;color:var(--lime);font-size:.72rem;font-weight:800;padding:8px 12px;text-align:center}
+    h1,h2,h3,p{margin:0}h1{font-size:clamp(2rem,6vw,3.9rem);line-height:1.07;letter-spacing:-.047em;font-weight:900}h2{font-size:clamp(1.42rem,3vw,1.75rem);letter-spacing:-.028em}h3{font-size:1rem}p{color:var(--muted)}.eyebrow{color:var(--lime);font-size:.77rem;letter-spacing:.15em;font-weight:900;text-transform:uppercase;margin-bottom:10px}.pink{color:var(--pink)}.hero{display:grid;grid-template-columns:1.55fr .7fr;gap:14px;margin-bottom:22px}.hero-content{padding:clamp(24px,5vw,43px);border-radius:29px;border:1px solid #503447;background:linear-gradient(132deg,#342034,#201b2a 60%,#1b2025);min-height:284px;position:relative;overflow:hidden}.hero-content::after{content:"";height:230px;width:230px;position:absolute;right:-100px;top:-110px;border:1px solid #ffffff18;border-radius:50%;pointer-events:none}.hero p{max-width:550px;margin:16px 0 24px}.hero-side{padding:26px;border-radius:29px;border:1px solid #354236;background:linear-gradient(145deg,#263829,#1a2423);display:flex;flex-direction:column;justify-content:space-between}.hero-side .side-head{color:var(--lime);font-size:.8rem;font-weight:800;letter-spacing:.1em}.hero-side strong{font-size:2rem;line-height:1.1;letter-spacing:-.05em}.hero-side p{font-size:.85rem}.hero-buttons,.button-row{display:flex;flex-wrap:wrap;gap:10px}
+    .btn{border:0;border-radius:14px;padding:12px 16px;min-height:46px;font-weight:800;display:inline-flex;gap:7px;align-items:center;justify-content:center;text-decoration:none}.primary{background:var(--pink);color:#21101a}.secondary{background:#34303d;color:#fff;border:1px solid #554353}.ghost{color:var(--text);border:1px solid var(--line);background:transparent}.danger{color:#ff9eae;border:1px solid #774656;background:#3a232e}.btn:hover{filter:brightness(1.08)}
+    .nav{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:#181b21;border:1px solid var(--line);padding:7px;border-radius:18px;margin:0 0 22px}.nav button{background:transparent;border:0;color:var(--muted);border-radius:12px;padding:11px 6px;font-weight:800;font-size:.92rem}.nav button[aria-selected="true"]{background:#36303b;color:white;box-shadow:inset 0 0 0 1px #644258}.nav button:hover{color:white}
+    .page[hidden]{display:none!important}.section-heading{display:flex;align-items:end;justify-content:space-between;gap:16px;margin:0 0 18px}.section-heading p{font-size:.91rem;margin-top:5px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-bottom:22px}.metric{border:1px solid var(--line);background:var(--panel);border-radius:20px;padding:19px 22px}.metric span{font-size:.81rem;color:var(--muted)}.metric strong{display:block;font-size:2rem;margin-top:6px;letter-spacing:-.05em}.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px;margin-bottom:16px}.panel h3{font-size:1.15rem}.panel .desc{margin:8px 0 18px;font-size:.9rem}.panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:17px}.tiny-label{font-size:.72rem;font-weight:850;color:var(--lime);letter-spacing:.1em;text-transform:uppercase}.field{display:block;font-size:.87rem;font-weight:700;margin-bottom:6px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin:15px 0}.formgrid .full{grid-column:1/-1}.note{font-size:.83rem;line-height:1.55;color:var(--muted)}.callout{padding:16px 18px;border:1px dashed #52614b;border-radius:17px;background:#1c2921;color:#d4e9c5;font-size:.88rem;margin-top:18px}
+    .item-list{display:flex;flex-direction:column;gap:9px}.item{border:1px solid var(--line);background:var(--panel2);padding:13px 14px;border-radius:16px;display:flex;align-items:flex-start;gap:10px}.item-body{flex:1;min-width:0;overflow-wrap:anywhere}.item-title{font-size:.96rem;font-weight:700;color:var(--text)}.item-sub{font-size:.81rem;color:var(--muted);margin-top:3px}.item.done .item-title{text-decoration:line-through;color:#8a929b}.item input[type="checkbox"]{accent-color:var(--lime);min-height:auto;width:20px;height:20px;margin:3px 2px;flex:none}.icon-btn{flex:none;background:transparent;border:1px solid #444854;color:#bec2cc;border-radius:10px;width:35px;height:35px;font-size:1.2rem}.icon-btn:hover{border-color:#e58aa5;color:white}.pill{font-size:.71rem;padding:3px 8px;display:inline-block;background:#384534;color:#d0edbc;border-radius:999px;margin-top:7px}.pill.high{background:#53303c;color:#ffc2ce}.empty{border:1px dashed #545762;padding:29px 17px;border-radius:17px;text-align:center;color:var(--muted);font-size:.91rem}.progress{height:10px;background:#343942;border-radius:99px;overflow:hidden;margin:13px 0 12px}.progress>span{display:block;background:linear-gradient(90deg,var(--pink),var(--lime));height:100%;width:0;transition:width .2s}.plan-card{border:1px solid var(--line);background:var(--panel2);border-radius:18px;padding:18px;margin-top:13px}.plan-card-top{display:flex;justify-content:space-between;gap:10px;align-items:start}.plan-card h3{font-size:1.11rem;overflow-wrap:anywhere}.plan-card .item-list{margin-top:15px}.plan-note{font-size:.77rem;color:#bcc5ab}.idea-output{border:1px solid #694056;background:linear-gradient(145deg,#3b2334,#211e2c);padding:21px;border-radius:19px;margin:20px 0}.idea-output h3{font-size:1.35rem;margin-bottom:9px}.idea-output p{margin-top:8px}.idea-output .tiny-label{color:#ffa4c4}.footer{display:flex;flex-wrap:wrap;justify-content:space-between;gap:13px;border-top:1px solid var(--line);margin-top:30px;padding:23px 3px;color:var(--muted);font-size:.81rem}.footer strong{color:var(--text)}.toast{position:fixed;z-index:30;left:50%;bottom:24px;transform:translateX(-50%);min-width:220px;max-width:calc(100vw - 34px);text-align:center;background:#e6f8db;color:#18251a;padding:11px 18px;border-radius:13px;font-size:.9rem;font-weight:750;box-shadow:0 14px 45px #0008}.toast[hidden]{display:none}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    @media(max-width:720px){.wrap{padding:15px 12px 90px}.topbar{margin-bottom:17px}.hero{grid-template-columns:1fr}.hero-content{min-height:auto;padding:26px}.hero-side{min-height:124px;flex-direction:row;gap:15px;align-items:center}.hero-side strong{font-size:1.7rem}.hero-side p{max-width:160px}.grid{grid-template-columns:1fr}.panel{padding:18px}.nav{gap:3px}.nav button{font-size:.8rem;padding:12px 3px}.tag{font-size:.66rem}.stats{gap:7px}.metric{padding:14px 11px;border-radius:15px}.metric span{font-size:.72rem}.metric strong{font-size:1.65rem}.section-heading{align-items:start}.formgrid{grid-template-columns:1fr}.formgrid .full{grid-column:auto}.btn{padding:11px 14px}}
+    @media(max-width:365px){.brandname{font-size:.99rem}.tag{padding:7px}.brand{gap:7px}.logo{width:45px;height:53px}.nav button{font-size:.72rem}.hero-content{padding:21px}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="topbar">
+      <div class="brand" aria-label="RZOTKIEWKA AI">
+        <svg class="logo" viewBox="0 0 82 94" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Różowa rzodkiewka w czapce kucharza">
+          <path d="M39 24C27 15 26 7 30 3c7 4 11 9 14 18C47 7 54 3 59 4c-1 9-7 15-15 22" fill="#A8DE73"/>
+          <path d="M14 41c-4 22 12 40 30 48 19-11 31-29 27-48-4-17-19-24-29-24S18 24 14 41Z" fill="#FF5C91"/>
+          <path d="M44 88c5-14 8-23 7-30" stroke="#FFC0D1" stroke-width="3" stroke-linecap="round"/>
+          <path d="M17 34c-7-13 8-18 14-12-2-12 14-18 20-7 10-8 22 1 19 11 11 0 12 15 0 18H20c-5 0-7-4-3-10Z" fill="#FFF0E7" stroke="#D9CCCF" stroke-width="2"/>
+          <path d="M21 43h46v9H21z" fill="#FFF0E7" stroke="#D9CCCF" stroke-width="2"/>
+          <path d="M29 62c4-5 8-5 12 0M48 61c3-6 8-6 12-2" stroke="#3A1B29" stroke-width="3.7" stroke-linecap="round"/>
+          <path d="M39 71c5 5 10 5 15-1" stroke="#611F38" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <div><div class="brandname">RZOTKIEWKA <span class="pink">AI</span></div><div class="brandsub">Mała rzecz. Wielkie plany.</div></div>
+      </div>
+      <span class="tag">STARTER 0.1</span>
+    </header>
+
+    <section class="hero" aria-label="Wprowadzenie">
+      <div class="hero-content">
+        <div class="eyebrow">Twój nowy centrum dowodzenia</div>
+        <h1>Pomysły są dobre.<br><span class="pink">Działanie jest lepsze.</span></h1>
+        <p>Zapisuj zadania, układaj plany i odkrywaj pomysły. Jeden prosty panel na telefon i komputer.</p>
+        <div class="hero-buttons">
+          <button class="btn primary" data-goto="plans">+ Utwórz plan</button>
+          <button class="btn secondary" data-goto="tasks">Moje zadania →</button>
+        </div>
+      </div>
+      <div class="hero-side">
+        <div><div class="side-head">TWÓJ PROGRES</div><strong id="hero-progress">0%</strong></div>
+        <p>Ukończone kroki we wszystkich zapisanych planach</p>
+      </div>
+    </section>
+
+    <nav class="nav" aria-label="Główne sekcje">
+      <button type="button" data-page="home" aria-selected="true">⌂ Start</button>
+      <button type="button" data-page="plans" aria-selected="false">◈ Plany</button>
+      <button type="button" data-page="tasks" aria-selected="false">✓ Zadania</button>
+      <button type="button" data-page="ideas" aria-selected="false">✦ Pomysły</button>
+    </nav>
+
+    <main>
+      <section id="page-home" class="page" aria-labelledby="home-title">
+        <div class="section-heading"><div><h2 id="home-title">Centrum dowodzenia</h2><p>Wszystko, co ważne, w jednym miejscu.</p></div></div>
+        <div class="stats">
+          <div class="metric"><span>Zadań do zrobienia</span><strong id="metric-tasks">0</strong></div>
+          <div class="metric"><span>Aktywnych planów</span><strong id="metric-plans">0</strong></div>
+          <div class="metric"><span>Zapisanych pomysłów</span><strong id="metric-ideas">0</strong></div>
+        </div>
+        <div class="grid">
+          <div class="panel"><div class="panel-head"><h3>🎯 Najbliższy cel</h3><span class="tiny-label">PLANY</span></div><div id="home-plan" class="empty">Jeszcze nie masz planu. Zacznij od swojego celu.</div><div class="button-row" style="margin-top:16px"><button class="btn ghost" data-goto="plans">Przejdź do planów</button></div></div>
+          <div class="panel"><div class="panel-head"><h3>✅ Na dziś</h3><span class="tiny-label">ZADANIA</span></div><div id="home-tasks" class="empty">Brak zadań. Dodaj pierwsze.</div><div class="button-row" style="margin-top:16px"><button class="btn ghost" data-goto="tasks">Przejdź do zadań</button></div></div>
+        </div>
+        <div class="callout"><strong>Jak działa wersja 0.1?</strong> Plany i propozycje pomysłów powstają z gotowych reguł offline — nie są jeszcze generowane przez model AI. Wszystkie dane zapisują się tylko w tej przeglądarce. Prawdziwe AI dodamy w kolejnym etapie.</div>
+      </section>
+
+      <section id="page-plans" class="page" aria-labelledby="plans-title" hidden>
+        <div class="section-heading"><div><h2 id="plans-title">Twój plan działania</h2><p>Rozbij duży cel na małe, konkretne kroki.</p></div></div>
+        <div class="panel">
+          <h3>Nowy cel</h3><p class="desc">Opisz, co chcesz zrobić. Wersja offline przygotuje 5 kroków na wybrany okres.</p>
+          <form id="plan-form">
+            <div class="formgrid">
+              <div class="full"><label class="field" for="goal-title">Jaki jest Twój cel?</label><input id="goal-title" maxlength="120" required placeholder="Np. uruchomić mały sklep internetowy"></div>
+              <div><label class="field" for="goal-category">Obszar</label><select id="goal-category"><option value="biznes">💼 Biznes</option><option value="nauka">📚 Nauka</option><option value="podroz">🚴 Podróż</option><option value="codziennosc">🌱 Życie codzienne</option></select></div>
+              <div><label class="field" for="goal-days">Czas realizacji</label><select id="goal-days"><option value="7">7 dni</option><option value="14" selected>14 dni</option><option value="30">30 dni</option></select></div>
+            </div>
+            <button type="submit" class="btn primary">Utwórz plan 5 kroków →</button>
+          </form>
+        </div>
+        <div class="panel"><div class="panel-head"><h3>Zapisane plany</h3><span class="tiny-label" id="plans-count">0 PLANÓW</span></div><div id="plans-list" class="empty">Twoje plany pojawią się tutaj.</div></div>
+      </section>
+
+      <section id="page-tasks" class="page" aria-labelledby="tasks-title" hidden>
+        <div class="section-heading"><div><h2 id="tasks-title">Lista zadań</h2><p>Dodaj zadanie, wykonaj je i odznacz.</p></div></div>
+        <div class="panel"><h3>Dodaj zadanie</h3>
+          <form id="task-form" class="formgrid">
+            <div class="full"><label class="field" for="task-title">Co trzeba zrobić?</label><input id="task-title" required maxlength="160" placeholder="Np. przygotować listę produktów"></div>
+            <div><label class="field" for="task-priority">Priorytet</label><select id="task-priority"><option value="normal">Zwykły</option><option value="high">Ważne</option></select></div>
+            <div style="display:flex;align-items:end"><button type="submit" class="btn primary" style="width:100%">+ Dodaj zadanie</button></div>
+          </form>
+        </div>
+        <div class="panel"><div class="panel-head"><h3>Moje zadania</h3><span id="task-count" class="tiny-label">0 DO ZROBIENIA</span></div><div id="task-list" class="empty">Dodaj pierwsze zadanie, aby zacząć.</div></div>
+      </section>
+
+      <section id="page-ideas" class="page" aria-labelledby="ideas-title" hidden>
+        <div class="section-heading"><div><h2 id="ideas-title">Laboratorium pomysłów</h2><p>Inspiracje na pierwszy krok do własnego projektu.</p></div></div>
+        <div class="panel">
+          <h3>Znajdź pomysł</h3><p class="desc">Wybierz obszar i odkryj inspirację z biblioteki propozycji.</p>
+          <div class="formgrid">
+            <div><label class="field" for="idea-category">Interesuje mnie</label><select id="idea-category"><option value="biznes">💰 Mały biznes</option><option value="internet">🌍 Internet i aplikacje</option><option value="codziennosc">🌱 Ułatwienie życia</option><option value="tworczosc">🎨 Twórczość</option></select></div>
+            <div style="display:flex;align-items:end"><button type="button" class="btn primary" id="generate-idea" style="width:100%">✦ Pokaż pomysł</button></div>
+          </div>
+          <div id="idea-output" class="idea-output" hidden><span class="tiny-label">TWÓJ POMYSŁ</span><h3 id="idea-name"></h3><p id="idea-desc"></p><p id="idea-first"></p><div class="button-row" style="margin-top:16px"><button class="btn secondary" id="save-idea">♡ Zapisz pomysł</button></div></div>
+          <p class="note">To inspiracje z przygotowanej bazy, nie odpowiedzi generowane przez AI.</p>
+        </div>
+        <div class="panel"><div class="panel-head"><h3>Zapisane pomysły</h3><span class="tiny-label" id="ideas-count">0 ZAPISANYCH</span></div><div id="ideas-list" class="empty">Zapisane pomysły pojawią się tutaj.</div></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div><strong>RZOTKIEWKA AI</strong> · wersja 0.1 · stworzona z myślą o pierwszych testach</div>
+      <div class="button-row"><button class="btn ghost" id="backup-export" type="button">↓ Kopia danych</button><button class="btn ghost" id="backup-import" type="button">↑ Przywróć dane</button><input id="backup-file" type="file" accept=".json,application/json" class="sr-only" aria-label="Wybierz plik kopii danych"></div>
+      <div style="width:100%">🔒 Bez konta i bez serwera: dane pozostają w pamięci tej przeglądarki. Zrób kopię, jeśli chcesz je zachować przy zmianie urządzenia lub czyszczeniu danych strony. Nie wpisuj poufnych informacji.</div>
+    </footer>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <script>
+    (() => {
+      'use strict';
+      const KEY = 'rzotkiewka_ai_starter_v1';
+      const $ = (id) => document.getElementById(id);
+      const cleanText = (value, max=160) => String(value ?? '').trim().slice(0, max);
+      const freshData = () => ({version:1, tasks:[], plans:[], ideas:[]});
+      const validArray = (arr) => Array.isArray(arr) ? arr.slice(0, 250) : [];
+      const uid = () => (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      function normalize(raw) {
+        if (!raw || typeof raw !== 'object' || raw.version !== 1) throw new Error('Nieobsługiwany format kopii.');
+        return {
+          version:1,
+          tasks:validArray(raw.tasks).filter(x=>x&&typeof x==='object').map(x=>({id:cleanText(x.id,80)||uid(),title:cleanText(x.title),priority:x.priority==='high'?'high':'normal',done:!!x.done})).filter(x=>x.title),
+          plans:validArray(raw.plans).filter(x=>x&&typeof x==='object').map(x=>({id:cleanText(x.id,80)||uid(),title:cleanText(x.title,120),category:cleanText(x.category,30),days:[7,14,30].includes(Number(x.days))?Number(x.days):14,steps:validArray(x.steps).slice(0,5).filter(s=>s&&typeof s==='object').map(s=>({title:cleanText(s.title,140),detail:cleanText(s.detail,250),due:cleanText(s.due,40),done:!!s.done})).filter(s=>s.title)})).filter(x=>x.title&&x.steps.length),
+          ideas:validArray(raw.ideas).filter(x=>x&&typeof x==='object').map(x=>({id:cleanText(x.id,80)||uid(),title:cleanText(x.title,120),desc:cleanText(x.desc,300),first:cleanText(x.first,220)})).filter(x=>x.title)
+        };
+      }
+      function load() {
+        try {const raw=localStorage.getItem(KEY);return raw?normalize(JSON.parse(raw)):freshData();}
+        catch(e) {return freshData();}
+      }
+      let data=load();
+      let currentIdea=null;
+      let toastTimer;
+      function toast(message) { const el=$('toast');el.textContent=message;el.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>{el.hidden=true;},3400); }
+      function persist() {try {localStorage.setItem(KEY,JSON.stringify(data));return true;}catch(e){toast('Nie udało się zapisać danych. Sprawdź pamięć przeglądarki.');return false;}}
+      function element(tag, cls='', content) {const e=document.createElement(tag);if(cls)e.className=cls;if(content!==undefined)e.textContent=content;return e;}
+      function empty(message) {return element('div','empty',message);}
+      function clearContainer(node) {node.replaceChildren();node.classList.remove('empty');}
+      function showPage(id) {
+        if (!['home','plans','tasks','ideas'].includes(id)) return;
+        document.querySelectorAll('.page').forEach(p=>p.hidden=p.id!==`page-${id}`);
+        document.querySelectorAll('[data-page]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.page===id)));
+        window.scrollTo({top:Math.min(290,window.scrollY),behavior:'instant'});
+      }
+      document.querySelectorAll('[data-page]').forEach(button=>button.addEventListener('click',()=>showPage(button.dataset.page)));
+      document.querySelectorAll('[data-goto]').forEach(button=>button.addEventListener('click',()=>showPage(button.dataset.goto)));
+
+      const templates = {
+        biznes:[
+          ['Określ odbiorcę','Zapisz, komu dokładnie chcesz pomóc i jaki problem rozwiązujesz.'],
+          ['Sprawdź rynek','Znajdź 3 podobne rozwiązania i zapisz, czym Twoje może się różnić.'],
+          ['Policz prosty budżet','Zestaw koszty startu, możliwą cenę i sposób dotarcia do klientów.'],
+          ['Zrób mały test','Przedstaw ofertę kilku potencjalnym klientom i zbierz konkretne uwagi.'],
+          ['Podejmij decyzję','Oceń wyniki testu i zaplanuj kolejną wersję lub zmianę pomysłu.']
+        ],
+        nauka:[
+          ['Ustal poziom startowy','Wypisz, co już umiesz i czego dokładnie chcesz się nauczyć.'],
+          ['Zbierz materiały','Wybierz jedno główne źródło wiedzy i przygotuj harmonogram.'],
+          ['Ćwicz podstawy','Poświęć czas na krótkie ćwiczenia i notuj trudności.'],
+          ['Zrób własny projekt','Sprawdź wiedzę w praktyce na małym zadaniu.'],
+          ['Zweryfikuj postęp','Powtórz materiał, oceń rezultat i ustal kolejną umiejętność.']
+        ],
+        podroz:[
+          ['Określ trasę i termin','Spisz punkty startu i końca, ramy czasowe i sposób podróży.'],
+          ['Policz dystans i koszty','Przygotuj realistyczny budżet i zapas na nieprzewidziane sytuacje.'],
+          ['Sprawdź logistykę','Zweryfikuj noclegi, dojazdy, połączenia i wariant awaryjny.'],
+          ['Przygotuj sprzęt','Stwórz listę wyposażenia, sprawdź stan rzeczy i dokumenty.'],
+          ['Zrób kontrolę końcową','Sprawdź pogodę i aktualne warunki przed wyjazdem, potwierdź rezerwacje.']
+        ],
+        codziennosc:[
+          ['Opisz rezultat','Zapisz, jak konkretnie poznasz, że cel został wykonany.'],
+          ['Podziel pracę','Wskaż najmniejszą czynność, którą możesz zrobić jeszcze dziś.'],
+          ['Ustal rytm','Zaplanuj krótkie powtarzalne sesje w kalendarzu.'],
+          ['Usuń przeszkody','Zidentyfikuj jeden główny problem i sposób jego obejścia.'],
+          ['Sprawdź efekty','Podsumuj, co działa i jaki będzie następny mały krok.']
+        ]
+      };
+      function buildPlan(goal,category,days) {
+        const today=new Date();
+        const steps=templates[category].map(([title,detail],i)=>{
+          const date=new Date(today.getFullYear(),today.getMonth(),today.getDate()+Math.max(1,Math.round(days*(i+1)/5))-1);
+          return {title,detail,due:date.toLocaleDateString('pl-PL',{day:'2-digit',month:'short'}),done:false};
+        });
+        return {id:uid(),title:goal,category,days,steps};
+      }
+      $('plan-form').addEventListener('submit',(event)=>{
+        event.preventDefault();const title=cleanText($('goal-title').value,120);
+        if(!title) return;
+        const plan=buildPlan(title,$('goal-category').value,Number($('goal-days').value));
+        data.plans.unshift(plan);data.plans=data.plans.slice(0,250);persist();$('plan-form').reset();render();toast('Plan zapisany. Do dzieła!');
+      });
+      $('task-form').addEventListener('submit',(event)=>{
+        event.preventDefault();const title=cleanText($('task-title').value);
+        if(!title)return;
+        data.tasks.unshift({id:uid(),title,priority:$('task-priority').value==='high'?'high':'normal',done:false});data.tasks=data.tasks.slice(0,250);
+        persist();$('task-form').reset();render();$('task-title').focus();toast('Dodano zadanie.');
+      });
+      function createItem(title,sub,done,onChange,onDelete,priority) {
+        const card=element('div',`item${done?' done':''}`);
+        const cb=element('input');cb.type='checkbox';cb.checked=done;cb.setAttribute('aria-label',`Oznacz jako ${done?'niewykonane':'wykonane'}: ${title}`);cb.addEventListener('change',()=>onChange(cb.checked));
+        const body=element('div','item-body');body.append(element('div','item-title',title));if(sub)body.append(element('div','item-sub',sub));
+        if(priority==='high')body.append(element('span','pill high','Ważne'));
+        const del=element('button','icon-btn','×');del.type='button';del.title='Usuń';del.setAttribute('aria-label',`Usuń: ${title}`);del.addEventListener('click',onDelete);
+        card.append(cb,body,del);return card;
+      }
+      function renderTasks() {
+        const target=$('task-list');clearContainer(target);
+        const ordered=[...data.tasks].sort((a,b)=>Number(a.done)-Number(b.done));
+        if(!ordered.length)target.append(empty('Nie masz jeszcze zadań. Dodaj pierwsze powyżej.'));
+        for(const task of ordered){target.append(createItem(task.title,'',task.done,(done)=>{task.done=done;persist();render();},()=>{data.tasks=data.tasks.filter(t=>t.id!==task.id);persist();render();},task.priority));}
+        $('task-count').textContent=`${data.tasks.filter(t=>!t.done).length} DO ZROBIENIA`;
+      }
+      function renderPlans() {
+        const target=$('plans-list');clearContainer(target);$('plans-count').textContent=`${data.plans.length} PLANÓW`;
+        if(!data.plans.length){target.append(empty('Twoje plany pojawią się tutaj.'));return;}
+        for(const plan of data.plans){
+          const card=element('article','plan-card');const top=element('div','plan-card-top');const titlebox=element('div');titlebox.append(element('div','tiny-label',`${plan.days} DNI · ${plan.category.toUpperCase()}`),element('h3','',plan.title));
+          const remove=element('button','icon-btn','×');remove.type='button';remove.title='Usuń plan';remove.setAttribute('aria-label',`Usuń plan: ${plan.title}`);remove.addEventListener('click',()=>{if(window.confirm('Usunąć ten plan wraz z postępem?')){data.plans=data.plans.filter(x=>x.id!==plan.id);persist();render();}});top.append(titlebox,remove);
+          const completed=plan.steps.filter(s=>s.done).length;const pct=Math.round(100*completed/plan.steps.length);
+          const bar=element('div','progress');const fill=element('span');fill.style.width=`${pct}%`;bar.append(fill);
+          card.append(top,bar,element('p','plan-note',`${completed}/${plan.steps.length} kroków · ${pct}% wykonane`));
+          const list=element('div','item-list');
+          plan.steps.forEach((step,i)=>{
+            const item=element('div',`item${step.done?' done':''}`);
+            const cb=element('input');cb.type='checkbox';cb.checked=step.done;cb.setAttribute('aria-label',`Krok ${i+1}: ${step.title}`);cb.addEventListener('change',()=>{step.done=cb.checked;persist();render();});
+            const body=element('div','item-body');body.append(element('div','item-title',`${i+1}. ${step.title}`),element('div','item-sub',step.detail),element('span','pill',`Orientacyjnie do: ${step.due}`));item.append(cb,body);list.append(item);
+          });
+          card.append(list);target.append(card);
+        }
+      }
+      const ideas={
+        biznes:[
+          ['Pomoc lokalnym sklepom','Prosta usługa przygotowywania opisów produktów i aktualizacji ofert internetowych.','Porozmawiaj z trzema sklepami o najczęstszym problemie przy sprzedaży online.'],
+          ['Pakiety prezentowe z lokalnych produktów','Mała marka zestawów prezentowych z produktami od regionalnych dostawców.','Sprawdź ceny pięciu produktów oraz koszty pakowania i dostawy.'],
+          ['Mobilna pomoc techniczna','Podstawowe wsparcie przy ustawianiu telefonów, aplikacji i komputerów.','Zapisz 5 usług, które możesz bezpiecznie i kompetentnie wykonać.'],
+          ['Mikroserwis dla rowerzystów','Usługi sezonowych przeglądów i przygotowania rowerów do podróży.','Sprawdź lokalny popyt i wymagane narzędzia.'],
+          ['Organizacja magazynów','Prosta oferta porządkowania, oznaczania i optymalizacji małych zapleczy firm.','Przygotuj przykładową listę kontrolną i cennik pilotażowy.']
+        ],
+        internet:[
+          ['Planer małych celów','Lekka aplikacja zamieniająca cele w zadania i pokazująca postęp.','Wypisz trzy funkcje niezbędne w pierwszej wersji.'],
+          ['Kreator checklist','Strona z prostymi listami na podróż, przeprowadzkę i remont.','Przygotuj jedną kompletną listę i pokaż ją pięciu osobom.'],
+          ['Porównywarka usług lokalnych','Katalog z praktycznymi filtrami i aktualnymi informacjami.','Sprawdź legalne źródła danych i wybierz jedną kategorię.'],
+          ['Kalendarz dla małych ekip','Przejrzysta aplikacja do umawiania zleceń i terminów.','Narysuj jeden ekran rezerwacji w telefonie.'],
+          ['Asystent mikrofirmy','Narzędzie do tworzenia szkiców ofert i uporządkowania zapytań.','Wybierz jedną branżę i zbadaj jej największy problem.']
+        ],
+        codziennosc:[
+          ['Poranny plan 10 minut','Prosty rytuał wyboru trzech najważniejszych spraw na dzień.','Przez 3 dni rano zapisuj priorytety i wieczorem sprawdzaj wyniki.'],
+          ['Domowy system rzeczy','Lista przedmiotów i miejsc przechowywania, żeby mniej czasu tracić na szukanie.','Uporządkuj jedną szufladę i stwórz jej prosty spis.'],
+          ['Planner wydatków bez komplikacji','Minimalistyczny rejestr stałych kosztów i celów oszczędnościowych.','Wypisz 5 największych powtarzalnych wydatków.'],
+          ['Lista przygotowania do wyjazdu','Checklista sprzętu, dokumentów i spraw przed opuszczeniem domu.','Zapisz 10 rzeczy, o których najczęściej zapominasz.']
+        ],
+        tworczosc:[
+          ['Seria krótkich poradników','Twórz jeden zwięzły materiał tygodniowo z dziedziny, którą znasz.','Wypisz 10 pytań często zadawanych w Twojej dziedzinie.'],
+          ['Minimarka z charakterem','Opracuj postać, hasło i styl własnego małego projektu.','Zrób trzy warianty hasła i poproś znajomych o opinię.'],
+          ['Dziennik podróży','Połącz zdjęcia, trasę i krótkie opowieści z wycieczek.','Stwórz pierwszy wpis z jednej wcześniejszej podróży.'],
+          ['Cykl przed i po','Dokumentuj przemiany przedmiotów lub miejsc w krótkich materiałach.','Wybierz jeden bezpieczny projekt na start i sfotografuj stan wyjściowy.']
+        ]
+      };
+      let previousIdeaKey='';
+      $('generate-idea').addEventListener('click',()=>{
+        const category=$('idea-category').value;const options=ideas[category];
+        let index=Math.floor(Math.random()*options.length);
+        if(options.length>1&&`${category}-${index}`===previousIdeaKey)index=(index+1)%options.length;
+        previousIdeaKey=`${category}-${index}`;
+        const [title,desc,first]=options[index];currentIdea={id:uid(),title,desc,first};
+        $('idea-name').textContent=title;$('idea-desc').textContent=desc;$('idea-first').textContent=`Pierwszy krok: ${first}`;$('idea-output').hidden=false;
+        $('save-idea').disabled=false;$('save-idea').textContent='♡ Zapisz pomysł';
+      });
+      $('save-idea').addEventListener('click',()=>{
+        if(!currentIdea)return;
+        if(data.ideas.some(x=>x.title===currentIdea.title)){toast('Ten pomysł jest już zapisany.');return;}
+        data.ideas.unshift({...currentIdea});data.ideas=data.ideas.slice(0,250);persist();render();$('save-idea').disabled=true;$('save-idea').textContent='✓ Zapisano';toast('Pomysł zapisany.');
+      });
+      function renderIdeas(){
+        const target=$('ideas-list');clearContainer(target);$('ideas-count').textContent=`${data.ideas.length} ZAPISANYCH`;
+        if(!data.ideas.length){target.append(empty('Zapisz interesujący pomysł, aby zobaczyć go tutaj.'));return;}
+        for(const idea of data.ideas){
+          const card=element('div','item');const body=element('div','item-body');body.append(element('div','item-title',idea.title),element('div','item-sub',idea.desc),element('div','item-sub',`Pierwszy krok: ${idea.first}`));
+          const remove=element('button','icon-btn','×');remove.type='button';remove.title='Usuń pomysł';remove.setAttribute('aria-label',`Usuń pomysł: ${idea.title}`);remove.addEventListener('click',()=>{data.ideas=data.ideas.filter(x=>x.id!==idea.id);persist();render();});card.append(body,remove);target.append(card);
+        }
+      }
+      function renderHome(){
+        $('metric-tasks').textContent=data.tasks.filter(x=>!x.done).length;
+        $('metric-plans').textContent=data.plans.filter(x=>x.steps.some(s=>!s.done)).length;
+        $('metric-ideas').textContent=data.ideas.length;
+        const total=data.plans.reduce((sum,p)=>sum+p.steps.length,0);const done=data.plans.reduce((sum,p)=>sum+p.steps.filter(s=>s.done).length,0);$('hero-progress').textContent=`${total?Math.round(100*done/total):0}%`;
+        const planTarget=$('home-plan');clearContainer(planTarget);
+        const plan=data.plans.find(p=>p.steps.some(s=>!s.done))||data.plans[0];
+        if(!plan)planTarget.append(empty('Jeszcze nie masz planu. Zacznij od swojego celu.'));
+        else {planTarget.append(element('div','item-title',plan.title));const complete=plan.steps.filter(s=>s.done).length;planTarget.append(element('p','item-sub',`${complete}/${plan.steps.length} wykonanych kroków`));const next=plan.steps.find(s=>!s.done);if(next)planTarget.append(element('div','pill',`Następnie: ${next.title}`));else planTarget.append(element('div','pill','Plan ukończony!'));}
+        const taskTarget=$('home-tasks');clearContainer(taskTarget);
+        const pending=data.tasks.filter(x=>!x.done).slice(0,3);
+        if(!pending.length)taskTarget.append(empty('Brak oczekujących zadań.'));
+        else for(const t of pending)taskTarget.append(element('div','item',t.priority==='high'?`★ ${t.title}`:t.title));
+      }
+      function render(){renderTasks();renderPlans();renderIdeas();renderHome();}
+      $('backup-export').addEventListener('click',()=>{
+        const payload=JSON.stringify(data,null,2);const blob=new Blob([payload],{type:'application/json'});const url=URL.createObjectURL(blob);
+        const a=document.createElement('a');a.href=url;a.download=`rzotkiewka-kopia-${new Date().toISOString().slice(0,10)}.json`;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);toast('Kopia danych gotowa do pobrania.');
+      });
+      $('backup-import').addEventListener('click',()=>$('backup-file').click());
+      $('backup-file').addEventListener('change',async(event)=>{
+        const file=event.target.files?.[0];if(!file)return;
+        try{
+          if(file.size>2*1024*1024)throw new Error('Plik jest zbyt duży (maks. 2 MB).');
+          const parsed=normalize(JSON.parse(await file.text()));
+          if(window.confirm('Zastąpić aktualne dane zawartością kopii zapasowej?')){data=parsed;persist();render();toast('Przywrócono dane z kopii.');}
+        }catch(error){toast(`Nie udało się odczytać kopii: ${error.message}`);}finally{event.target.value='';}
+      });
+      render();
+    })();
+  </script>
+</body>
+</html>
