@@ -1,26 +1,44 @@
 name: RZOTKIEWKA - archiwum prognoz
+
 on:
   schedule:
     - cron: '17 */6 * * *'
   workflow_dispatch:
+
 permissions:
   contents: write
+
 concurrency:
   group: rzotkiewka-forecast-archive
   cancel-in-progress: false
+
 jobs:
   update:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - name: Pobierz repozytorium
+        uses: actions/checkout@v7
         with:
           persist-credentials: true
-      - uses: actions/setup-python@v5
+
+      - name: Przygotuj Python
+        uses: actions/setup-python@v7
         with:
           python-version: '3.12'
+
+      - name: Sprawdz skladnie silnika
+        run: python -m py_compile forecast_engine.py
+
+      # Testy zaczna sie wykonywac automatycznie po dodaniu
+      # tests/test_forecast_engine.py do repozytorium.
+      - name: Uruchom testy archiwum
+        if: ${{ hashFiles('tests/test_forecast_engine.py') != '' }}
+        run: python -m unittest discover -s tests -v
+
       - name: Pobierz mecze i rozlicz prognozy
         run: python forecast_engine.py
+
       - name: Zapisz nowe prognozy w historii GitHuba
         run: |
           git config user.name 'rzotkiewka-bot'
