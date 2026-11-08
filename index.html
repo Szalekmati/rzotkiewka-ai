@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0a0e13">
   <meta name="description" content="🫜 RZOTKIEWKA — mecze, wyniki, eksperymentalne prawdopodobieństwa 1X2 i historyczny test modelu. OpenLigaDB. Typy demonstracyjne.">
-  <title>🫜 RZOTKIEWKA 1.3 — Archiwum prognoz i wyniki 1X2</title>
+  <title>🫜 RZOTKIEWKA 1.4 — Archiwum prognoz i wyniki 1X2</title>
   <style>
     :root{color-scheme:dark;--bg:#0a0e13;--surface:#131a22;--surface2:#19232d;--line:#293743;--ink:#f4f8f8;--muted:#a2b1bc;--accent:#a6f475;--accent2:#dfffc8;--red:#ff858b;--gold:#f4c77f;--radius:18px}
     *{box-sizing:border-box}
@@ -172,7 +172,7 @@
     <nav class="nav" aria-label="Nawigacja"><a href="#mecze">Mecze</a><a href="#typy">Typy demo</a><a href="#jak-to-dziala">Zasady</a><a class="nav-premium" href="#premium">Premium ✦</a></nav>
   </div>
 </header>
-<div id="demo-banner" class="banner" role="status">WERSJA 1.3 — prawdziwe mecze, model statystyczny i archiwum prognoz przed meczami. DEMO pozostaje fikcyjne.</div>
+<div id="demo-banner" class="banner" role="status">WERSJA 1.4 — prawdziwe mecze, model statystyczny i archiwum prognoz przed meczami. DEMO pozostaje fikcyjne.</div>
 <main class="shell" id="start">
   <section class="hero" aria-labelledby="hero-title">
     <div>
@@ -260,7 +260,7 @@
   </section>
   <section id="jak-to-dziala" aria-labelledby="how-title"><h2 id="how-title">Co znajdziesz w 🫜?</h2><p class="section-sub" style="margin-bottom:18px">Proste zasady zwiększają zaufanie bardziej niż obietnice wygranej.</p>
     <div class="info-grid">
-      <div class="info"><div class="symbol">📊</div><h3>Fakty przed typowaniem</h3><p>Zweryfikowane terminy, wyniki i statystyki historyczne zamiast „pewniaków”.</p></div>
+      <div class="info"><div class="symbol">📊</div><h3>Fakty przed typowaniem</h3><p>Terminy, wyniki i statystyki z publicznej bazy; sprawdzaj również oficjalne źródła.</p></div>
       <div class="info"><div class="symbol">✅</div><h3>Rzeczywiste wyniki</h3><p>Zakończone spotkania i forma drużyn w wybranym sezonie.</p></div>
       <div class="info"><div class="symbol">🔐</div><h3>Premium dopiero po wdrożeniu</h3><p>Bez udawanej blokady i fałszywego przycisku zakupu.</p></div>
     </div>
@@ -504,7 +504,7 @@
     const f=estimate1x2(match);
     if(!f)return make('div','not-ready',`Model jeszcze nie liczy szans tego spotkania. Potrzebne są co najmniej ${modelConfig.minLeague} wcześniejsze wyniki w lidze oraz ${modelConfig.minTeam} spotkania każdej drużyny.`);
     const block=make('div','model-mini');
-    block.append(make('div','model-heading',match.score?'📐 Rekonstrukcja historyczna 1X2':'📐 Szacunek bieżący 1X2 (NIEZAPISANY)'));
+    block.append(make('div','model-heading',(match.score || match.time <= Date.now())?'📐 Rekonstrukcja historyczna 1X2 (NIEZAPISANA)':'📐 Szacunek bieżący 1X2 (NIEZAPISANY)'));
     const labels=[['1','Gospodarze'],['X','Remis'],['2','Goście']];
     const winner=bestOutcome(f.p);
     for(const [key,label] of labels){
@@ -516,7 +516,7 @@
       track.append(fill);
       row.append(name,track,make('strong','',formattedPercent(f.p[key])));block.append(row);
     }
-    block.append(make('p','forecast-note',`Prognozowane gole: ${probFormatter.format(f.expectedHome)} – ${probFormatter.format(f.expectedAway)} · Dane wejściowe: ${f.history} wcześniejszych spotkań ligi, ${f.homeCount} / ${f.awayCount} gier drużyn. ${match.score?'Odtworzona z obecnej bazy historycznej, nie zapisana przed meczem.':'Bieżący szacunek, nie prognoza zamrożona w publicznym archiwum.'}`));
+    block.append(make('p','forecast-note',`Prognozowane gole: ${probFormatter.format(f.expectedHome)} – ${probFormatter.format(f.expectedAway)} · Dane wejściowe: ${f.history} wcześniejszych spotkań ligi, ${f.homeCount} / ${f.awayCount} gier drużyn. ${(match.score || match.time <= Date.now())?'Odtworzona z obecnej bazy historycznej, nie zapisana przed meczem.':'Bieżący szacunek, nie prognoza zamrożona w publicznym archiwum.'}`));
     return block;
   }
   function evaluateModel(){
@@ -584,24 +584,51 @@
       root.append(entry);
     }
   }
+  // Canonical JSON must match Python json.dumps(sort_keys=True, ensure_ascii=False,
+  // separators=(',', ':')) used in forecast_engine.py. Verify the hash, not just its presence.
+  function canonicalJson(value){
+    if(Array.isArray(value))return '['+value.map(canonicalJson).join(',')+']';
+    if(value !== null && typeof value==='object'){
+      return '{'+Object.keys(value).sort().map(k=>JSON.stringify(k)+':'+canonicalJson(value[k])).join(',')+'}';
+    }
+    return JSON.stringify(value);
+  }
+  async function validArchiveRecord(rec){
+    if(!rec||!rec.snapshot||!rec.settlement||typeof rec.snapshot_sha256!=='string'||
+        !/^[a-f0-9]{64}$/.test(rec.snapshot_sha256))return false;
+    const s=rec.snapshot,p=s.probabilities;
+    if(!p||!['1','X','2'].every(k=>Number.isFinite(p[k])&&p[k]>=0&&p[k]<=1)||
+        Math.abs(p['1']+p.X+p['2']-1)>.00001||
+        typeof s.league!=='string'||!Number.isInteger(s.season)||!Number.isInteger(s.match_id))return false;
+    if(!s.kickoff||!s.created_at||new Date(s.created_at)>=new Date(s.kickoff))return false;
+    if(rec.settlement.state==='graded'){
+      const score=rec.settlement.score;
+      if(!Array.isArray(score)||score.length!==2||score.some(n=>!Number.isInteger(n)||n<0)||
+         rec.settlement.outcome!==pickOutcome(score))return false;
+    }else if(rec.settlement.state!=='pending'||rec.settlement.score!==null||rec.settlement.outcome!==null)return false;
+    const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(canonicalJson(s)));
+    const hex=Array.from(new Uint8Array(digest),x=>x.toString(16).padStart(2,'0')).join('');
+    return hex===rec.snapshot_sha256;
+  }
   async function loadArchive(){
-    const url='https://raw.githubusercontent.com/Szalekmati/rzotkiewka-ai/main/predictions.json?t='+Math.floor(Date.now()/60000);
+    const url='./predictions.json?t='+Math.floor(Date.now()/60000);
     try{
+      if(!globalThis.crypto?.subtle)throw new Error('Weryfikacja SHA-256 wymaga HTTPS');
       const resp=await fetch(url,{cache:'no-store'});
       if(!resp.ok)throw new Error('HTTP '+resp.status);
       const payload=await resp.json();
       if(payload.schema!==1||!Array.isArray(payload.forecasts))throw new Error('Niepoprawny format archiwum');
-      const verified=payload.forecasts.filter(r=>r&&r.snapshot&&r.snapshot_sha256&&r.settlement&&
-        r.snapshot.probabilities&&['1','X','2'].every(k=>Number.isFinite(r.snapshot.probabilities[k]))&&
-        typeof r.snapshot.league==='string'&&Number.isInteger(r.snapshot.season)&&Number.isInteger(r.snapshot.match_id));
+      const checks=await Promise.all(payload.forecasts.map(validArchiveRecord));
+      const verified=payload.forecasts.filter((r,i)=>checks[i]);
+      const rejected=payload.forecasts.length-verified.length;
       state.archive=verified;
       state.archiveAt=payload.updated_at;
       $('archive-status').textContent=payload.updated_at
-        ?`Publiczne archiwum: ${verified.length} rekordów · ostatnia zmiana: ${new Date(payload.updated_at).toLocaleString('pl-PL')} · GitHub (gałąź main).`
+        ?`Publiczne archiwum: ${verified.length} rekordów z poprawną sumą SHA-256 · ostatnia zmiana: ${new Date(payload.updated_at).toLocaleString('pl-PL')}.`+(rejected?` ODRZUCONO ${rejected} błędnych rekordów.`:'')
         :'Archiwum jest puste: automatyczna publikacja prognoz nie została jeszcze uruchomiona.';
     }catch(err){
       state.archive=[];
-      $('archive-status').textContent='Nie udało się pobrać publicznego archiwum. Terminarze i model bieżący nadal działają. Sprawdź plik predictions.json w repozytorium.';
+      $('archive-status').textContent='Nie udało się pobrać lub zweryfikować publicznego archiwum. Uruchom stronę przez HTTPS i sprawdź predictions.json.';
       console.warn('RZOTKIEWKA: archiwum niedostepne',err);
     }
     render();

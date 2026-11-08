@@ -1,0 +1,47 @@
+# 🫜 RZOTKIEWKA AI 1.4
+
+Publiczny, eksperymentalny serwis z terminarzem piłkarskim, modelem prawdopodobieństw **1/X/2** i audytowalnym archiwum prognoz. Projekt korzysta z OpenLigaDB i publikuje statyczną stronę na GitHub Pages. **Nie gwarantuje wyników.**
+
+## Co działa
+
+- Prawdziwe terminarze i wyniki dla Bundesligi, 2. Bundesligi i 3. Ligi z OpenLigaDB (baza społecznościowa).
+- Wyliczanie prawdopodobieństw 1/X/2 prostym modelem Poissona na podstawie dostępnej historii sezonu.
+- Automatyczny zapis prognoz przed meczem w `predictions.json` (GitHub Actions co 6 godzin, bez gwarancji wykonania o dokładnej godzinie).
+- Archiwizacja prognozy wraz z sumą SHA-256; strona przez HTTPS **rzeczywiście weryfikuje** sumy dla wyświetlanych rekordów.
+- Rozliczanie wyników, także dla niezamkniętych prognoz z poprzednich sezonów (do 3 sezonów wstecz).
+- Oddzielny test historyczny, jednoznacznie oznaczony jako retrospektywny.
+- Fikcyjne typy **DEMO** w `tips.json`; widok planowanego Premium za 19,99 zł miesięcznie.
+
+## Czego jeszcze nie ma
+
+- Prawdziwych płatności, kont ani bezpiecznej blokady Premium.
+- Potwierdzonej skuteczności modelu na dużej próbce zapisanych *przed meczami* prognoz.
+- Automatycznego pobierania kursów bukmacherskich ani gwarancji opłacalności zakładów.
+
+## Wgranie na GitHub (telefon lub komputer)
+
+1. Rozpakuj pobrane archiwum ZIP.
+2. W repozytorium `Szalekmati/rzotkiewka-ai` wgraj **pliki z tej paczki aktualizacyjnej** do odpowiadających im ścieżek (plik `index.html` w katalogu głównym, plik YAML do `.github/workflows/`, testy do `tests/`).
+3. Zastąp tylko pliki obecne w paczce i zatwierdź przez `Commit changes`. **Nie usuwaj `predictions.json` ani `tips.json`.**
+4. W zakładce **Actions** uruchom ręcznie `RZOTKIEWKA - archiwum prognoz`, jeżeli chcesz od razu sprawdzić aktualizację. Normalnie harmonogram działa automatycznie.
+5. Otwórz stronę GitHub Pages po udanym wdrożeniu. Archiwum na stronie jest ładowane z własnego `predictions.json`.
+
+**Ważne:** paczka aktualizacyjna celowo **nie zawiera `predictions.json` ani `tips.json`**, żeby nie nadpisać nowych prognoz wygenerowanych przez GitHub Actions. Zachowaj obydwa istniejące pliki w repozytorium.
+
+## Uruchamianie lokalnie
+
+```bash
+python -m unittest discover -s tests -v
+python forecast_engine.py
+python -m http.server 8000
+```
+
+Otwórz `http://localhost:8000`. W przeglądarce na adresie HTTP bez HTTPS (poza localhost) weryfikacja kryptograficzna może być niedostępna. `forecast_engine.py` wymaga dostępu do internetu, ale testy są offline. Nie wpisuj kluczy API ani danych portfeli do repozytorium.
+
+## Integralność archiwum
+
+Suma SHA-256 wykrywa przypadkową lub nieautoryzowaną modyfikację prognozy względem zapisanej sumy, ale **właściciel repozytorium może zmienić zarówno prognozę, jak i jej sumę**; niezależnym potwierdzeniem chronologii jest historia publicznych commitów, która również może być przepisana przez administratora. To nie jest niezależny audyt i nie potwierdza przewagi statystycznej.
+
+Model statystyczny zachowuje oznaczenie `1.3.0`, ponieważ w wydaniu 1.4 poprawiono niezawodność i kontrolę danych, **nie zmieniono samej formuły**. Starsze zapisane prognozy pozostają bez modyfikacji.
+
+Źródło danych: [OpenLigaDB](https://www.openligadb.de/). Przy dalszym publicznym wykorzystaniu sprawdź warunki licencji ODbL 1.0, w tym obowiązki atrybucji i ewentualnego udostępniania danych pochodnych. Serwis 18+; obstawianie zakładów wiąże się z możliwością straty pieniędzy.

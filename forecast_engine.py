@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""RZOTKIEWKA 1.3: audytowalne prognozy 1X2, tylko publiczne dane OpenLigaDB.
+"""RZOTKIEWKA 1.4: archiwum prognoz 1X2, publiczne dane OpenLigaDB.
 
 Dziala bez zewnetrznych zaleznosci; uruchamiany co 6 godzin przez GitHub Actions.
 Nie wykonuje zakladow, nie obsluguje kont ani platnosci.
@@ -70,6 +70,8 @@ def normalize_match(raw):
         return None
     dt = parse_date(raw)
     home, away = raw.get('team1') or {}, raw.get('team2') or {}
+    if not isinstance(home, dict) or not isinstance(away, dict):
+        return None
     id_, hid, aid = raw.get('matchID'), home.get('teamId'), away.get('teamId')
     if not dt or not all(type(v) is int and v > 0 for v in (id_, hid, aid)):
         return None
@@ -188,15 +190,46 @@ def create_record(league, season, m, f, now):
 
 
 def valid_doc(doc):
+    """Reject corrupted snapshots and inconsistent settlements before writing anything."""
     if not isinstance(doc, dict) or doc.get('schema') != 1 or not isinstance(doc.get('forecasts'), list):
         raise ValueError('predictions.json ma niewlasciwy format')
     ids = set()
     for rec in doc['forecasts']:
-        if rec['id'] in ids:
+        if not isinstance(rec, dict) or not isinstance(rec.get('snapshot'), dict):
+            raise ValueError('Nieprawidlowy rekord archiwum')
+        snapshot = rec['snapshot']
+        rid = rec.get('id')
+        if not isinstance(rid, str) or not rid:
+            raise ValueError('Nieprawidlowy identyfikator rekordu')
+        if rid in ids:
             raise ValueError('Zduplikowany rekord w archiwum')
-        ids.add(rec['id'])
-        if sha256(rec['snapshot']) != rec['snapshot_sha256']:
-            raise ValueError(f'Wykryto zmiane zamrozonej prognozy: {rec["id"]}')
+        ids.add(rid)
+        if sha256(snapshot) != rec.get('snapshot_sha256'):
+            raise ValueError(f'Wykryto zmiane zamrozonej prognozy: {rid}')
+        probabilities = snapshot.get('probabilities')
+        if (not isinstance(probabilities, dict)
+            or any(type(probabilities.get(k)) not in (float, int) or
+                   not 0 <= probabilities[k] <= 1 for k in ('1', 'X', '2'))
+            or abs(sum(probabilities[k] for k in ('1', 'X', '2')) - 1) > 0.00001):
+            raise ValueError(f'Nieprawidlowe prawdopodobienstwa: {rid}')
+        try:
+            created = datetime.fromisoformat(snapshot['created_at'].replace('Z', '+00:00'))
+            kickoff = datetime.fromisoformat(snapshot['kickoff'].replace('Z', '+00:00'))
+            if created.tzinfo is None or kickoff.tzinfo is None or created >= kickoff:
+                raise ValueError('Nieprawidlowa chronologia')
+        except (KeyError, AttributeError, TypeError, ValueError) as exc:
+            raise ValueError(f'Nieprawidlowy czas prognozy: {rid}') from exc
+        settlement = rec.get('settlement')
+        if not isinstance(settlement, dict) or settlement.get('state') not in ('pending', 'graded'):
+            raise ValueError(f'Nieprawidlowy status rozliczenia: {rid}')
+        if settlement['state'] == 'graded':
+            score = settlement.get('score')
+            if (not isinstance(score, list) or len(score) != 2
+                or any(type(n) is not int or n < 0 for n in score)
+                or settlement.get('outcome') != result_outcome(score)):
+                raise ValueError(f'Niespojne rozliczenie: {rid}')
+        elif settlement.get('score') is not None or settlement.get('outcome') is not None:
+            raise ValueError(f'Oczekujace rozliczenie ma wynik: {rid}')
     return doc
 
 
@@ -261,15 +294,24 @@ def run():
     default = {'schema': 1, 'updated_at': None, 'forecasts': []}
     doc = json.loads(FILE.read_text(encoding='utf-8')) if FILE.exists() else default
     data = {}
-    for league in LEAGUES:
+    # Always update this season; revisit unfinished forecasts from previous seasons.
+    targets = {(league, year) for league in LEAGUES}
+    for rec in doc.get('forecasts', []):
+        snap = rec.get('snapshot', {})
+        if (rec.get('settlement', {}).get('state') == 'pending'
+                and snap.get('league') in LEAGUES
+                and type(snap.get('season')) is int
+                and year - 3 <= snap['season'] < year):
+            targets.add((snap['league'], snap['season']))
+    for league, season in sorted(targets):
         try:
-            matches = fetch_matches(league, year)
+            matches = fetch_matches(league, season)
             if not matches:
                 raise ValueError('Pusta lista spotkan (brak aktualizacji)')
-            data[(league, year)] = matches
-            print(f'{league}: {len(matches)} spotkan z OpenLigaDB')
+            data[(league, season)] = matches
+            print(f'{league} {season}: {len(matches)} spotkan z OpenLigaDB')
         except Exception as exc:
-            print(f'OSTRZEZENIE: {league} niepobrana: {exc}')
+            print(f'OSTRZEZENIE: {league}/{season} niepobrana: {exc}')
     if not data:
         raise RuntimeError('Brak danych ze wszystkich lig; nie modyfikujemy archiwum')
     original = json.dumps(doc, ensure_ascii=False, sort_keys=True)
