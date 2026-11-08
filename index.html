@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0a0e13">
   <meta name="description" content="🫜 RZOTKIEWKA — mecze, wyniki, eksperymentalne prawdopodobieństwa 1X2 i historyczny test modelu. OpenLigaDB. Typy demonstracyjne.">
-  <title>🫜 RZOTKIEWKA 1.2 — Statystyczny model 1X2</title>
+  <title>🫜 RZOTKIEWKA 1.3 — Archiwum prognoz i wyniki 1X2</title>
   <style>
     :root{color-scheme:dark;--bg:#0a0e13;--surface:#131a22;--surface2:#19232d;--line:#293743;--ink:#f4f8f8;--muted:#a2b1bc;--accent:#a6f475;--accent2:#dfffc8;--red:#ff858b;--gold:#f4c77f;--radius:18px}
     *{box-sizing:border-box}
@@ -145,29 +145,47 @@
     .prob-row .prob-label{color:#cddcd6}
     .not-ready{border:1px dashed #485b57;background:#1b262a;color:#c9d6d5;padding:12px;border-radius:12px;font-size:12px;margin:12px 0}
     @media(max-width:390px){.prob-row{grid-template-columns:82px 1fr 40px;gap:6px}.model-panel{padding:12px}.model-metric{padding:9px}.model-metric strong{font-size:19px}}
+
+    /* V1.3: archiwum odroznione od biezacych estymacji */
+    .archive-panel{border:1px solid #4b7956;background:linear-gradient(132deg,#13241b,#141c26);padding:21px;border-radius:20px;margin:18px 0 24px}
+    .archive-panel h3{font-size:21px;margin:0 0 10px}
+    .archive-panel p{font-size:12px;color:var(--muted);line-height:1.7;margin:4px 0 11px}
+    .archive-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin:17px 0}
+    .archive-metric{background:#111d20;border:1px solid #2c5442;border-radius:13px;padding:12px}
+    .archive-metric strong{display:block;font-size:24px;color:#a6f57b}
+    .archive-metric span{display:block;font-size:11px;color:#a9b6bc}
+    .archive-entry{border-top:1px solid #304b43;padding:15px 0}
+    .archive-entry strong{font-size:14px;line-height:1.5;display:block}
+    .archive-entry .archive-meta{font-size:11px;color:#acbcc0;margin:5px 0 3px}
+    .archive-entry .archive-probs{font-size:13px;color:#b9f6a3;font-weight:650}
+    .archive-link{color:#c2f4a9;text-decoration:underline;text-underline-offset:2px}
+    .archive-chip{display:inline-block;font-size:11px;border:1px solid #4a8057;padding:4px 8px;border-radius:30px;color:#d2f4c2;margin:0 0 8px}
+    .archive-chip.graded{border-color:#618d84;color:#dcf5ef}
+    .archive-error{color:#ffd8a6!important}
+    @media(max-width:420px){.archive-panel{padding:14px}.archive-metric{padding:10px}.archive-metric strong{font-size:21px}}
   </style>
 </head>
 <body>
 <header class="header">
   <div class="shell head-inner">
-    <a class="brand" href="#start" aria-label="RZOTKIEWKA — strona główna"><span class="brand-emoji" aria-hidden="true">🫜</span><span><span class="brand-name">RZOTKIEWKA</span><span class="brand-caption">FOOTBALL LAB · 1.2</span></span></a>
+    <a class="brand" href="#start" aria-label="RZOTKIEWKA — strona główna"><span class="brand-emoji" aria-hidden="true">🫜</span><span><span class="brand-name">RZOTKIEWKA</span><span class="brand-caption">FOOTBALL LAB · 1.3</span></span></a>
     <nav class="nav" aria-label="Nawigacja"><a href="#mecze">Mecze</a><a href="#typy">Typy demo</a><a href="#jak-to-dziala">Zasady</a><a class="nav-premium" href="#premium">Premium ✦</a></nav>
   </div>
 </header>
-<div id="demo-banner" class="banner" role="status">WERSJA 1.2 — prawdziwe mecze i eksperymentalny model statystyczny 1X2. Kursy i typy DEMO są fikcyjne.</div>
+<div id="demo-banner" class="banner" role="status">WERSJA 1.3 — prawdziwe mecze, model statystyczny i archiwum prognoz przed meczami. DEMO pozostaje fikcyjne.</div>
 <main class="shell" id="start">
   <section class="hero" aria-labelledby="hero-title">
     <div>
-      <div class="kicker">⚽ MECZE NA ŻYWO Z BAZY · MODEL 1X2</div>
+      <div class="kicker">⚽ PRAWDZIWE MECZE · PUBLICZNE ARCHIWUM PROGNOZ</div>
       <h1 id="hero-title">Mecze pod <span>lupą.</span></h1>
-      <p class="lead">Rzeczywiste terminarze i wyniki. Poznaj szacunki 1–X–2 oparte na historii spotkań i sprawdź, jak model radził sobie w przeszłości.</p>
+      <p class="lead">Prawdziwe mecze i prawdopodobieństwa 1–X–2. Oddzielamy szacunki na żywo od prognoz zapisanych przed pierwszym gwizdkiem.</p>
       <div class="actions"><a class="primary" href="#mecze">Zobacz mecze →</a><a class="secondary" href="#premium">Poznaj Premium · 19,99 zł</a></div>
     </div>
-    <div class="visual" aria-hidden="true"><div class="mascot">🫜</div><h3>Nie obiecuj. Sprawdzaj.</h3><p>Prosty interfejs · jasne zasady</p></div>
+    <div class="visual" aria-hidden="true"><div class="mascot">🫜</div><h3>Zapisz. Sprawdź. Ucz się.</h3><p>Prosty interfejs · jasne zasady</p></div>
   </section>
   <section id="mecze" class="real-section" aria-labelledby="live-title">
-    <div class="section-top"><div><h2 id="live-title">Mecze, forma i model 1X2</h2><p class="section-sub">Terminarze, wyniki i forma drużyn z niezależnej bazy danych.</p></div></div>
-    <p class="real-intro">Niemiecka 1., 2. i 3. liga. Wyniki pochodzą z OpenLigaDB. Model 1X2 szacuje prawdopodobieństwa na podstawie wcześniejszych zakończonych meczów w tym sezonie; jest eksperymentalny, niekalibrowany i nie jest kursem bukmacherskim ani rekomendacją zakładu.</p>
+    <div class="section-top"><div><h2 id="live-title">Mecze, prognozy i wyniki 1X2</h2><p class="section-sub">Terminarze, wyniki i forma drużyn z niezależnej bazy danych.</p></div></div>
+    <p class="real-intro">Niemiecka 1., 2. i 3. liga. Wyniki pochodzą z OpenLigaDB. Model 1.3 uwzględnia formę z 8 ostatnich spotkań, osobno mecze u siebie i na wyjeździe oraz średnią bramek gospodarzy i gości w lidze. Jest eksperymentalny, niekalibrowany i nie jest kursem ani rekomendacją zakładu.</p>
     <div class="live-toolbar">
       <label class="field-select" for="live-league">Rozgrywki
         <select id="live-league"><option value="bl1">Bundesliga</option><option value="bl2">2. Bundesliga</option><option value="bl3">3. Liga</option></select>
@@ -187,9 +205,22 @@
       <div class="real-metric"><strong id="live-upcoming">—</strong><span>Przyszłych meczów</span></div>
     </div>
     <p id="live-status" class="status-real" role="status" aria-live="polite">Łączenie ze źródłem meczów…</p>
+    <div id="archive-panel" class="archive-panel" aria-labelledby="archive-title">
+      <h3 id="archive-title">📌 Prognozy zapisane przed meczami</h3>
+      <p>To publiczne archiwum pochodzi z automatycznego zapisu w repozytorium GitHub. Raz zapisany szacunek nie jest ponownie obliczany po wyniku meczu. Historia zmian jest widoczna w commitach. Właściciel repozytorium technicznie może jednak zmienić historię Git — nie jest to niezależny audyt.</p>
+      <div class="archive-metrics" aria-label="Statystyki publicznie zapisanych prognoz">
+        <div class="archive-metric"><strong id="archive-total">—</strong><span>Zapisanych</span></div>
+        <div class="archive-metric"><strong id="archive-graded">—</strong><span>Rozliczonych</span></div>
+        <div class="archive-metric"><strong id="archive-hit">—</strong><span>Trafień 1X2</span></div>
+      </div>
+      <p id="archive-status" role="status" aria-live="polite">Ładowanie archiwum prognoz…</p>
+      <div id="archive-list" aria-live="polite"></div>
+      <p><a class="archive-link" href="https://github.com/Szalekmati/rzotkiewka-ai/commits/main/predictions.json" target="_blank" rel="noopener noreferrer">Sprawdź historię zapisów na GitHubie ↗</a></p>
+      <p>Oceniana jest wyłącznie prawidłowość wyniku 1/X/2. Małe próbki i opóźnione wyniki nie dowodzą przewagi nad ofertami bukmacherów.</p>
+    </div>
     <div class="model-panel" aria-labelledby="backtest-title">
-      <h3 id="backtest-title">🧪 Sprawdzian modelu 1X2</h3>
-      <p>Ocena retrospektywna: dla każdego meczu liczona jest nowa prognoza, używając wyłącznie wyników wcześniejszych spotkań z wybranego sezonu (minimum 3 godziny odstępu od ich rozpoczęcia). Nie są to zapisane w przeszłości prognozy.</p>
+      <h3 id="backtest-title">🧪 Test retrospektywny modelu 1.3</h3>
+      <p>Osobny test historyczny wyliczany na bieżąco z wcześniejszych wyników (z odstępem co najmniej 3 godzin). To NIE są prognozy opublikowane przed meczami; takie prognozy są pokazane wyżej w publicznym archiwum.</p>
       <div class="model-metrics" aria-label="Wyniki testu historycznego">
         <div class="model-metric"><strong id="model-count">—</strong><span>Meczów w teście</span></div>
         <div class="model-metric"><strong id="model-hitrate">—</strong><span>Trafień lidera 1X2</span></div>
@@ -197,7 +228,7 @@
       </div>
       <p id="model-description" role="status">Po pobraniu danych sprawdzimy model. Brier: średnia kwadratowych błędów trzech prawdopodobieństw; 0 oznacza wynik idealny, 0,222 to stała prognoza 33/33/33.</p>
       <details><summary>Przykładowe historyczne prognozy i rezultaty</summary><div id="model-history" style="overflow-x:auto"><p>Jeszcze nie pobrano danych.</p></div></details>
-      <p>Metoda: uproszczony rozkład Poissona na podstawie 8 ostatnich spotkań każdej drużyny oraz średnich bramek w lidze. Model nie jest uczony na wynikach tego samego meczu, a dane historyczne mogą później zostać skorygowane. Wyniki nie dowodzą przewagi nad rynkiem zakładów.</p>
+      <p>Metoda 1.3: uproszczony Poisson, forma ważona ostatnich 8 spotkań, wyniki gospodarzy u siebie i gości na wyjeździe. Dane pochodzą z obecnej bazy i mogą być korygowane. Test retrospektywny nie stanowi dowodu przyszłej skuteczności.</p>
     </div>
     <div id="live-list" class="real-grid" aria-live="polite"><div class="empty">Pobieranie terminarza…</div></div>
     <p class="real-note">Źródło: <a href="https://www.openligadb.de/" target="_blank" rel="noopener noreferrer">OpenLigaDB</a> (dane społecznościowe, licencja <a href="https://opendatacommons.org/licenses/odbl/1-0/" target="_blank" rel="noopener noreferrer">ODbL 1.0</a>). Wyniki mogą mieć opóźnienie; brak wyniku nie oznacza trwającego meczu. Przed podjęciem decyzji sprawdzaj źródła oficjalne.</p>
@@ -327,7 +358,7 @@
     render();
   }));
   $('reload').addEventListener('click',loadTips);
-  $('footer-year').textContent = '© ' + new Date().getFullYear() + ' RZOTKIEWKA · wersja 1.2';
+  $('footer-year').textContent = '© ' + new Date().getFullYear() + ' RZOTKIEWKA · wersja 1.3';
   loadTips();
 })();
 </script>
@@ -346,7 +377,7 @@
   };
   const cache = new Map(); // do 10 minut, tylko w trakcie jednej wizyty
   const maxAgeMs = 10*60*1000;
-  const state = {league:'bl1',season:2026,tab:'next',matches:[],loadedAt:null};
+  const state = {league:'bl1',season:2026,tab:'next',matches:[],loadedAt:null,archive:[],archiveAt:null};
   const now = new Date();
   const currentSeason = now.getMonth() >= 6 ? now.getFullYear() : now.getFullYear()-1;
   state.season=currentSeason;
@@ -407,23 +438,27 @@
     root.append(item);
   }
 
-  // MODEL 1.2: zakladamy niezalezne liczby goli Poissona. Bez uzycia kursow, AI ani sygnalow bukmacherskich.
-  const modelConfig = Object.freeze({ minLeague:24, minTeam:4, recent:8, teamPseudo:6, leaguePseudo:12, maxGoals:12, settleHours:3 });
+  // MODEL 1.3: recency weighted, venue adjusted Poisson. The same formula lives in forecast_engine.py.
+  const modelConfig = Object.freeze({minLeague:24,minTeam:4,recent:8,leaguePseudo:12,maxGoals:12,settleHours:3});
   const probFormatter = new Intl.NumberFormat('pl-PL',{maximumFractionDigits:1,minimumFractionDigits:1});
-  const safeRate = (v,low,high)=>Math.min(high,Math.max(low,v));
-  const modelCache = new Map();
-  const sampleBefore = (targetTime) => state.matches.filter(m => m.score && m.time + modelConfig.settleHours*3600000 <= Math.min(targetTime,Date.now()));
-  function teamSample(matches,teamId){
-    const rows=matches.filter(m=>m.homeId===teamId||m.awayId===teamId).sort((a,b)=>b.time-a.time).slice(0,modelConfig.recent);
-    let scored=0,allowed=0;
-    for (const m of rows){const h=m.homeId===teamId;scored+=m.score[h?0:1];allowed+=m.score[h?1:0];}
-    return {n:rows.length,scored,allowed};
+  const safeRate=(v,low,high)=>Math.min(high,Math.max(low,v));
+  const modelCache=new Map();
+  const sampleBefore=(targetTime)=>state.matches.filter(m=>m.score && m.time+modelConfig.settleHours*3600000<=Math.min(targetTime,Date.now()));
+  const teamSample=(history,id)=>history.filter(m=>m.homeId===id||m.awayId===id).sort((a,b)=>b.time-a.time).slice(0,modelConfig.recent);
+  function venueRates(rows,id,venue,typical){
+    let sumFor=0,sumAgainst=0,sumWeight=0,venFor=0,venAgainst=0,venWeight=0;
+    rows.forEach((m,i)=>{
+      const w=1-0.05*i,atHome=m.homeId===id,scored=m.score[atHome?0:1],conceded=m.score[atHome?1:0];
+      sumFor+=w*scored;sumAgainst+=w*conceded;sumWeight+=w;
+      if(atHome===(venue==='home')){venFor+=w*scored;venAgainst+=w*conceded;venWeight+=w;}
+    });
+    const baseFor=(sumFor+6*typical)/(sumWeight+6),baseAgainst=(sumAgainst+6*typical)/(sumWeight+6);
+    return [(venFor+4*baseFor)/(venWeight+4),(venAgainst+4*baseAgainst)/(venWeight+4)];
   }
-  function poisson(lambda) {
+  function poisson(lambda){
     const arr=[Math.exp(-lambda)];
     for(let k=1;k<modelConfig.maxGoals;k++)arr.push(arr[k-1]*lambda/k);
-    const remaining=Math.max(0,1-arr.reduce((a,b)=>a+b,0));
-    arr.push(remaining);
+    arr.push(Math.max(0,1-arr.reduce((a,b)=>a+b,0)));
     return arr;
   }
   function pickOutcome(score){return score[0]>score[1]?'1':score[0]===score[1]?'X':'2';}
@@ -431,34 +466,45 @@
   function estimate1x2(match){
     const key=String(match.id)+'@'+match.time;
     if(modelCache.has(key))return modelCache.get(key);
-    const history=sampleBefore(match.time);
-    const h=teamSample(history,match.homeId),a=teamSample(history,match.awayId);
+    const history=sampleBefore(match.time),h=teamSample(history,match.homeId),a=teamSample(history,match.awayId);
     let result=null;
-    if(history.length>=modelConfig.minLeague && h.n>=modelConfig.minTeam && a.n>=modelConfig.minTeam){
-      const homeGoals=history.reduce((n,m)=>n+m.score[0],0),awayGoals=history.reduce((n,m)=>n+m.score[1],0);
-      // Wczesnosezonowe wartosci startowe. Pozniej dominują realne srednie ligowe.
-      const leagueHome=(homeGoals+modelConfig.leaguePseudo*1.45)/(history.length+modelConfig.leaguePseudo);
-      const leagueAway=(awayGoals+modelConfig.leaguePseudo*1.15)/(history.length+modelConfig.leaguePseudo);
+    if(history.length>=modelConfig.minLeague&&h.length>=modelConfig.minTeam&&a.length>=modelConfig.minTeam){
+      const hg=history.reduce((n,m)=>n+m.score[0],0),ag=history.reduce((n,m)=>n+m.score[1],0);
+      const leagueHome=(hg+12*1.45)/(history.length+12),leagueAway=(ag+12*1.15)/(history.length+12);
       const typical=(leagueHome+leagueAway)/2;
-      const strength=(num,n)=>safeRate((num+modelConfig.teamPseudo*typical)/(n+modelConfig.teamPseudo)/typical,0.5,1.7);
-      const expectedHome=safeRate(leagueHome*Math.sqrt(strength(h.scored,h.n)*strength(a.allowed,a.n)),0.35,3.5);
-      const expectedAway=safeRate(leagueAway*Math.sqrt(strength(a.scored,a.n)*strength(h.allowed,h.n)),0.35,3.5);
-      const ph=poisson(expectedHome),pa=poisson(expectedAway);
-      const p={'1':0,'X':0,'2':0};
+      const [hf,ha]=venueRates(h,match.homeId,'home',typical);
+      const [af,aa]=venueRates(a,match.awayId,'away',typical);
+      const expectedHome=safeRate(leagueHome*Math.sqrt(safeRate(hf/leagueHome,.5,1.8)*safeRate(aa/leagueHome,.5,1.8)),.35,3.5);
+      const expectedAway=safeRate(leagueAway*Math.sqrt(safeRate(af/leagueAway,.5,1.8)*safeRate(ha/leagueAway,.5,1.8)),.35,3.5);
+      const ph=poisson(expectedHome),pa=poisson(expectedAway),p={'1':0,'X':0,'2':0};
       for(let i=0;i<ph.length;i++)for(let j=0;j<pa.length;j++)p[i>j?'1':i===j?'X':'2']+=ph[i]*pa[j];
       const total=p['1']+p.X+p['2'];
       for(const k of ['1','X','2'])p[k]/=total;
-      result={p,expectedHome,expectedAway,history:history.length,homeCount:h.n,awayCount:a.n};
+      result={p,expectedHome,expectedAway,history:history.length,homeCount:h.length,awayCount:a.length};
     }
     modelCache.set(key,result);
     return result;
   }
   function formattedPercent(p){return probFormatter.format(p*100)+'%';}
   function renderForecast(match){
+    const archived=state.archive.find(r=>r.snapshot?.league===state.league&&r.snapshot?.season===state.season&&r.snapshot?.match_id===match.id);
+    if(archived){
+      const snapshot=archived.snapshot,p=snapshot.probabilities;
+      const block=make('div','model-mini');
+      block.append(make('div','model-heading','🔒 Publicznie zapisana prognoza · model '+snapshot.model_version));
+      const labels=[['1','Gospodarze'],['X','Remis'],['2','Goście']];
+      for(const [key,label] of labels){
+        const row=make('div','prob-row'),bar=make('div','prob-track'),fill=make('div','prob-fill');
+        fill.style.width=safeRate(100*p[key],0,100).toFixed(2)+'%';bar.append(fill);
+        row.append(make('span','prob-label',key+' · '+label),bar,make('strong','',formattedPercent(p[key])));block.append(row);
+      }
+      block.append(make('p','forecast-note','Zapis: '+new Date(snapshot.created_at).toLocaleString('pl-PL')+' · SHA256 '+archived.snapshot_sha256.slice(0,12)+'… · '+(archived.settlement.state==='graded'?'Rozliczono: '+archived.settlement.score.join(':'):'Oczekuje na wynik')+'. Wartości nie są przeliczane po meczu.'));
+      return block;
+    }
     const f=estimate1x2(match);
     if(!f)return make('div','not-ready',`Model jeszcze nie liczy szans tego spotkania. Potrzebne są co najmniej ${modelConfig.minLeague} wcześniejsze wyniki w lidze oraz ${modelConfig.minTeam} spotkania każdej drużyny.`);
     const block=make('div','model-mini');
-    block.append(make('div','model-heading',match.score?'📐 Retrospektywna prognoza 1X2':'📐 Eksperymentalny model 1X2'));
+    block.append(make('div','model-heading',match.score?'📐 Rekonstrukcja historyczna 1X2':'📐 Szacunek bieżący 1X2 (NIEZAPISANY)'));
     const labels=[['1','Gospodarze'],['X','Remis'],['2','Goście']];
     const winner=bestOutcome(f.p);
     for(const [key,label] of labels){
@@ -470,7 +516,7 @@
       track.append(fill);
       row.append(name,track,make('strong','',formattedPercent(f.p[key])));block.append(row);
     }
-    block.append(make('p','forecast-note',`Prognozowane gole: ${probFormatter.format(f.expectedHome)} – ${probFormatter.format(f.expectedAway)} · Dane wejściowe: ${f.history} wcześniejszych spotkań ligi, ${f.homeCount} / ${f.awayCount} gier drużyn. ${match.score?'Odtworzona z obecnej bazy historycznej, nie zapisana przed meczem.':'Szacunek matematyczny, nie kurs ani porada bukmacherska.'}`));
+    block.append(make('p','forecast-note',`Prognozowane gole: ${probFormatter.format(f.expectedHome)} – ${probFormatter.format(f.expectedAway)} · Dane wejściowe: ${f.history} wcześniejszych spotkań ligi, ${f.homeCount} / ${f.awayCount} gier drużyn. ${match.score?'Odtworzona z obecnej bazy historycznej, nie zapisana przed meczem.':'Bieżący szacunek, nie prognoza zamrożona w publicznym archiwum.'}`));
     return block;
   }
   function evaluateModel(){
@@ -509,6 +555,58 @@
     table.append(tbody);root.append(table);
   }
 
+
+  function renderArchive(){
+    const chosen=state.archive.filter(r=>r.snapshot?.league===state.league&&r.snapshot?.season===state.season);
+    const graded=chosen.filter(r=>r.settlement?.state==='graded'&&Array.isArray(r.settlement.score));
+    const hits=graded.filter(r=>bestOutcome(r.snapshot.probabilities)===r.settlement.outcome).length;
+    const brier=graded.length?graded.reduce((sum,r)=>sum+['1','X','2'].reduce((acc,k)=>acc+(r.snapshot.probabilities[k]-(r.settlement.outcome===k?1:0))**2,0)/3,0)/graded.length:null;
+    $('archive-total').textContent=String(chosen.length);
+    $('archive-graded').textContent=String(graded.length);
+    $('archive-hit').textContent=graded.length?probFormatter.format(hits/graded.length*100)+'%':'—';
+    const root=$('archive-list');root.replaceChildren();
+    if(!chosen.length){
+      root.append(make('p','','Nie ma jeszcze publicznie zapisanych prognoz dla tej ligi i sezonu. Uruchomienie GitHub Actions pozwoli je zapisywać przed meczami.'));
+      return;
+    }
+    const details=`Archiwum: ${chosen.length} prognoz · ${graded.length} rozliczonych`+(brier!==null?` · Brier: ${brier.toFixed(3).replace('.',',')}`:'');
+    root.append(make('p','',details));
+    const shown=chosen.slice().sort((a,b)=>b.snapshot.kickoff.localeCompare(a.snapshot.kickoff)).slice(0,12);
+    for(const r of shown){
+      const s=r.snapshot,p=s.probabilities,finished=r.settlement.state==='graded';
+      const entry=make('article','archive-entry');
+      entry.append(make('span','archive-chip'+(finished?' graded':''),finished?'ROZLICZONA':'PRZED MECZEM / OCZEKUJE'));
+      entry.append(make('strong','',s.home+' – '+s.away));
+      entry.append(make('div','archive-meta','Mecz: '+new Date(s.kickoff).toLocaleString('pl-PL')+' · zapis: '+new Date(s.created_at).toLocaleString('pl-PL')));
+      entry.append(make('div','archive-probs',`1: ${formattedPercent(p['1'])} · X: ${formattedPercent(p.X)} · 2: ${formattedPercent(p['2'])}`));
+      if(finished)entry.append(make('div','archive-meta','Wynik: '+r.settlement.score.join(':')+' · '+(bestOutcome(p)===r.settlement.outcome?'trafienie 1X2':'nietrafione 1X2')));
+      entry.append(make('div','archive-meta','SHA256: '+r.snapshot_sha256.slice(0,16)+'…'));
+      root.append(entry);
+    }
+  }
+  async function loadArchive(){
+    const url='https://raw.githubusercontent.com/Szalekmati/rzotkiewka-ai/main/predictions.json?t='+Math.floor(Date.now()/60000);
+    try{
+      const resp=await fetch(url,{cache:'no-store'});
+      if(!resp.ok)throw new Error('HTTP '+resp.status);
+      const payload=await resp.json();
+      if(payload.schema!==1||!Array.isArray(payload.forecasts))throw new Error('Niepoprawny format archiwum');
+      const verified=payload.forecasts.filter(r=>r&&r.snapshot&&r.snapshot_sha256&&r.settlement&&
+        r.snapshot.probabilities&&['1','X','2'].every(k=>Number.isFinite(r.snapshot.probabilities[k]))&&
+        typeof r.snapshot.league==='string'&&Number.isInteger(r.snapshot.season)&&Number.isInteger(r.snapshot.match_id));
+      state.archive=verified;
+      state.archiveAt=payload.updated_at;
+      $('archive-status').textContent=payload.updated_at
+        ?`Publiczne archiwum: ${verified.length} rekordów · ostatnia zmiana: ${new Date(payload.updated_at).toLocaleString('pl-PL')} · GitHub (gałąź main).`
+        :'Archiwum jest puste: automatyczna publikacja prognoz nie została jeszcze uruchomiona.';
+    }catch(err){
+      state.archive=[];
+      $('archive-status').textContent='Nie udało się pobrać publicznego archiwum. Terminarze i model bieżący nadal działają. Sprawdź plik predictions.json w repozytorium.';
+      console.warn('RZOTKIEWKA: archiwum niedostepne',err);
+    }
+    render();
+  }
+
   function renderCard(m) {
     const card=make('article','real-card');
     const head=make('div','real-head');
@@ -527,6 +625,7 @@
     return card;
   }
   function render() {
+    renderArchive();
     $('live-all').textContent=String(state.matches.length);
     const completed=state.matches.filter(m=>m.score);
     $('live-finished').textContent=String(completed.length);
@@ -597,6 +696,7 @@
     render();
   }));
   load();
+  loadArchive();
 })();
 </script>
 </body>
