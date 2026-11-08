@@ -1,4 +1,3 @@
-
 name: RZOTKIEWKA - badanie lig
 
 on:
@@ -11,25 +10,44 @@ permissions:
 
 jobs:
   research:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
-
     steps:
       - name: Pobierz katalog lig
+        shell: bash
         run: |
+          set -euo pipefail
           mkdir -p reports
-          curl --fail --silent --show-error \
-            --retry 3 \
+          curl --fail --silent --show-error --location \
+            --retry 3 --connect-timeout 20 --max-time 120 \
             https://api.openligadb.de/getavailableleagues \
             -o reports/research_leagues.json
-          python -m json.tool \
-            reports/research_leagues.json > /dev/null
-          python -c "import json; d=json.load(open('reports/research_leagues.json')); assert isinstance(d,list); print('Liczba wpisow:', len(d))"
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          import os
+
+          path = Path('reports/research_leagues.json')
+          data = json.loads(path.read_text(encoding='utf-8'))
+          if not isinstance(data, list) or not data:
+              raise SystemExit('Blad: katalog lig jest pusty lub ma niepoprawny format.')
+          required = {'leagueId', 'leagueName', 'leagueShortcut', 'leagueSeason', 'sport'}
+          if any(not isinstance(row, dict) or not required.issubset(row) for row in data):
+              raise SystemExit('Blad: niepoprawna struktura wpisow katalogu.')
+          summary = (
+              '# RZOTKIEWKA - katalog lig\n\n'
+              f'Liczba wpisow rozgrywek i sezonow: **{len(data)}**.\n\n'
+              'Zrodlo: OpenLigaDB. Katalog nie zawiera wynikow meczow '
+              'i nie potwierdza kompletnosci danych dla kazdej ligi.\n'
+          )
+          print(summary)
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a', encoding='utf-8') as output:
+              output.write(summary)
+          PY
 
       - name: Zapisz raport
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: katalog-lig
           path: reports/research_leagues.json
           if-no-files-found: error
-          
