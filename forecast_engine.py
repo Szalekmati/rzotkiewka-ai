@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""RZOTKIEWKA 1.6: archiwizacja i kontrola wynikow 1X2, dane OpenLigaDB.
+"""RZOTKIEWKA 1.7: audytowalne prognozy, kontrola wynikow i diagnostyka 1X2.
 
 Dziala bez zewnetrznych zaleznosci; kontrola planowana co 2 godziny przez GitHub Actions.
 Nie wykonuje zakladow, nie obsluguje kont ani platnosci.
@@ -243,7 +243,7 @@ def valid_doc(doc):
 
 def fetch_matches(league, season):
     url = f'{BASE}/{league}/{season}'
-    req = Request(url, headers={'User-Agent': 'Rzotkiewka-FootballLab/1.6 (public GitHub Actions)','Accept': 'application/json'})
+    req = Request(url, headers={'User-Agent': 'Rzotkiewka-FootballLab/1.7 (public GitHub Actions)','Accept': 'application/json'})
     data = None
     for attempt in range(3):
         try:
@@ -307,11 +307,57 @@ def update_doc(doc, data_by_league, now):
     return doc, new_count, graded_count
 
 
+
+def diagnose_league(doc, league, season, matches, now):
+    """Tylko analiza przyczyn: NIE zmienia archiwum i NIE tworzy typow."""
+    ids = {rec['id'] for rec in doc['forecasts']}
+    counts = {
+        'archiwum': 0,
+        'za_blisko': 0,
+        'poza_oknem': 0,
+        'za_malo_danych': 0,
+        'gotowe_do_prognozy': 0,
+    }
+    future = sorted((m for m in matches
+                     if m['score'] is None and m['kickoff'] > now),
+                    key=lambda m: m['kickoff'])
+    for m in future:
+        rid = f'{league}-{season}-{m["id"]}'
+        if rid in ids:
+            counts['archiwum'] += 1
+        elif m['kickoff'] <= now + timedelta(hours=MIN_LEAD_HOURS):
+            counts['za_blisko'] += 1
+        elif m['kickoff'] > now + timedelta(days=MAX_LEAD_DAYS):
+            counts['poza_oknem'] += 1
+        else:
+            history = prior_history(matches, m['kickoff'], now)
+            h = team_recent(history, m['home_id'])
+            a = team_recent(history, m['away_id'])
+            if len(history) < MIN_LEAGUE or min(len(h), len(a)) < MIN_TEAM:
+                counts['za_malo_danych'] += 1
+            else:
+                counts['gotowe_do_prognozy'] += 1
+
+    print(f'DIAGNOZA {league} {season}: przyszle bez wyniku={len(future)}, '
+          f'juz zapisane={counts["archiwum"]}, '
+          f'start za <= {MIN_LEAD_HOURS}h={counts["za_blisko"]}, '
+          f'dalej niz {MAX_LEAD_DAYS} dni={counts["poza_oknem"]}, '
+          f'za malo danych={counts["za_malo_danych"]}, '
+          f'kwalifikuje sie={counts["gotowe_do_prognozy"]}')
+    if future:
+        m = future[0]
+        print(f'NAJBLIZSZY MECZ {league}: {m["home"]} - {m["away"]}, '
+              f'{iso(m["kickoff"])} (UTC)')
+    else:
+        print(f'NAJBLIZSZY MECZ {league}: brak przyszlych meczow w odpowiedzi API')
+    return counts
+
 def run():
     now = utc_now()
     year = now.year if now.month >= 7 else now.year - 1
     default = {'schema': 1, 'updated_at': None, 'forecasts': []}
     doc = json.loads(FILE.read_text(encoding='utf-8')) if FILE.exists() else default
+    valid_doc(doc)  # Sprawdz archiwum przed odczytem zaleglych typow.
     data = {}
     # Rozliczaj takze zalegle prognozy z poprzednich sezonow bez ich przeliczania.
     targets = {(league, year) for league in LEAGUES}
@@ -333,6 +379,11 @@ def run():
             print(f'OSTRZEZENIE: {league}/{season} niepobrana: {exc}')
     if not data:
         raise RuntimeError('Brak danych ze wszystkich lig; nie modyfikujemy archiwum')
+    # Prawdziwe przyczyny braku prognoz sa widoczne w logach GitHub Actions.
+    # Diagnostyka dziala na stanie archiwum PRZED aktualizacja.
+    for (league, season), matches in sorted(data.items()):
+        if season == year:
+            diagnose_league(doc, league, season, matches, now)
     original = json.dumps(doc, ensure_ascii=False, sort_keys=True)
     doc, added, graded = update_doc(doc, data, now)
     updated = json.dumps(doc, ensure_ascii=False, sort_keys=True)
@@ -341,6 +392,9 @@ def run():
         tmp.write_text(json.dumps(doc, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
         os.replace(tmp, FILE)
     print(f'Nowe prognozy: {added}; nowe/zmienione wyniki: {graded}; archiwum: {len(doc["forecasts"])}')
+    if added == 0:
+        print('INFO: Brak nowych typow. Szczegoly sa w liniach DIAGNOZA powyzej. '
+              'To nie oznacza awarii, jesli API poprawnie zwrocilo spotkania.')
 
 
 if __name__ == '__main__':
