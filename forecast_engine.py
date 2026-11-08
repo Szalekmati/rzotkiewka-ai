@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""RZOTKIEWKA 1.4: archiwum prognoz 1X2, publiczne dane OpenLigaDB.
+"""RZOTKIEWKA 1.6: archiwizacja i kontrola wynikow 1X2, dane OpenLigaDB.
 
-Dziala bez zewnetrznych zaleznosci; uruchamiany co 6 godzin przez GitHub Actions.
+Dziala bez zewnetrznych zaleznosci; kontrola planowana co 2 godziny przez GitHub Actions.
 Nie wykonuje zakladow, nie obsluguje kont ani platnosci.
 """
 from __future__ import annotations
@@ -10,9 +10,11 @@ import hashlib
 import json
 import math
 import os
+import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from urllib.request import Request, urlopen
+from urllib.error import HTTPError, URLError
 from zoneinfo import ZoneInfo
 
 BASE = 'https://api.openligadb.de/getmatchdata'
@@ -190,7 +192,7 @@ def create_record(league, season, m, f, now):
 
 
 def valid_doc(doc):
-    """Reject corrupted snapshots and inconsistent settlements before writing anything."""
+    """Odrzuc niepoprawne migawki i rozliczenia przed zapisem."""
     if not isinstance(doc, dict) or doc.get('schema') != 1 or not isinstance(doc.get('forecasts'), list):
         raise ValueError('predictions.json ma niewlasciwy format')
     ids = set()
@@ -228,16 +230,33 @@ def valid_doc(doc):
                 or any(type(n) is not int or n < 0 for n in score)
                 or settlement.get('outcome') != result_outcome(score)):
                 raise ValueError(f'Niespojne rozliczenie: {rid}')
-        elif settlement.get('score') is not None or settlement.get('outcome') is not None:
+            try:
+                at = datetime.fromisoformat(settlement['graded_at'].replace('Z', '+00:00'))
+                if at.tzinfo is None or at < kickoff:
+                    raise ValueError('Bad timestamp')
+            except (KeyError, TypeError, AttributeError, ValueError) as exc:
+                raise ValueError(f'Nieprawidlowy czas rozliczenia: {rid}') from exc
+        elif (settlement.get('score') is not None or settlement.get('outcome') is not None
+              or settlement.get('graded_at') is not None):
             raise ValueError(f'Oczekujace rozliczenie ma wynik: {rid}')
     return doc
 
-
 def fetch_matches(league, season):
     url = f'{BASE}/{league}/{season}'
-    req = Request(url, headers={'User-Agent': 'Rzotkiewka-FootballLab/1.3 (public GitHub Actions)','Accept': 'application/json'})
-    with urlopen(req, timeout=35) as response:
-        data = json.load(response)
+    req = Request(url, headers={'User-Agent': 'Rzotkiewka-FootballLab/1.6 (public GitHub Actions)','Accept': 'application/json'})
+    data = None
+    for attempt in range(3):
+        try:
+            with urlopen(req, timeout=30) as response:
+                data = json.load(response)
+            break
+        except (HTTPError, URLError, TimeoutError) as exc:
+            if isinstance(exc, HTTPError) and exc.code not in (429, 500, 502, 503, 504):
+                raise
+            if attempt == 2:
+                raise
+            print(f'Pobieranie {league}/{season}: chwilowy blad, ponowienie {attempt + 1}/2: {exc}')
+            time.sleep(2 * (attempt + 1))
     if not isinstance(data, list):
         raise ValueError(f'Niepoprawna odpowiedz OpenLigaDB: {league}')
     matches = [normalize_match(r) for r in data]
@@ -294,7 +313,7 @@ def run():
     default = {'schema': 1, 'updated_at': None, 'forecasts': []}
     doc = json.loads(FILE.read_text(encoding='utf-8')) if FILE.exists() else default
     data = {}
-    # Always update this season; revisit unfinished forecasts from previous seasons.
+    # Rozliczaj takze zalegle prognozy z poprzednich sezonow bez ich przeliczania.
     targets = {(league, year) for league in LEAGUES}
     for rec in doc.get('forecasts', []):
         snap = rec.get('snapshot', {})

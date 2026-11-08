@@ -204,11 +204,11 @@
 <body>
 <header class="header">
   <div class="shell head-inner">
-    <a class="brand" href="#start" aria-label="RZOTKIEWKA — strona główna"><span class="brand-emoji" aria-hidden="true">🫜</span><span><span class="brand-name">RZOTKIEWKA</span><span class="brand-caption">FOOTBALL LAB · 1.5</span></span></a>
+    <a class="brand" href="#start" aria-label="RZOTKIEWKA — strona główna"><span class="brand-emoji" aria-hidden="true">🫜</span><span><span class="brand-name">RZOTKIEWKA</span><span class="brand-caption">FOOTBALL LAB · 1.6</span></span></a>
     <nav class="nav" aria-label="Nawigacja"><a href="#mecze">Mecze</a><a href="#ranking">Ranking</a><a href="#typy">Typy demo</a><a href="#jak-to-dziala">Zasady</a><a class="nav-premium" href="#premium">Premium ✦</a></nav>
   </div>
 </header>
-<div id="demo-banner" class="banner" role="status">WERSJA 1.5 — publiczny ranking prognoz przed meczami i rzeczywiste statystyki. Typy demonstracyjne są fikcyjne.</div>
+<div id="demo-banner" class="banner" role="status">WERSJA 1.6 — publiczny ranking prognoz przed meczami i rzeczywiste statystyki. Typy demonstracyjne są fikcyjne.</div>
 <main class="shell" id="start">
   <section class="hero" aria-labelledby="hero-title">
     <div>
@@ -223,7 +223,7 @@
     <div class="rank-shell">
       <div class="kicker">📊 PUBLICZNE WYNIKI · BEZ OBIETNIC</div>
       <h2 id="ranking-title" style="margin-top:14px">Ranking prognoz RZOTKIEWKA</h2>
-      <p class="rank-explainer">Tylko prognozy opublikowane przed spotkaniem i pozytywnie zweryfikowane SHA-256. Ranking sortuje według <strong>najwyższego pojedynczego prawdopodobieństwa 1X2</strong> wyliczonego przez model, a nie według pewności wygranej. Kolejność nie oznacza opłacalności zakładu.</p>
+      <p class="rank-explainer">Tylko prognozy opublikowane przed spotkaniem i pozytywnie zweryfikowane SHA-256. Kontrola wyników jest zaplanowana co 2 godziny (harmonogram GitHub może mieć opóźnienia). Ranking sortuje według <strong>najwyższego pojedynczego prawdopodobieństwa 1X2</strong> wyliczonego przez model, a nie według pewności wygranej. Kolejność nie oznacza opłacalności zakładu.</p>
       <div class="rank-metrics" aria-label="Wyniki wszystkich zweryfikowanych prognoz">
         <div class="rank-metric"><strong id="rank-total">—</strong><span>Opublikowane prognozy</span></div>
         <div class="rank-metric"><strong id="rank-graded">—</strong><span>Rozliczone mecze</span></div>
@@ -236,7 +236,7 @@
           <select id="rank-league"><option value="all">Wszystkie ligi</option><option value="bl1">Bundesliga</option><option value="bl2">2. Bundesliga</option><option value="bl3">3. Liga</option></select>
         </label>
         <label class="field-select" for="rank-state">Stan meczu
-          <select id="rank-state"><option value="upcoming">Przed meczem</option><option value="graded">Rozliczone</option><option value="awaiting">Oczekują na wynik</option></select>
+          <select id="rank-state"><option value="all" selected>Wszystkie mecze</option><option value="upcoming">Przed meczem</option><option value="graded">Rozliczone</option><option value="awaiting">Oczekują na wynik</option></select>
         </label>
         <label class="field-select" for="rank-order">Sortuj
           <select id="rank-order"><option value="confidence">Szansa lidera ↓</option><option value="kickoff">Termin meczu ↑</option></select>
@@ -422,7 +422,7 @@
     render();
   }));
   $('reload').addEventListener('click',loadTips);
-  $('footer-year').textContent = '© ' + new Date().getFullYear() + ' RZOTKIEWKA · wersja 1.5';
+  $('footer-year').textContent = '© ' + new Date().getFullYear() + ' RZOTKIEWKA · wersja 1.6';
   loadTips();
 })();
 </script>
@@ -621,7 +621,7 @@
 
 
 
-  /* 1.5: ranking oparty WYŁĄCZNIE na archiwum po weryfikacji SHA-256. */
+  /* 1.6: ranking oparty WYŁĄCZNIE na archiwum po weryfikacji SHA-256. */
   function scored(r){
     return r.settlement.state==='graded' && Array.isArray(r.settlement.score);
   }
@@ -646,10 +646,11 @@
     $('rank-status').textContent=state.archiveFailed
       ?'Nie udało się zweryfikować archiwum. Poniższy ranking jest niedostępny.'
       :!state.archiveReady?'Weryfikowanie archiwum prognoz…'
-      :`Zweryfikowanych zapisów: ${data.length} · rozliczonych: ${stats.graded}. ${stats.graded?`Trafionych liderów: ${stats.hits}/${stats.graded}.`:'Za mało rozliczonych spotkań do obliczenia skuteczności.'} ${state.archiveAt?'Ostatnia zmiana archiwum: '+new Date(state.archiveAt).toLocaleString('pl-PL')+'.':''}`;
+      :`Zweryfikowanych zapisów: ${data.length} · rozliczonych: ${stats.graded} · przed meczem: ${data.filter(r=>!scored(r)&&new Date(r.snapshot.kickoff).getTime()>Date.now()).length} · oczekuje na wynik: ${data.filter(r=>!scored(r)&&new Date(r.snapshot.kickoff).getTime()<=Date.now()).length}. ${stats.graded?`Trafionych liderów: ${stats.hits}/${stats.graded}.`:'Skuteczność będzie dostępna po rozliczeniu meczów.'} ${state.archiveAt?'Ostatnia ZMIANA archiwum: '+new Date(state.archiveAt).toLocaleString('pl-PL')+'.':''}`;
     const league=$('rank-league').value, status=$('rank-state').value, order=$('rank-order').value, now=Date.now();
     const rows=data.filter(r=>{
       if(league!=='all'&&r.snapshot.league!==league)return false;
+      if(status==='all')return true;
       if(status==='graded')return scored(r);
       if(status==='upcoming')return !scored(r)&&new Date(r.snapshot.kickoff).getTime()>now;
       return !scored(r)&&new Date(r.snapshot.kickoff).getTime()<=now;
@@ -660,13 +661,13 @@
     });
     const root=$('rank-list');root.replaceChildren();
     if(!state.archiveReady){root.append(make('p','rank-empty',state.archiveFailed?'Błąd pobierania lub sprawdzania danych. Nie wyświetlamy niezweryfikowanych prognoz.':'Weryfikowanie danych…'));}
-    else if(!rows.length){root.append(make('p','rank-empty',status==='upcoming'?'Brak przyszłych prognoz dla wybranego filtra. Zobacz rozliczone lub zmień ligę.':status==='graded'?'Nie ma jeszcze rozliczonych prognoz dla tego filtra.':'Brak meczów oczekujących na potwierdzenie wyniku.'));}
+    else if(!rows.length){root.append(make('p','rank-empty',status==='all'?'Brak zapisanych prognoz dla tego filtra.':status==='upcoming'?'Brak przyszłych prognoz dla wybranego filtra. Zobacz rozliczone lub zmień ligę.':status==='graded'?'Nie ma jeszcze rozliczonych prognoz dla tego filtra.':'Brak meczów oczekujących na potwierdzenie wyniku.'));}
     for(const [i,r] of rows.slice(0,16).entries()){
       const s=r.snapshot, p=s.probabilities, lead=leaderOf(r), isGraded=scored(r);
       const card=make('article','rank-card');
       const head=make('div','rank-top');
       head.append(make('span','rank-index',`#${i+1} · ${allowedLeagues[s.league]||s.league} · ${s.season}/${s.season+1}`));
-      head.append(make('span','rank-tag'+(isGraded?' graded':''),isGraded?'ROZLICZONY':status==='awaiting'?'OCZEKUJE':'ZAPISANY PRZED MECZEM'));
+      head.append(make('span','rank-tag'+(isGraded?' graded':''),isGraded?'ROZLICZONY':new Date(s.kickoff).getTime()<=now?'OCZEKUJE NA WYNIK':'ZAPISANY PRZED MECZEM'));
       card.append(head,make('h3','',`${s.home} – ${s.away}`));
       card.append(make('p','rank-date',`Początek: ${new Date(s.kickoff).toLocaleString('pl-PL')}`));
       const leader=make('div','rank-leader');
@@ -676,6 +677,8 @@
       if(isGraded){
         const hit=lead.outcome===r.settlement.outcome;
         card.append(make('p','rank-result',`Wynik ${r.settlement.score.join(':')} · ${hit?'TRAFIONY':'NIETRAFIONY'} lider 1X2`));
+      } else if(new Date(s.kickoff).getTime()<=now){
+        card.append(make('p','rank-caption','Trwa oczekiwanie na końcowy wynik w OpenLigaDB. Automatyczne kontrole są planowane co 2 godziny; rozliczenie możliwe najwcześniej 3 godziny po rozpoczęciu meczu.'));
       }
       card.append(make('p','rank-caption',`Zapisano: ${new Date(s.created_at).toLocaleString('pl-PL')} · SHA-256 ${r.snapshot_sha256.slice(0,14)}…`));
       root.append(card);
