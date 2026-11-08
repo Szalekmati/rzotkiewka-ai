@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""RZOTKIEWKA 1.7: audytowalne prognozy, kontrola wynikow i diagnostyka 1X2.
+"""RZOTKIEWKA AI 2.0 — prognozy 1X2, archiwum i rozliczanie.
 
-Dziala bez zewnetrznych zaleznosci; kontrola planowana co 2 godziny przez GitHub Actions.
-Nie wykonuje zakladow, nie obsluguje kont ani platnosci.
+Wersja testowa modelu statystycznego, bez gwarancji skutecznosci.
+Uzywa wylacznie danych historycznych dostepnych przed utworzeniem prognozy.
+Nie zmienia historycznych snapshotow prognoz w predictions.json.
 """
 from __future__ import annotations
 
@@ -20,7 +21,7 @@ from zoneinfo import ZoneInfo
 BASE = 'https://api.openligadb.de/getmatchdata'
 LEAGUES = {'bl1': 'Bundesliga', 'bl2': '2. Bundesliga', 'bl3': '3. Liga'}
 FILE = Path(__file__).resolve().parent / 'predictions.json'
-MODEL_VERSION = '1.3.0'
+MODEL_VERSION = '2.0.0'
 MIN_LEAGUE = 24
 MIN_TEAM = 4
 RECENT = 8
@@ -97,7 +98,7 @@ def team_recent(history, tid):
 
 
 def team_rates(rows, tid, venue, typical):
-    # Recency: wagi kolejnych meczow (najnowszy -> starszy): 1.00 do 0.65.
+    """Zachowane dla zgodnosci z testami i wczesniejsza analiza."""
     overall_for = overall_against = overall_weight = 0.0
     venue_for = venue_against = venue_weight = 0.0
     for i, m in enumerate(rows):
@@ -122,6 +123,45 @@ def clamp(value, low, high):
     return max(low, min(high, value))
 
 
+def venue_profile(rows, tid, venue, league_home, league_away):
+    """Estymuje gole zdobywane i tracone na danym boisku.
+
+    Priory rozdzielaja dom i wyjazd; forma druzyny wywodzi sie z meczow
+    ze wszystkich boisk. Mniejsza probka venue jest mocniej wygładzana.
+    """
+    if venue not in ('home', 'away'):
+        raise ValueError('Nieprawidlowe venue')
+    # Na neutralnym poziomie zakladamy srednia ligi, nie stale 1.3 dla obu stron.
+    baseline_for = league_home if venue == 'home' else league_away
+    baseline_against = league_away if venue == 'home' else league_home
+    baseline_total = (league_home + league_away) / 2.0
+    all_for = all_against = all_weight = 0.0
+    place_for = place_against = place_weight = 0.0
+    for i, m in enumerate(rows):
+        weight = 1.0 - .05 * i
+        home_game = m['home_id'] == tid
+        goals_for = m['score'][0 if home_game else 1]
+        goals_against = m['score'][1 if home_game else 0]
+        all_for += goals_for * weight
+        all_against += goals_against * weight
+        all_weight += weight
+        if home_game == (venue == 'home'):
+            place_for += goals_for * weight
+            place_against += goals_against * weight
+            place_weight += weight
+
+    # Wazona forma zespolu, niezalezna od przewagi swojego boiska.
+    team_for = (all_for + 4.0 * baseline_total) / (all_weight + 4.0)
+    team_against = (all_against + 4.0 * baseline_total) / (all_weight + 4.0)
+    # Przekladamy forme na rozne srednie gole dom / wyjazd.
+    expected_for = baseline_for * team_for / baseline_total
+    expected_against = baseline_against * team_against / baseline_total
+    # Ostroznie laczymy sile ogolna z forma na konkretnym boisku.
+    venue_for = (place_for + 3.0 * expected_for) / (place_weight + 3.0)
+    venue_against = (place_against + 3.0 * expected_against) / (place_weight + 3.0)
+    return venue_for, venue_against
+
+
 def poisson(lam):
     result = [math.exp(-lam)]
     for k in range(1, MAX_GOALS):
@@ -140,20 +180,20 @@ def predict(match, matches, now):
     away_goals = sum(m['score'][1] for m in history)
     avg_home = (home_goals + 12 * 1.45) / (len(history) + 12)
     avg_away = (away_goals + 12 * 1.15) / (len(history) + 12)
-    typical = (avg_home + avg_away) / 2
-    hf, ha = team_rates(home_rows, match['home_id'], 'home', typical)
-    af, aa = team_rates(away_rows, match['away_id'], 'away', typical)
-    exp_home = clamp(avg_home * math.sqrt(clamp(hf / avg_home, .5, 1.8) *
-                                          clamp(aa / avg_home, .5, 1.8)), .35, 3.5)
-    exp_away = clamp(avg_away * math.sqrt(clamp(af / avg_away, .5, 1.8) *
-                                          clamp(ha / avg_away, .5, 1.8)), .35, 3.5)
+    hf, ha = venue_profile(home_rows, match['home_id'], 'home', avg_home, avg_away)
+    af, aa = venue_profile(away_rows, match['away_id'], 'away', avg_home, avg_away)
+    # Moc ataku gospodarzy przeciw obronie gosci i na odwrot.
+    # Rozne priory bramkowe zapewniaja jawna i umiarkowana przewage boiska.
+    exp_home = clamp(avg_home * math.sqrt(clamp(hf / avg_home, .50, 1.90) *
+                                           clamp(aa / avg_home, .50, 1.90)), .35, 3.5)
+    exp_away = clamp(avg_away * math.sqrt(clamp(af / avg_away, .50, 1.90) *
+                                           clamp(ha / avg_away, .50, 1.90)), .35, 3.5)
     probs = {'1': 0.0, 'X': 0.0, '2': 0.0}
     for i, p1 in enumerate(poisson(exp_home)):
         for j, p2 in enumerate(poisson(exp_away)):
             probs['1' if i > j else 'X' if i == j else '2'] += p1 * p2
     total = sum(probs.values())
     probs = {k: round(probs[k] / total, 6) for k in ('1', 'X', '2')}
-    # Kompensacja zaokraglenia do dokladnie 1,000000.
     probs['2'] = round(1.0 - probs['1'] - probs['X'], 6)
     return {
         'probabilities': probs,
@@ -241,9 +281,11 @@ def valid_doc(doc):
             raise ValueError(f'Oczekujace rozliczenie ma wynik: {rid}')
     return doc
 
+
 def fetch_matches(league, season):
     url = f'{BASE}/{league}/{season}'
-    req = Request(url, headers={'User-Agent': 'Rzotkiewka-FootballLab/1.7 (public GitHub Actions)','Accept': 'application/json'})
+    req = Request(url, headers={'User-Agent': 'Rzotkiewka-FootballLab/2.0 (public GitHub Actions)',
+                                'Accept': 'application/json'})
     data = None
     for attempt in range(3):
         try:
@@ -280,7 +322,7 @@ def apply_league(doc, league, season, matches, now):
                     graded_count += 1
             continue
         if m['score'] is not None:
-            continue  # Nigdy nie tworzymy prognoz po zakonczonym meczu.
+            continue  # Nie wolno tworzyc prognoz po zakonczonym meczu.
         if not (now + timedelta(hours=MIN_LEAD_HOURS) < m['kickoff'] <= now + timedelta(days=MAX_LEAD_DAYS)):
             continue
         f = predict(m, matches, now)
@@ -307,19 +349,12 @@ def update_doc(doc, data_by_league, now):
     return doc, new_count, graded_count
 
 
-
 def diagnose_league(doc, league, season, matches, now):
-    """Tylko analiza przyczyn: NIE zmienia archiwum i NIE tworzy typow."""
+    """Diagnostyka nie zmienia prognoz ani archiwum."""
     ids = {rec['id'] for rec in doc['forecasts']}
-    counts = {
-        'archiwum': 0,
-        'za_blisko': 0,
-        'poza_oknem': 0,
-        'za_malo_danych': 0,
-        'gotowe_do_prognozy': 0,
-    }
-    future = sorted((m for m in matches
-                     if m['score'] is None and m['kickoff'] > now),
+    counts = {'archiwum': 0, 'za_blisko': 0, 'poza_oknem': 0,
+              'za_malo_danych': 0, 'gotowe_do_prognozy': 0}
+    future = sorted((m for m in matches if m['score'] is None and m['kickoff'] > now),
                     key=lambda m: m['kickoff'])
     for m in future:
         rid = f'{league}-{season}-{m["id"]}'
@@ -337,7 +372,6 @@ def diagnose_league(doc, league, season, matches, now):
                 counts['za_malo_danych'] += 1
             else:
                 counts['gotowe_do_prognozy'] += 1
-
     print(f'DIAGNOZA {league} {season}: przyszle bez wyniku={len(future)}, '
           f'juz zapisane={counts["archiwum"]}, '
           f'start za <= {MIN_LEAD_HOURS}h={counts["za_blisko"]}, '
@@ -352,14 +386,14 @@ def diagnose_league(doc, league, season, matches, now):
         print(f'NAJBLIZSZY MECZ {league}: brak przyszlych meczow w odpowiedzi API')
     return counts
 
+
 def run():
     now = utc_now()
     year = now.year if now.month >= 7 else now.year - 1
     default = {'schema': 1, 'updated_at': None, 'forecasts': []}
     doc = json.loads(FILE.read_text(encoding='utf-8')) if FILE.exists() else default
-    valid_doc(doc)  # Sprawdz archiwum przed odczytem zaleglych typow.
+    valid_doc(doc)
     data = {}
-    # Rozliczaj takze zalegle prognozy z poprzednich sezonow bez ich przeliczania.
     targets = {(league, year) for league in LEAGUES}
     for rec in doc.get('forecasts', []):
         snap = rec.get('snapshot', {})
@@ -379,8 +413,6 @@ def run():
             print(f'OSTRZEZENIE: {league}/{season} niepobrana: {exc}')
     if not data:
         raise RuntimeError('Brak danych ze wszystkich lig; nie modyfikujemy archiwum')
-    # Prawdziwe przyczyny braku prognoz sa widoczne w logach GitHub Actions.
-    # Diagnostyka dziala na stanie archiwum PRZED aktualizacja.
     for (league, season), matches in sorted(data.items()):
         if season == year:
             diagnose_league(doc, league, season, matches, now)
