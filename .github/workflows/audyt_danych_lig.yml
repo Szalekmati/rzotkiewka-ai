@@ -1,0 +1,231 @@
+name: RZOTKIEWKA - audyt danych lig
+
+on:
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: 'Maksymalna liczba wpisow liga/sezon (1-300)'
+        required: true
+        default: '120'
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rzotkiewka-audyt-lig
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Sprawdz dane pilkarskie OpenLigaDB
+        env:
+          AUDIT_LIMIT: ${{ inputs.limit }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import csv
+          import json
+          import os
+          import time
+          from collections import Counter
+          from datetime import datetime, timezone
+          from pathlib import Path
+          from urllib.error import HTTPError, URLError
+          from urllib.parse import quote
+          from urllib.request import Request, urlopen
+          
+          BASE = 'https://api.openligadb.de/'
+          OUT = Path(os.environ.get('AUDIT_OUTPUT', 'reports/audyt_lig'))
+          LAST_REQUEST = 0.0
+          
+          
+          def get_json(route):
+              global LAST_REQUEST
+              for attempt in range(3):
+                  time.sleep(max(0, 1.25 - (time.monotonic() - LAST_REQUEST)))
+                  LAST_REQUEST = time.monotonic()
+                  try:
+                      request = Request(BASE + route, headers={'User-Agent': 'RZOTKIEWKA-data-audit/1.0'})
+                      with urlopen(request, timeout=20) as response:
+                          return json.load(response)
+                  except (HTTPError, URLError, TimeoutError) as error:
+                      if attempt == 2:
+                          raise
+                      time.sleep(3 * (attempt + 1))
+          
+          
+          def season_year(row):
+              try:
+                  return int(str(row.get('leagueSeason', ''))[:4])
+              except ValueError:
+                  return 0
+          
+          
+          def score90(match):
+              results = match.get('matchResults')
+              if not isinstance(results, list):
+                  return None
+              results = [r for r in results if isinstance(r, dict) and r.get('resultTypeKind') == 'After90Minutes']
+              if len(results) != 1:
+                  return None
+              pair = (results[0].get('pointsTeam1'), results[0].get('pointsTeam2'))
+              return pair if all(type(p) is int and p >= 0 for p in pair) else None
+          
+          
+          def utc_date(match):
+              try:
+                  value = datetime.fromisoformat(str(match.get('matchDateTimeUTC', '')).replace('Z', '+00:00'))
+                  return value.astimezone(timezone.utc) if value.tzinfo else None
+              except ValueError:
+                  return None
+          
+          
+          def analyze(matches):
+              if not isinstance(matches, list) or any(not isinstance(m, dict) for m in matches):
+                  raise ValueError('Niepoprawny format odpowiedzi meczowej')
+              now = datetime.now(timezone.utc)
+              ids = [m.get('matchID') for m in matches if m.get('matchID') is not None]
+              duplicates = len(ids) - len(set(ids))
+              finished = [m for m in matches if m.get('matchIsFinished') is True]
+              good = []
+              for match in finished:
+                  date = utc_date(match)
+                  teams = [match.get(key) for key in ('team1', 'team2')]
+                  valid_teams = all(isinstance(t, dict) and t.get('teamId') and t.get('teamName') for t in teams)
+                  if (score90(match) is not None and date and date <= now and valid_teams
+                          and teams[0]['teamId'] != teams[1]['teamId'] and match.get('matchID') is not None):
+                      good.append(match)
+              dates = [utc_date(m) for m in good]
+              ratio = round(100 * len(good) / len(finished), 1) if finished else 0
+              status = ('BRAK_MECZOW' if not matches else
+                        'SPRAWDZ_RECZNIE' if duplicates or len(ids) != len(matches) else
+                        'KANDYDAT_DO_TESTOW' if len(good) >= 100 and ratio >= 95 else
+                        'SPRAWDZ_RECZNIE' if finished and ratio < 95 else 'MALO_DANYCH')
+              return dict(status=status, mecze=len(matches), zakonczone=len(finished),
+                          poprawne_90min=len(good), pokrycie_zakonczonych_proc=ratio,
+                          duplikaty_id=duplicates, zakonczone_do_weryfikacji=len(finished)-len(good),
+                          pierwszy_wynik=min(dates).date().isoformat() if dates else '',
+                          ostatni_wynik=max(dates).date().isoformat() if dates else '')
+          
+          
+          def write_csv(path, rows, fields):
+              with path.open('w', encoding='utf-8-sig', newline='') as output:
+                  writer = csv.DictWriter(output, fieldnames=fields, extrasaction='ignore')
+                  writer.writeheader()
+                  writer.writerows(rows)
+          
+          
+          def cell(value):
+              return str(value).replace('|', '/').replace('\n', ' ').replace('\r', ' ')
+          
+          
+          def main():
+              OUT.mkdir(parents=True, exist_ok=True)
+              (OUT / 'raw').mkdir(exist_ok=True)
+              catalog = get_json('getavailableleagues')
+              if not isinstance(catalog, list) or not catalog or any(not isinstance(r, dict) for r in catalog):
+                  raise ValueError('Niepoprawny lub pusty katalog lig')
+              (OUT / 'katalog.json').write_text(json.dumps(catalog, ensure_ascii=False), encoding='utf-8')
+              year = datetime.now(timezone.utc).year
+              requested = int(os.environ.get('AUDIT_LIMIT', '120'))
+              if not 1 <= requested <= 300:
+                  raise ValueError('Limit musi miescic sie w zakresie 1-300')
+              football = [r for r in catalog if isinstance(r.get('sport'), dict)
+                          and r['sport'].get('sportName') in ('Fußball', 'Frauenfußball')]
+              candidates = [r for r in football if year - 2 <= season_year(r) <= year
+                            and r.get('leagueShortcut') and r.get('leagueSeason') is not None]
+              priority = {'bl1': 0, 'bl2': 1, 'bl3': 2}
+              candidates.sort(key=lambda r: (priority.get(str(r['leagueShortcut']).lower(), 3),
+                                             -season_year(r), str(r['leagueShortcut']).lower()))
+              selected, seen = [], set()
+              for row in candidates:
+                  key = (str(row['leagueShortcut']), str(row['leagueSeason']))
+                  if key not in seen:
+                      seen.add(key)
+                      selected.append(row)
+              selected = selected[:requested]
+              rows = []
+              for index, league in enumerate(selected, 1):
+                  shortcut, season = str(league['leagueShortcut']), str(league['leagueSeason'])
+                  row = dict(leagueId=league.get('leagueId'), nazwa=league.get('leagueName', ''),
+                             skrot=shortcut, sezon=season, blad='')
+                  route = 'getmatchdata/' + quote(shortcut, safe='') + '/' + quote(season, safe='')
+                  try:
+                      matches = get_json(route)
+                      (OUT / 'raw' / f'{index:03d}.json').write_text(json.dumps(matches, ensure_ascii=False), encoding='utf-8')
+                      row.update(analyze(matches))
+                  except (HTTPError, URLError, TimeoutError, ValueError, OSError) as error:
+                      row.update(status='BLAD_POBIERANIA', blad=f'{type(error).__name__}: {error}')
+                  row['endpoint'] = BASE + route
+                  rows.append(row)
+                  print(f"[{index}/{len(selected)}] {shortcut}/{season}: {row['status']}", flush=True)
+              counts = Counter(row['status'] for row in rows)
+              fields = ['leagueId', 'nazwa', 'skrot', 'sezon', 'status', 'mecze', 'zakonczone',
+                        'poprawne_90min', 'pokrycie_zakonczonych_proc', 'duplikaty_id',
+                        'zakonczone_do_weryfikacji', 'pierwszy_wynik', 'ostatni_wynik', 'blad', 'endpoint']
+              write_csv(OUT / 'audyt_lig.csv', rows, fields)
+              inventory = []
+              tested = {(r['skrot'], r['sezon']) for r in rows}
+              for league in football:
+                  inventory.append(dict(nazwa=league.get('leagueName'), skrot=league.get('leagueShortcut'),
+                                        sezon=league.get('leagueSeason'),
+                                        status='SPRAWDZONO' if (str(league.get('leagueShortcut')), str(league.get('leagueSeason'))) in tested
+                                        else 'NIESPRAWDZONE'))
+              write_csv(OUT / 'inwentarz_pilkarski.csv', inventory, ['nazwa', 'skrot', 'sezon', 'status'])
+              metadata = dict(czas_utc=datetime.now(timezone.utc).isoformat(), katalog_wpisy=len(catalog),
+                              pilka_wpisy=len(football), zakres_sezonow=[year-2, year], sprawdzono=len(rows),
+                              statusy=dict(counts), wyniki=rows)
+              (OUT / 'audyt_lig.json').write_text(json.dumps(metadata, ensure_ascii=False, indent=2), encoding='utf-8')
+              summary = ['# RZOTKIEWKA - audyt danych pilkarskich', '',
+                         f'Sprawdzono **{len(rows)}** wpisow liga/sezon z lat **{year-2}-{year}**.',
+                         f'Katalog: {len(catalog)} wpisow; kategorie pilkarskie: {len(football)}.', '',
+                         '## Statusy', '']
+              summary += [f'- {key}: **{value}**' for key, value in sorted(counts.items())]
+              summary += ['', '## Zasady oceny', '',
+                          'KANDYDAT_DO_TESTOW: co najmniej 100 zakonczonych meczow z jednoznacznym wynikiem '
+                          'After90Minutes, data UTC w przeszlosci, druzynami i ID; co najmniej 95% '
+                          'zakonczonych meczow spelnia te warunki i nie ma powtorzonych/brakujacych ID.',
+                          'To prog wstepnego przegladu, nie potwierdzenie kompletnosci sezonu ani gotowosci modelu.',
+                          'Wyniki bez oznaczenia After90Minutes wymagaja weryfikacji. Nie zgadujemy po numerze typu wyniku.',
+                          'Katalog zawiera tez wpisy testowe, amatorskie i pucharowe. Status kandydata wymaga recznej weryfikacji rozgrywek.',
+                          'NIESPRAWDZONE oznacza wpis poza zakresem lub limitem, nie brak danych.',
+                          'Audyt obejmuje tylko OpenLigaDB; nie jest katalogiem wszystkich lig swiata.', '',
+                          '## Wyniki (najpierw kandydaci)', '',
+                          '| Liga | Sezon | Status | Mecze | Poprawne 90 min |',
+                          '|---|---|---|---:|---:|']
+              ordered = sorted(rows, key=lambda r: (r['status'] != 'KANDYDAT_DO_TESTOW', -r.get('poprawne_90min', 0)))
+              summary += ['| ' + ' | '.join(cell(r.get(k, '')) for k in ['nazwa', 'sezon', 'status', 'mecze', 'poprawne_90min']) + ' |'
+                          for r in ordered]
+              summary += ['', '## Kolejne kroki', '',
+                          '- Zweryfikowac nazwy kandydatow i pokrycie zakonczonych sezonow.',
+                          '- Sprawdzic zgodnosc identyfikatorow druzyn z obecnym modelem.',
+                          '- Dopiero potem przygotowac import i backtest chronologiczny.',
+                          '- Szukac dalszych dostawcow dla brakujacych krajow i lig.', '',
+                          'Pelne odpowiedzi API sa w raw/; numer pliku odpowiada kolejnosci w CSV i JSON.',
+                          'Nie zmieniono danych modelu ani kodu aplikacji.']
+              report = '\n'.join(summary) + '\n'
+              (OUT / 'RAPORT_LIG.md').write_text(report, encoding='utf-8')
+              if os.environ.get('GITHUB_STEP_SUMMARY'):
+                  with open(os.environ['GITHUB_STEP_SUMMARY'], 'a', encoding='utf-8') as output:
+                      output.write(report)
+              if not rows or all(r['status'] == 'BLAD_POBIERANIA' for r in rows):
+                  raise SystemExit('Brak poprawnie sprawdzonych wpisow. Zobacz raport.')
+          
+          
+          if __name__ == '__main__':
+              main()
+          PY
+
+      - name: Zapisz raport audytu
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: audyt-danych-lig
+          path: reports/audyt_lig/
+          if-no-files-found: warn
+          retention-days: 14
