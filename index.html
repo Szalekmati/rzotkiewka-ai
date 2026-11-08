@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0a0e13">
-  <meta name="description" content="🫜 RZOTKIEWKA — przejrzyste typy piłkarskie, uzasadnienia i historia wyników. Wersja demonstracyjna.">
-  <title>🫜 RZOTKIEWKA — Typy piłkarskie</title>
+  <meta name="description" content="🫜 RZOTKIEWKA — przejrzyste typy piłkarskie, uzasadnienia i historia wyników. Terminarze z OpenLigaDB. Typy demonstracyjne.">
+  <title>🫜 RZOTKIEWKA 1.1 — Mecze, statystyki i typy</title>
   <style>
     :root{color-scheme:dark;--bg:#0a0e13;--surface:#131a22;--surface2:#19232d;--line:#293743;--ink:#f4f8f8;--muted:#a2b1bc;--accent:#a6f475;--accent2:#dfffc8;--red:#ff858b;--gold:#f4c77f;--radius:18px}
     *{box-sizing:border-box}
@@ -85,39 +85,99 @@
     @media(max-width:760px){.hero{grid-template-columns:1fr;padding:38px 0 24px}.visual{min-height:225px}.mascot{font-size:69px}.metrics{margin:0 0 43px}.nav a:not(.nav-premium){display:none}.tips{grid-template-columns:1fr}.premium-section{grid-template-columns:1fr;gap:15px}.info-grid{grid-template-columns:1fr}.metric .value{font-size:25px}}
     @media(max-width:390px){.shell{width:calc(100% - 24px)}.brand-name{font-size:13px}.brand-emoji{width:36px;height:36px}.nav .nav-premium{padding:8px 10px}.metric{padding:12px}.metric .label{font-size:11px}.metric .value{font-size:22px}.tip{padding:15px}.price{font-size:42px}}
     @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+    /* Wersja 1.1: niezalezne, publiczne dane spotkan */
+    .real-section{margin-bottom:55px}
+    .real-intro{max-width:840px;color:var(--muted);font-size:14px;margin-bottom:20px}
+    .live-toolbar{display:flex;flex-wrap:wrap;align-items:end;gap:12px;margin-bottom:17px}
+    .field-select{display:flex;flex-direction:column;gap:5px;min-width:156px;color:var(--muted);font-size:12px;font-weight:700}
+    .field-select select{appearance:auto;width:100%;padding:11px 12px;color:var(--ink);background:var(--surface);border:1px solid #43515b;border-radius:10px;font-size:14px}
+    .field-select select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+    .real-tabs{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+    .real-note{border:1px solid var(--line);background:#111b21;border-radius:13px;padding:13px 16px;color:#c2cfd1;font-size:13px;margin:13px 0}
+    .real-note a{text-decoration:underline;color:var(--accent)}
+    .real-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+    .real-card{background:var(--surface);border:1px solid #355045;border-radius:20px;padding:21px;min-width:0}
+    .real-card h3{font-size:21px;line-height:1.25;margin:13px 0}
+    .real-head{display:flex;justify-content:space-between;gap:10px;align-items:start}
+    .real-head .eyebrow{margin:0}
+    .real-score{display:inline-block;padding:9px 14px;background:#1e3024;border:1px solid #45624b;border-radius:11px;color:var(--accent);font-size:20px;font-weight:850;margin-bottom:13px}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+    .form-item{background:#19252c;border:1px solid #30424c;border-radius:12px;padding:11px;min-width:0}
+    .form-item strong{display:block;font-size:12px;line-height:1.35;margin-bottom:7px;overflow-wrap:anywhere}
+    .form-item span{font-size:12px;color:var(--muted);display:block;line-height:1.6}
+    .stat-label{color:var(--accent);font-weight:800}
+    .real-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:13px}
+    .real-metric{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:14px}
+    .real-metric strong{display:block;font-size:25px;line-height:1.15}
+    .real-metric span{color:var(--muted);font-size:12px}
+    .status-real{margin:10px 0 14px;color:var(--muted);font-size:13px;min-height:23px}
+    .real-foot{border-top:1px solid var(--line);margin-top:14px;padding-top:11px;font-size:12px;color:var(--muted)}
+    .demo-explainer{border-left:3px solid var(--gold);background:#2d261b;color:#f2d6ac;border-radius:8px;padding:12px 14px;font-size:13px;margin:18px 0}
+    .demo-stats{display:none}
+    .live-refresh{height:44px}
+    .live-refresh:disabled{opacity:.5;cursor:wait}
+    @media(max-width:760px){.real-grid{grid-template-columns:1fr}.real-summary{grid-template-columns:repeat(3,minmax(0,1fr))}.real-metric{padding:10px}.real-metric strong{font-size:21px}}
+    @media(max-width:380px){.form-grid{grid-template-columns:1fr}.real-summary{gap:6px}.real-metric strong{font-size:18px}}
   </style>
 </head>
 <body>
 <header class="header">
   <div class="shell head-inner">
-    <a class="brand" href="#start" aria-label="RZOTKIEWKA — strona główna"><span class="brand-emoji" aria-hidden="true">🫜</span><span><span class="brand-name">RZOTKIEWKA</span><span class="brand-caption">FOOTBALL PICKS</span></span></a>
-    <nav class="nav" aria-label="Nawigacja"><a href="#typy">Typy</a><a href="#jak-to-dziala">Zasady</a><a class="nav-premium" href="#premium">Premium ✦</a></nav>
+    <a class="brand" href="#start" aria-label="RZOTKIEWKA — strona główna"><span class="brand-emoji" aria-hidden="true">🫜</span><span><span class="brand-name">RZOTKIEWKA</span><span class="brand-caption">FOOTBALL LAB · 1.1</span></span></a>
+    <nav class="nav" aria-label="Nawigacja"><a href="#mecze">Mecze</a><a href="#typy">Typy demo</a><a href="#jak-to-dziala">Zasady</a><a class="nav-premium" href="#premium">Premium ✦</a></nav>
   </div>
 </header>
-<div id="demo-banner" class="banner" role="status">WERSJA DEMONSTRACYJNA — widoczne spotkania i kursy są fikcyjnymi przykładami, nie poradą bukmacherską.</div>
+<div id="demo-banner" class="banner" role="status">WERSJA 1.1 — terminarze i wyniki pochodzą z OpenLigaDB. Typy i kursy w sekcji DEMO pozostają fikcyjne.</div>
 <main class="shell" id="start">
   <section class="hero" aria-labelledby="hero-title">
     <div>
-      <div class="kicker">⚽ TYPUJ ŚWIADOMIE · ANALIZUJ WYNIKI</div>
+      <div class="kicker">⚽ PRAWDZIWE MECZE · ZROZUMIAŁE STATYSTYKI</div>
       <h1 id="hero-title">Mecze pod <span>lupą.</span></h1>
-      <p class="lead">Typy piłkarskie w jednym miejscu: kurs, krótkie uzasadnienie oraz uczciwie pokazywane wyniki. Bez opowieści o „pewniakach”.</p>
-      <div class="actions"><a class="primary" href="#typy">Zobacz typy →</a><a class="secondary" href="#premium">Poznaj Premium · 19,99 zł</a></div>
+      <p class="lead">Rzeczywiste mecze i wyniki z publicznej bazy. Porównuj formę drużyn bez fikcyjnych kursów i obietnic wygranej.</p>
+      <div class="actions"><a class="primary" href="#mecze">Zobacz mecze →</a><a class="secondary" href="#premium">Poznaj Premium · 19,99 zł</a></div>
     </div>
     <div class="visual" aria-hidden="true"><div class="mascot">🫜</div><h3>Nie zgaduj. Analizuj.</h3><p>Prosty interfejs · jasne zasady</p></div>
   </section>
-  <div class="metrics" aria-label="Statystyki opublikowanych typów">
-    <div class="metric"><span id="stat-count" class="value">—</span><span class="label">Dostępne typy</span></div>
-    <div class="metric"><span id="stat-hit" class="value">—</span><span class="label">Skuteczność zakończonych</span></div>
-    <div class="metric"><span id="stat-profit" class="value">—</span><span class="label">Wynik przy stawce 1 j.</span></div>
-  </div>
+  <section id="mecze" class="real-section" aria-labelledby="live-title">
+    <div class="section-top"><div><h2 id="live-title">Prawdziwe mecze i statystyki</h2><p class="section-sub">Terminarze, wyniki i forma drużyn z niezależnej bazy danych.</p></div></div>
+    <p class="real-intro">Na początek obsługujemy niemiecką 1., 2. i 3. ligę. Statystyki są liczone wyłącznie na podstawie zakończonych spotkań z wybranego sezonu. To nie są prognozy AI ani kursy bukmacherskie.</p>
+    <div class="live-toolbar">
+      <label class="field-select" for="live-league">Rozgrywki
+        <select id="live-league"><option value="bl1">Bundesliga</option><option value="bl2">2. Bundesliga</option><option value="bl3">3. Liga</option></select>
+      </label>
+      <label class="field-select" for="live-season">Sezon
+        <select id="live-season"></select>
+      </label>
+      <div class="real-tabs" role="group" aria-label="Widok terminarza">
+        <button type="button" class="filter" data-live-tab="next" aria-pressed="true">Nadchodzące</button>
+        <button type="button" class="filter" data-live-tab="done" aria-pressed="false">Wyniki</button>
+      </div>
+      <button type="button" id="refresh-live" class="filter live-refresh">↻ Odśwież dane</button>
+    </div>
+    <div id="live-summary" class="real-summary" aria-label="Statystyki sezonu">
+      <div class="real-metric"><strong id="live-all">—</strong><span>Meczów w bazie</span></div>
+      <div class="real-metric"><strong id="live-finished">—</strong><span>Zakończonych</span></div>
+      <div class="real-metric"><strong id="live-upcoming">—</strong><span>Przyszłych meczów</span></div>
+    </div>
+    <p id="live-status" class="status-real" role="status" aria-live="polite">Łączenie ze źródłem meczów…</p>
+    <div id="live-list" class="real-grid" aria-live="polite"><div class="empty">Pobieranie terminarza…</div></div>
+    <p class="real-note">Źródło: <a href="https://www.openligadb.de/" target="_blank" rel="noopener noreferrer">OpenLigaDB</a> (dane społecznościowe, licencja <a href="https://opendatacommons.org/licenses/odbl/1-0/" target="_blank" rel="noopener noreferrer">ODbL 1.0</a>). Wyniki mogą mieć opóźnienie; brak wyniku nie oznacza trwającego meczu. Przed podjęciem decyzji sprawdzaj źródła oficjalne.</p>
+  </section>
   <section id="typy" aria-labelledby="tips-title">
-    <div class="section-top"><div><h2 id="tips-title">Typy i analizy</h2><p class="section-sub">Dane są publikowane przez właściciela strony. Wynik każdego typu pozostaje w historii.</p></div>
+    <div class="section-top"><div><h2 id="tips-title">Przykładowe typy — DEMO</h2><p class="section-sub">Ta sekcja pozwala testować wygląd typów i Premium. Nie przedstawia prawdziwych prognoz ani kursów.</p></div>
       <div class="filters" role="group" aria-label="Filtr typów">
         <button class="filter" type="button" data-filter="all" aria-pressed="true">Wszystkie</button>
         <button class="filter" type="button" data-filter="free" aria-pressed="false">Darmowe</button>
         <button class="filter" type="button" data-filter="premium" aria-pressed="false">Premium 🔒</button>
       </div>
     </div>
+    <p class="demo-explainer">⚠️ Poniższe mecze, kursy i wyniki to wyłącznie fikcyjne dane demonstracyjne. Nie używaj ich do obstawiania.</p>
+  <div class="metrics demo-stats" aria-label="Statystyki opublikowanych typów">
+    <div class="metric"><span id="stat-count" class="value">—</span><span class="label">Dostępne typy</span></div>
+    <div class="metric"><span id="stat-hit" class="value">—</span><span class="label">Skuteczność zakończonych</span></div>
+    <div class="metric"><span id="stat-profit" class="value">—</span><span class="label">Wynik przy stawce 1 j.</span></div>
+  </div>
     <div id="tips-list" class="tips" aria-live="polite"><div class="empty">Wczytywanie typów…</div></div>
     <div class="status-line"><span id="data-message" role="status">Ładowanie danych…</span> <button type="button" id="reload" class="filter" style="margin-left:8px">↻ Odśwież</button></div>
   </section>
@@ -131,8 +191,8 @@
   </section>
   <section id="jak-to-dziala" aria-labelledby="how-title"><h2 id="how-title">Co znajdziesz w 🫜?</h2><p class="section-sub" style="margin-bottom:18px">Proste zasady zwiększają zaufanie bardziej niż obietnice wygranej.</p>
     <div class="info-grid">
-      <div class="info"><div class="symbol">📊</div><h3>Typ z uzasadnieniem</h3><p>Rynek, kurs i argumenty zamiast samych liczb.</p></div>
-      <div class="info"><div class="symbol">✅</div><h3>Pełna historia</h3><p>Typy wygrane, przegrane i zwrócone. Wynik nie znika.</p></div>
+      <div class="info"><div class="symbol">📊</div><h3>Fakty przed typowaniem</h3><p>Zweryfikowane terminy, wyniki i statystyki historyczne zamiast „pewniaków”.</p></div>
+      <div class="info"><div class="symbol">✅</div><h3>Rzeczywiste wyniki</h3><p>Zakończone spotkania i forma drużyn w wybranym sezonie.</p></div>
       <div class="info"><div class="symbol">🔐</div><h3>Premium dopiero po wdrożeniu</h3><p>Bez udawanej blokady i fałszywego przycisku zakupu.</p></div>
     </div>
   </section>
@@ -204,7 +264,7 @@
     $('stat-hit').textContent = ended.length ? (100 * ended.filter(t => t.status === 'won').length / ended.length).toFixed(1).replace('.',',') + '%' : '—';
     const profit = ended.reduce((sum,t) => sum + (t.status === 'won' ? t.odds - 1 : -1),0);
     $('stat-profit').textContent = ended.length ? `${profit > 0 ? '+' : ''}${profit.toFixed(2).replace('.',',')} j.` : '—';
-    $('demo-banner').hidden = state.mode !== 'demo';
+    // Baner zawsze widoczny: w sekcji demonstracyjnej są fikcyjne kursy.
   }
   async function loadTips() {
     $('data-message').textContent = 'Wczytywanie danych…';
@@ -229,8 +289,171 @@
     render();
   }));
   $('reload').addEventListener('click',loadTips);
-  $('footer-year').textContent = '© ' + new Date().getFullYear() + ' RZOTKIEWKA · wersja 1.0';
+  $('footer-year').textContent = '© ' + new Date().getFullYear() + ' RZOTKIEWKA · wersja 1.1';
   loadTips();
+})();
+</script>
+
+<script>
+(() => {
+  'use strict';
+  // OpenLigaDB: publiczne dane, bez konta i klucza. Nie wyliczamy kursow ani prognoz.
+  const allowedLeagues = Object.freeze({bl1:'Bundesliga', bl2:'2. Bundesliga', bl3:'3. Liga'});
+  const $ = id => document.getElementById(id);
+  const make = (tag,cls='',text='') => {
+    const e = document.createElement(tag);
+    if(cls) e.className=cls;
+    e.textContent=String(text);
+    return e;
+  };
+  const cache = new Map(); // do 10 minut, tylko w trakcie jednej wizyty
+  const maxAgeMs = 10*60*1000;
+  const state = {league:'bl1',season:2026,tab:'next',matches:[],loadedAt:null};
+  const now = new Date();
+  const currentSeason = now.getMonth() >= 6 ? now.getFullYear() : now.getFullYear()-1;
+  state.season=currentSeason;
+  for(const y of [currentSeason,currentSeason-1]) {
+    const opt=make('option','',`${y}/${y+1}`);opt.value=String(y);$('live-season').append(opt);
+  }
+  $('live-season').value=String(currentSeason);
+  const nf = new Intl.NumberFormat('pl-PL',{maximumFractionDigits:1,minimumFractionDigits:1});
+  const df = new Intl.DateTimeFormat('pl-PL',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+  function asDate(source) {
+    if(typeof source!=='string' || source.length<10) return null;
+    const hasZone=/[zZ]$|[+-]\d\d:?\d\d$/.test(source);
+    const dt=new Date(hasZone ? source : source+'Z');
+    return Number.isNaN(dt.getTime())?null:dt;
+  }
+  function scoreFrom(raw) {
+    if (!raw.matchIsFinished || !Array.isArray(raw.matchResults)) return null;
+    const result=raw.matchResults.find(r=>Number(r?.resultTypeID)===2 || String(r?.resultName||'').toLowerCase().includes('endergebnis'));
+    if(!result) return null;
+    const a=Number(result.pointsTeam1),b=Number(result.pointsTeam2);
+    if(!Number.isInteger(a)||!Number.isInteger(b)||a<0||b<0) return null;
+    return [a,b];
+  }
+  function normalizeMatch(raw) {
+    if(!raw||typeof raw!=='object') return null;
+    const dt=asDate(raw.matchDateTimeUTC) || asDate(raw.matchDateTime);
+    const homeId=Number(raw.team1?.teamId), awayId=Number(raw.team2?.teamId);
+    if(!dt||!Number.isInteger(homeId)||!Number.isInteger(awayId)||homeId<=0||awayId<=0) return null;
+    if(typeof raw.team1?.teamName!=='string'||typeof raw.team2?.teamName!=='string')return null;
+    return {
+      id:Number(raw.matchID)||0,time:dt.getTime(),homeId,awayId,
+      home:raw.team1.teamName.slice(0,90),away:raw.team2.teamName.slice(0,90),
+      round:String(raw.group?.groupName||'').slice(0,45),
+      score:scoreFrom(raw)
+    };
+  }
+  function recentForm(teamId,beforeTime) {
+    const past=state.matches.filter(m=>m.score && m.time<beforeTime && (m.homeId===teamId||m.awayId===teamId))
+      .sort((a,b)=>b.time-a.time).slice(0,5);
+    if(!past.length) return null;
+    let won=0,draw=0,loss=0,forGoals=0,against=0,over15=0;
+    for(const m of past) {
+      const home=m.homeId===teamId;
+      const scored=m.score[home?0:1], conceded=m.score[home?1:0];
+      forGoals+=scored; against+=conceded;
+      if(scored>conceded)won++; else if(scored===conceded)draw++; else loss++;
+      if(m.score[0]+m.score[1]>=2)over15++;
+    }
+    return {size:past.length,won,draw,loss,forGoals,against,over15};
+  }
+  function renderForm(root,name,form) {
+    const item=make('div','form-item');
+    item.append(make('strong','',name));
+    if(!form){item.append(make('span','','Brak wcześniejszych wyników w sezonie.'));root.append(item);return;}
+    item.append(make('span','',`Ostatnie ${form.size}: ${form.won}W · ${form.draw}R · ${form.loss}P`));
+    item.append(make('span','',`Gole zdobyte / stracone: ${nf.format(form.forGoals/form.size)} / ${nf.format(form.against/form.size)} na mecz`));
+    item.append(make('span','',`Min. 2 gole łącznie: ${form.over15}/${form.size} spotkań`));
+    root.append(item);
+  }
+  function renderCard(m) {
+    const card=make('article','real-card');
+    const head=make('div','real-head');
+    head.append(make('p','eyebrow',`${allowedLeagues[state.league]}${m.round?' · '+m.round:''} · ${df.format(new Date(m.time))}`));
+    const complete=Boolean(m.score);
+    head.append(make('span','badge'+(complete?' closed':''), complete?'WYNIK':'TERMINARZ'));
+    card.append(head,make('h3','',`${m.home} – ${m.away}`));
+    if(complete)card.append(make('div','real-score',`${m.score[0]} : ${m.score[1]}`));
+    else card.append(make('p','rationale',m.time<Date.now()?'Brak potwierdzonego wyniku w źródle.':'Spotkanie zaplanowane — wynik nie jest jeszcze znany.'));
+    const grid=make('div','form-grid');
+    renderForm(grid,m.home,recentForm(m.homeId,m.time));
+    renderForm(grid,m.away,recentForm(m.awayId,m.time));
+    card.append(grid);
+    card.append(make('div','real-foot','Statystyki z zakończonych spotkań przed tym meczem, tylko bieżący wybrany sezon. Nie stanowią prognozy ani rekomendacji zakładu.'));
+    return card;
+  }
+  function render() {
+    $('live-all').textContent=String(state.matches.length);
+    const completed=state.matches.filter(m=>m.score);
+    $('live-finished').textContent=String(completed.length);
+    $('live-upcoming').textContent=String(state.matches.filter(m=>!m.score && m.time>Date.now()).length);
+    const target=$('live-list');target.replaceChildren();
+    const games=state.tab==='done'
+      ?completed.sort((a,b)=>b.time-a.time).slice(0,16)
+      :state.matches.filter(m=>!m.score && m.time>Date.now()-3*60*60*1000).sort((a,b)=>a.time-b.time).slice(0,16);
+    if(!games.length){
+      target.append(make('div','empty',state.matches.length
+        ? 'Nie ma meczów w wybranym widoku. Wybierz drugi filtr lub inny sezon.'
+        : 'Źródło nie zwróciło spotkań dla tego sezonu i ligi.'));
+    } else for(const game of games) target.append(renderCard(game));
+  }
+  async function load(force=false) {
+    const league=$('live-league').value;
+    const season=Number($('live-season').value);
+    if(!Object.hasOwn(allowedLeagues,league)||!Number.isInteger(season)||season<2000||season>2100)return;
+    state.league=league;state.season=season;
+    const key=`${league}/${season}`;
+    const cached=cache.get(key);
+    if(!force && cached && Date.now()-cached.loadedAt<maxAgeMs){
+      state.matches=cached.matches;state.loadedAt=cached.loadedAt;render();
+      $('live-status').textContent=`Dane z ${new Date(state.loadedAt).toLocaleString('pl-PL')}. Pobrano z OpenLigaDB.`;
+      return;
+    }
+    $('refresh-live').disabled=true;
+    state.matches=[]; state.loadedAt=null;
+    $('live-all').textContent='—';$('live-finished').textContent='—';$('live-upcoming').textContent='—';
+    $('live-status').textContent=`Pobieranie terminarza: ${allowedLeagues[league]} ${season}/${season+1}…`;
+    $('live-list').replaceChildren(make('div','empty','Łączenie z OpenLigaDB…'));
+    const controller=new AbortController(), timeout=setTimeout(()=>controller.abort(),16000);
+    try {
+      const res=await fetch(`https://api.openligadb.de/getmatchdata/${league}/${season}`,{signal:controller.signal,cache:'no-store'});
+      if(!res.ok)throw new Error(`HTTP ${res.status}`);
+      const payload=await res.json();
+      if(!Array.isArray(payload))throw new Error('Niepoprawny format danych');
+      const unique=new Map();
+      for(const item of payload) {
+        const m=normalizeMatch(item);
+        if(m)unique.set(m.id || `${m.homeId}:${m.awayId}:${m.time}`,m);
+      }
+      const matches=Array.from(unique.values()).sort((a,b)=>a.time-b.time);
+      // Jesli uzytkownik zmienil lige podczas oczekiwania, odrzucamy stary wynik.
+      cache.set(key,{matches,loadedAt:Date.now()});
+      if(state.league!==league||state.season!==season)return;
+      state.matches=matches;state.loadedAt=Date.now();render();
+      $('live-status').textContent=`${matches.length} spotkań · pobrano ${new Date().toLocaleString('pl-PL')} · źródło: OpenLigaDB`;
+    } catch(err) {
+      console.error('RZOTKIEWKA: problem z terminarzem',err);
+      if(state.league!==league||state.season!==season)return;
+      if(cached){
+        state.matches=cached.matches;render();
+        $('live-status').textContent='Nie udało się odświeżyć. Pokazujemy wcześniej pobrane dane; mogą być nieaktualne.';
+      }else{
+        state.matches=[];render();
+        $('live-status').textContent='Nie udało się pobrać aktualnych spotkań. Sprawdź połączenie z internetem i spróbuj ponownie.';
+      }
+    }finally {clearTimeout(timeout);$('refresh-live').disabled=false;}
+  }
+  $('live-league').addEventListener('change',()=>load());
+  $('live-season').addEventListener('change',()=>load());
+  $('refresh-live').addEventListener('click',()=>load(true));
+  document.querySelectorAll('[data-live-tab]').forEach(btn=>btn.addEventListener('click',()=>{
+    state.tab=btn.dataset.liveTab;
+    document.querySelectorAll('[data-live-tab]').forEach(other=>other.setAttribute('aria-pressed',String(other===btn)));
+    render();
+  }));
+  load();
 })();
 </script>
 </body>
