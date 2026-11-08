@@ -2,405 +2,236 @@
 <html lang="pl">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#11131a">
-  <meta name="description" content="RZOTKIEWKA AI 0.4 – prosty planer celów, zadań i pomysłów. Dane zapisują się na Twoim urządzeniu.">
-  <title>RZOTKIEWKA AI — Starter 0.4</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0e13">
+  <meta name="description" content="🫜 RZOTKIEWKA — przejrzyste typy piłkarskie, uzasadnienia i historia wyników. Wersja demonstracyjna.">
+  <title>🫜 RZOTKIEWKA — Typy piłkarskie</title>
   <style>
-    :root{color-scheme:dark;--bg:#101218;--panel:#1a1d25;--panel2:#20242d;--line:#353947;--text:#f5f4f4;--muted:#afb2bc;--pink:#fa5d93;--lime:#beee89;--radius:21px}
-    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 8% 2%,#392039 0,transparent 35%),radial-gradient(ellipse at 100% 0%,#253226 0,transparent 33%),var(--bg);color:var(--text);font:16px/1.48 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
-    h1,h2,h3,p{margin:0}p{color:var(--muted)}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity:.55;cursor:not-allowed}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--lime);outline-offset:3px}input,select,textarea{width:100%;min-height:47px;border:1px solid var(--line);border-radius:14px;background:#11151b;color:var(--text);padding:11px 13px}input::placeholder,textarea::placeholder{color:#898e9a}textarea{min-height:78px;resize:vertical}
-    .wrap{max-width:1060px;margin:0 auto;padding:20px 18px 100px}.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:29px}.brand{display:flex;align-items:center;gap:12px}.logo{width:54px;height:62px;flex:none;filter:drop-shadow(0 5px 18px #fa5d9344)}.brandname{font-size:1.16rem;font-weight:900;letter-spacing:.05em;line-height:1.15}.brandsub{color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.075em;margin-top:6px}.pink{color:var(--pink)}.tag{border:1px solid #566a51;background:#1f2a25;border-radius:999px;color:var(--lime);padding:8px 12px;font-size:.72rem;font-weight:800;white-space:nowrap}
-    .hero{display:grid;grid-template-columns:1.5fr .72fr;gap:14px;margin-bottom:21px}.hero-content{padding:clamp(24px,5vw,43px);border-radius:29px;border:1px solid #503447;background:linear-gradient(132deg,#342034,#201b2a 65%,#1b2025)}.eyebrow{color:var(--lime);font-weight:900;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px}.hero h1{font-size:clamp(2rem,6vw,3.9rem);letter-spacing:-.05em;line-height:1.08}.hero p{max-width:560px;margin:17px 0 25px}.hero-side{display:flex;flex-direction:column;justify-content:space-between;border-radius:29px;border:1px solid #354236;background:linear-gradient(145deg,#263829,#1a2423);padding:28px}.side-head{color:var(--lime);font-size:.8rem;font-weight:800;letter-spacing:.08em}.hero-side strong{display:block;font-size:2rem;line-height:1.2}.hero-side p{font-size:.88rem}
-    .button-row{display:flex;flex-wrap:wrap;gap:10px}.btn{border:0;border-radius:14px;padding:12px 16px;min-height:46px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:7px;text-decoration:none}.btn.primary{background:var(--pink);color:#25131c}.btn.secondary{background:#37313f;border:1px solid #554353;color:#fff}.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--text)}.btn:hover{filter:brightness(1.1)}
-    .nav{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;padding:7px;margin:0 0 23px;border-radius:18px;border:1px solid var(--line);background:#181b21}.nav button{min-height:49px;background:transparent;border:0;border-radius:12px;color:var(--muted);font-size:.92rem;font-weight:800;padding:11px 7px}.nav button[aria-selected="true"]{background:#36303b;color:#fff;box-shadow:inset 0 0 0 1px #644258}.nav button:hover{color:#fff}.page[hidden],[hidden]{display:none!important}.page{scroll-margin-top:15px}.section-heading{margin-bottom:18px}.section-heading h2{font-size:clamp(1.5rem,3vw,1.85rem);letter-spacing:-.03em}.section-heading p{margin-top:7px;font-size:.94rem}
-    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-bottom:19px}.metric{border:1px solid var(--line);background:var(--panel);border-radius:20px;padding:20px}.metric span{color:var(--muted);font-size:.81rem}.metric strong{display:block;font-size:2rem;margin-top:5px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px;margin-bottom:16px}.panel h3{font-size:1.14rem}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:11px;margin-bottom:15px}.tiny-label{color:var(--lime);font-size:.72rem;font-weight:850;letter-spacing:.08em;text-transform:uppercase}.desc{font-size:.91rem;margin-top:8px}.field{display:block;font-size:.86rem;font-weight:730;margin-bottom:6px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin:17px 0}.full{grid-column:1/-1}.note{color:var(--muted);font-size:.84rem;line-height:1.55}.callout{border:1px dashed #52614b;border-radius:17px;background:#1c2921;padding:16px 18px;color:#d4e9c5;font-size:.9rem;margin-top:18px}
-    .empty{border:1px dashed #565965;padding:27px 16px;border-radius:17px;text-align:center;color:var(--muted);font-size:.91rem}.item-list{display:flex;flex-direction:column;gap:10px}.item{display:flex;gap:10px;align-items:flex-start;background:var(--panel2);border:1px solid var(--line);padding:13px 14px;border-radius:16px}.item input[type="checkbox"]{width:20px;height:20px;min-height:auto;margin:3px 1px;flex:none;accent-color:var(--lime)}.item-body{flex:1;min-width:0;overflow-wrap:anywhere}.item-title{font-size:.96rem;color:var(--text);font-weight:730;overflow-wrap:anywhere}.item-sub{color:var(--muted);font-size:.83rem;margin-top:4px}.item.done .item-title{text-decoration:line-through;color:#9499a4}.icon-btn{flex:none;min-width:35px;min-height:35px;background:transparent;border:1px solid #494c58;border-radius:10px;color:#ced0d8;font-size:1.2rem}.icon-btn:hover{border-color:var(--pink)}.pill{display:inline-block;background:#384534;color:#d0edbc;font-size:.72rem;padding:3px 8px;border-radius:999px;margin-top:7px}.pill.high{background:#53303c;color:#ffc2ce}.plan-card{border:1px solid var(--line);background:var(--panel2);border-radius:18px;padding:17px;margin:12px 0}.plan-card-top{display:flex;justify-content:space-between;gap:8px;align-items:start}.plan-card h3{font-size:1.1rem;margin-top:5px;overflow-wrap:anywhere}.plan-card .item-list{margin-top:16px}.progress{height:10px;background:#343942;border-radius:99px;overflow:hidden;margin:15px 0 9px}.progress span{display:block;height:100%;background:linear-gradient(90deg,var(--pink),var(--lime));transition:width .2s}.plan-note{font-size:.78rem}.idea-output{border:1px solid #694056;background:linear-gradient(145deg,#3b2334,#211e2c);padding:21px;border-radius:18px;margin-top:18px}.idea-output h3{font-size:1.32rem;margin:10px 0}.idea-output p{margin-top:7px}.idea-output .button-row{margin-top:15px}.footer{display:flex;flex-wrap:wrap;gap:15px;justify-content:space-between;border-top:1px solid var(--line);padding-top:22px;margin-top:30px;color:var(--muted);font-size:.8rem}.footer strong{color:var(--text)}.toast{position:fixed;z-index:50;bottom:25px;left:50%;transform:translateX(-50%);max-width:calc(100vw - 35px);min-width:220px;background:#e6f8db;color:#17251a;border-radius:13px;padding:11px 17px;text-align:center;font-weight:800;box-shadow:0 15px 45px #0009}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-    .edit-zone{display:grid;gap:11px;margin:13px 0;padding:15px;border:1px solid #60704a;border-radius:16px;background:#19221f}.edit-zone .field{margin-top:4px}.edit-zone .button-row{margin-top:3px}.plan-tools{margin:14px 0;gap:8px}.btn.small{min-height:39px;padding:8px 12px;font-size:.82rem}.step-actions{margin-left:auto;display:flex;flex-wrap:wrap;gap:5px;align-items:start}.item .step-actions .btn{padding:6px 9px;min-height:34px;font-size:.77rem}.item-actions{display:flex;gap:5px;flex:none}.item-actions button{min-width:36px}.edit-zone input,.edit-zone textarea{background:#10171a}.editing-entry{width:100%}.muted-note{color:var(--muted);font-size:.78rem;margin-top:8px}
-    .reminder-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 15px}.reminder-stat{background:var(--panel2);padding:12px 9px;border:1px solid var(--line);border-radius:16px}.reminder-stat span{font-size:.78rem;color:var(--muted)}.reminder-stat strong{display:block;font-size:1.5rem}.reminder-group{margin:15px 0}.reminder-group h3{font-size:1.02rem;margin-bottom:8px}.pill.overdue{background:#60333b;color:#ffbdc7}.pill.today{background:#455032;color:#e6ffb4}.pill.soon{background:#263f4c;color:#bce6ff}.mini-bar{height:9px;border-radius:30px;background:#353b42;overflow:hidden;margin:11px 0}.mini-bar span{display:block;height:100%;background:linear-gradient(90deg,var(--pink),var(--lime))}.panel .item{margin-top:8px}.date-note{font-size:.8rem;color:var(--muted);margin-top:7px}.item-title button{font-weight:inherit}.alert-title{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-    @media(max-width:720px){.hero .btn{font-size:.85rem;padding:10px 11px}.wrap{padding:15px 12px 85px}.topbar{margin-bottom:17px}.hero{grid-template-columns:1fr}.hero-content{padding:26px}.hero-side{min-height:120px;flex-direction:row;align-items:center;gap:14px}.hero-side p{max-width:170px}.grid{grid-template-columns:1fr}.stats{gap:7px}.metric{padding:14px 10px;border-radius:15px}.metric span{font-size:.74rem}.metric strong{font-size:1.65rem}.panel{padding:18px}.formgrid{grid-template-columns:1fr}.full{grid-column:auto}.nav{gap:3px}.nav button{font-size:.70rem;padding:11px 2px}.tag{font-size:.66rem}.section-heading{margin-top:4px}}
-    @media(max-width:380px){.brandname{font-size:1rem}.brandsub{font-size:.64rem}.brand{gap:7px}.logo{width:47px;height:55px}.tag{padding:7px 8px}.nav button{font-size:.67rem}.hero-content{padding:22px}}
-    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+    :root{color-scheme:dark;--bg:#0a0e13;--surface:#131a22;--surface2:#19232d;--line:#293743;--ink:#f4f8f8;--muted:#a2b1bc;--accent:#a6f475;--accent2:#dfffc8;--red:#ff858b;--gold:#f4c77f;--radius:18px}
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;min-width:290px;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.5}
+    button,a{touch-action:manipulation}
+    button{font:inherit;cursor:pointer}
+    a{color:inherit;text-decoration:none}
+    a:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+    .shell{width:min(1120px,calc(100% - 32px));margin-inline:auto}
+    .header{position:sticky;top:0;z-index:10;background:rgba(10,14,19,.96);border-bottom:1px solid var(--line);backdrop-filter:blur(14px)}
+    .head-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:72px}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.025em}
+    .brand-emoji{display:grid;place-items:center;width:42px;height:42px;background:#243728;border:1px solid #45634b;border-radius:14px;font-size:25px}
+    .brand-name{font-size:16px;letter-spacing:.045em}
+    .brand-caption{display:block;color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.12em}
+    .nav{display:flex;align-items:center;gap:8px}
+    .nav a{padding:8px 11px;color:var(--muted);border-radius:9px;font-weight:700;font-size:13px}
+    .nav a:hover,.nav a:focus-visible{background:var(--surface2);color:var(--ink)}
+    .nav .nav-premium{background:var(--accent);color:#0a180b}
+    .banner{background:#202719;border-bottom:1px solid #516e35;color:#dafaad;text-align:center;font-size:12px;padding:9px 14px}
+    .hero{padding:65px 0 42px;display:grid;grid-template-columns:1.25fr .75fr;gap:30px;align-items:center}
+    .kicker{display:inline-flex;align-items:center;gap:8px;border:1px solid #426243;border-radius:100px;padding:6px 11px;color:var(--accent);font-size:12px;font-weight:800;letter-spacing:.07em}
+    h1,h2,h3,p{margin-top:0}
+    h1{font-size:clamp(40px,6vw,78px);line-height:1.08;letter-spacing:-.055em;margin:18px 0 16px;font-weight:900}
+    h1 span{color:var(--accent)}
+    .lead{color:var(--muted);max-width:650px;font-size:clamp(16px,2vw,19px)}
+    .actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:25px}
+    .primary,.secondary{display:inline-flex;justify-content:center;align-items:center;gap:8px;padding:13px 19px;border-radius:13px;font-weight:850;border:1px solid transparent}
+    .primary{background:var(--accent);color:#12200e}.primary:hover{background:var(--accent2)}
+    .secondary{border-color:var(--line);background:var(--surface);color:var(--ink)}.secondary:hover{border-color:#526570}
+    .visual{background:radial-gradient(circle at 54% 37%,#31472c 0,#162019 50%,#101720 100%);border:1px solid #334538;border-radius:26px;padding:28px;min-height:310px;display:flex;flex-direction:column;justify-content:center;align-items:center;position:relative;text-align:center;overflow:hidden}
+    .visual:after{content:"";position:absolute;width:260px;height:260px;border:1px solid #4b6350;border-radius:50%;opacity:.35}
+    .mascot{font-size:103px;line-height:1.3;filter:drop-shadow(0 12px 19px #0009);z-index:1}
+    .visual h3,.visual p{position:relative;z-index:1}
+    .visual h3{margin:6px 0 2px;font-size:22px}.visual p{color:var(--muted);font-size:13px;margin:0}
+    .metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:3px 0 57px}
+    .metric{padding:19px;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface)}
+    .metric .value{display:block;font-size:32px;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-.035em}
+    .metric .label{display:block;color:var(--muted);font-size:13px}
+    section{scroll-margin-top:100px}
+    .section-top{display:flex;justify-content:space-between;align-items:end;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+    h2{font-size:clamp(26px,3.5vw,38px);line-height:1.17;letter-spacing:-.035em;margin-bottom:5px}
+    .section-sub{color:var(--muted);margin-bottom:0}
+    .filters{display:flex;flex-wrap:wrap;gap:8px}
+    .filter{padding:9px 13px;border:1px solid var(--line);color:var(--muted);background:var(--surface);border-radius:100px;font-size:13px;font-weight:800}
+    .filter[aria-pressed="true"]{color:#142315;background:var(--accent);border-color:var(--accent)}
+    .tips{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:12px}
+    .tip{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:21px;min-width:0}
+    .tip-top{display:flex;gap:9px;align-items:start;justify-content:space-between}
+    .eyebrow{color:var(--muted);font-size:12px;font-weight:700;margin:0 0 10px}
+    .badge{border-radius:99px;white-space:nowrap;font-size:11px;padding:5px 9px;font-weight:850;background:#273a2a;color:#bff5a6}
+    .badge.premium{color:#f7d99b;background:#44351f}.badge.closed{background:#303d49;color:#bcd1de}.badge.lost{background:#4a292e;color:#ffb3ba}
+    .tip h3{font-size:22px;letter-spacing:-.03em;line-height:1.2;margin:0 0 18px}
+    .choice{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px;border:1px solid #344c39;background:#1e3024;border-radius:13px;margin-bottom:16px}
+    .choice .small,.premium-lock .small{font-size:11px;text-transform:uppercase;letter-spacing:.065em;color:#9cbd99;font-weight:800}
+    .choice strong{font-size:18px;display:block;line-height:1.3}
+    .odd{font-size:22px;font-weight:900;color:var(--accent);font-variant-numeric:tabular-nums;white-space:nowrap}
+    .rationale{margin:0;color:var(--muted);font-size:14px}
+    .tip-foot{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:18px;padding-top:13px;border-top:1px solid var(--line);font-size:12px;color:var(--muted)}
+    .premium-lock{border:1px dashed #796242;background:#292417;border-radius:13px;padding:19px;margin-bottom:16px}
+    .premium-lock strong{display:block;color:#fce3a9;font-size:17px;margin:5px 0}
+    .premium-lock a{font-size:13px;color:var(--gold);font-weight:800;text-decoration:underline;text-underline-offset:3px}
+    .status-line{min-height:26px;font-size:13px;color:var(--muted);margin-bottom:35px}
+    .empty{grid-column:1/-1;border:1px dashed #405360;background:var(--surface);padding:34px;border-radius:16px;text-align:center;color:var(--muted)}
+    .premium-section{margin:20px 0 63px;border:1px solid #567445;border-radius:26px;background:linear-gradient(125deg,#202e1f,#151d18 70%);padding:clamp(22px,5vw,42px);display:grid;grid-template-columns:1fr auto;gap:30px;align-items:center}
+    .price{font-size:50px;font-weight:900;letter-spacing:-.06em;white-space:nowrap;line-height:1}.price small{font-size:15px;letter-spacing:0;color:var(--muted)}
+    .premium-section ul{padding-left:19px;margin:15px 0 0;color:#cedccd}
+    .premium-section li{margin:5px 0}
+    .coming{margin-top:10px;font-size:13px;color:var(--gold);font-weight:700}
+    .info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:60px}
+    .info{background:var(--surface);border:1px solid var(--line);padding:21px;border-radius:var(--radius)}
+    .info .symbol{font-size:26px;margin-bottom:8px}.info h3{font-size:17px;margin-bottom:6px}.info p{font-size:13px;color:var(--muted);margin:0}
+    .footer{border-top:1px solid var(--line);padding:25px 0 35px;font-size:12px;color:var(--muted)}
+    .footer .shell{display:flex;flex-direction:column;gap:8px}
+    .footer strong{color:var(--ink)}
+    @media(max-width:760px){.hero{grid-template-columns:1fr;padding:38px 0 24px}.visual{min-height:225px}.mascot{font-size:69px}.metrics{margin:0 0 43px}.nav a:not(.nav-premium){display:none}.tips{grid-template-columns:1fr}.premium-section{grid-template-columns:1fr;gap:15px}.info-grid{grid-template-columns:1fr}.metric .value{font-size:25px}}
+    @media(max-width:390px){.shell{width:calc(100% - 24px)}.brand-name{font-size:13px}.brand-emoji{width:36px;height:36px}.nav .nav-premium{padding:8px 10px}.metric{padding:12px}.metric .label{font-size:11px}.metric .value{font-size:22px}.tip{padding:15px}.price{font-size:42px}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header class="topbar">
-      <div class="brand">
-        <svg class="logo" viewBox="0 0 82 94" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Uśmiechnięta różowa rzodkiewka w czapce kucharza">
-          <path d="M39 24C27 15 26 7 30 3c7 4 11 9 14 18C47 7 54 3 59 4c-1 9-7 15-15 22" fill="#A8DE73"/>
-          <path d="M14 41c-4 22 12 40 30 48 19-11 31-29 27-48-4-17-19-24-29-24S18 24 14 41Z" fill="#FF5C91"/>
-          <path d="M44 88c5-14 8-23 7-30" stroke="#FFC0D1" stroke-width="3" stroke-linecap="round"/>
-          <path d="M17 34c-7-13 8-18 14-12-2-12 14-18 20-7 10-8 22 1 19 11 11 0 12 15 0 18H20c-5 0-7-4-3-10Z" fill="#FFF0E7" stroke="#D9CCCF" stroke-width="2"/>
-          <path d="M21 43h46v9H21z" fill="#FFF0E7" stroke="#D9CCCF" stroke-width="2"/>
-          <path d="M29 62c4-5 8-5 12 0M48 61c3-6 8-6 12-2" stroke="#3A1B29" stroke-width="3.7" stroke-linecap="round"/>
-          <path d="M39 71c5 5 10 5 15-1" stroke="#611F38" stroke-width="3" stroke-linecap="round"/>
-        </svg>
-        <div><div class="brandname">RZOTKIEWKA <span class="pink">AI</span></div><div class="brandsub">Mała rzecz. Wielkie plany.</div></div>
-      </div>
-      <span class="tag">STARTER 0.4</span>
-    </header>
-    <section class="hero" aria-label="Wprowadzenie">
-      <div class="hero-content">
-        <div class="eyebrow">Twoje nowe centrum dowodzenia</div>
-        <h1>Pomysły są dobre.<br><span class="pink">Działanie jest lepsze.</span></h1>
-        <p>Zapisuj zadania, układaj plany i odkrywaj pomysły. Jeden prosty panel na telefon i komputer.</p>
-        <div class="button-row">
-          <button type="button" class="btn primary" data-goto="plans" data-focus="goal-title">+ Utwórz plan</button>
-          <button type="button" class="btn secondary" data-goto="tasks" data-focus="task-title">Moje zadania →</button>
-        </div>
-      </div>
-      <div class="hero-side"><div><div class="side-head">TWÓJ PROGRES</div><strong id="hero-progress">0%</strong></div><p>Ukończone kroki we wszystkich zapisanych planach</p></div>
-    </section>
-    <nav class="nav" aria-label="Główne sekcje">
-      <button type="button" data-page="home" aria-selected="true">⌂ Start</button>
-      <button type="button" data-page="today" aria-selected="false">☼ Dziś</button>
-      <button type="button" data-page="plans" aria-selected="false">◈ Plany</button>
-      <button type="button" data-page="tasks" aria-selected="false">✓ Zadania</button>
-      <button type="button" data-page="ideas" aria-selected="false">✦ Pomysły</button>
-    </nav>
-    <main>
-      <section id="page-home" class="page" aria-labelledby="home-title">
-        <div class="section-heading"><h2 id="home-title">Centrum dowodzenia</h2><p>Wszystko, co ważne, w jednym miejscu.</p></div>
-        <div class="stats">
-          <div class="metric"><span>Zadań do zrobienia</span><strong id="metric-tasks">0</strong></div>
-          <div class="metric"><span>Aktywnych planów</span><strong id="metric-plans">0</strong></div>
-          <div class="metric"><span>Zapisanych pomysłów</span><strong id="metric-ideas">0</strong></div>
-        </div>
-        <div class="grid">
-          <div class="panel"><div class="panel-head"><h3>🎯 Najbliższy cel</h3><span class="tiny-label">PLANY</span></div><div id="home-plan" class="empty">Jeszcze nie masz planu.</div><div class="button-row" style="margin-top:16px"><button type="button" class="btn ghost" data-goto="plans" data-focus="goal-title">Utwórz plan</button></div></div>
-          <div class="panel"><div class="panel-head"><h3>✅ Na dziś</h3><span class="tiny-label">ZADANIA</span></div><div id="home-tasks" class="empty">Brak zadań.</div><div class="button-row" style="margin-top:16px"><button type="button" class="btn ghost" data-goto="tasks" data-focus="task-title">Dodaj zadanie</button></div></div>
-        </div>
-        <div class="callout"><strong>Wersja 0.4:</strong> masz panel Dzisiaj, terminy zadań i kroków oraz statystyki. Przypomnienia są widoczne <b>po otwarciu aplikacji</b> — bez powiadomień systemowych i synchronizacji między urządzeniami. Generator planów i pomysłów nadal używa gotowych reguł, a nie zewnętrznego modelu AI.</div>
-      </section>
-      <section id="page-today" class="page" aria-labelledby="today-title" hidden>
-        <div class="section-heading"><h2 id="today-title">☀️ Dzisiaj i terminy</h2><p id="today-date">Zaplanuj najważniejsze działania.</p></div>
-        <div class="reminder-grid">
-          <div class="reminder-stat"><span>Zaległe</span><strong id="due-overdue">0</strong></div>
-          <div class="reminder-stat"><span>Na dziś</span><strong id="due-today">0</strong></div>
-          <div class="reminder-stat"><span>7 dni</span><strong id="due-week">0</strong></div>
-        </div>
-        <div class="panel"><div class="panel-head"><h3>🔔 Przypomnienia</h3><span class="tiny-label">W APLIKACJI</span></div>
-          <p class="note">Zadania i kroki z terminami zobaczysz tutaj po otwarciu strony. Nie wysyłamy powiadomień na telefon ani e-mail.</p>
-          <div id="today-list" class="item-list" style="margin-top:15px"></div>
-          <div class="button-row" style="margin-top:16px"><button class="btn primary" type="button" data-goto="tasks" data-focus="task-title">+ Dodaj zadanie</button></div>
-        </div>
-        <div class="panel"><h3>📊 Twoje statystyki</h3><div id="detailed-stats" style="margin-top:14px"></div></div>
-      </section>
-      <section id="page-plans" class="page" aria-labelledby="plans-title" hidden>
-        <div class="section-heading"><h2 id="plans-title">Twój plan działania</h2><p>Rozbij duży cel na małe, konkretne kroki. Każdy plan możesz później poprawić i rozbudować.</p></div>
-        <div class="panel" id="plan-editor">
-          <h3>Nowy cel</h3><p class="desc">Wpisz cel i wybierz okres — przygotujemy 5 konkretnych kroków.</p>
-          <form id="plan-form">
-            <div class="formgrid">
-              <div class="full"><label class="field" for="goal-title">Jaki jest Twój cel?</label><input id="goal-title" maxlength="120" required placeholder="Np. uruchomić mały sklep internetowy"></div>
-              <div><label class="field" for="goal-category">Obszar</label><select id="goal-category"><option value="biznes">💼 Biznes</option><option value="nauka">📚 Nauka</option><option value="podroz">🚴 Podróż</option><option value="codziennosc">🌱 Życie codzienne</option></select></div>
-              <div><label class="field" for="goal-days">Czas realizacji</label><select id="goal-days"><option value="7">7 dni</option><option value="14" selected>14 dni</option><option value="30">30 dni</option></select></div>
-            </div>
-            <button class="btn primary" type="submit">Utwórz plan 5 kroków →</button>
-          </form>
-        </div>
-        <div class="panel"><div class="panel-head"><h3>Zapisane plany</h3><span class="tiny-label" id="plans-count">0 PLANÓW</span></div><div id="plans-list" class="empty">Twoje plany pojawią się tutaj.</div></div>
-      </section>
-      <section id="page-tasks" class="page" aria-labelledby="tasks-title" hidden>
-        <div class="section-heading"><h2 id="tasks-title">Lista zadań</h2><p>Dodaj zadanie, zmień jego nazwę lub priorytet, a po wykonaniu odznacz.</p></div>
-        <div class="panel"><h3>Dodaj zadanie</h3>
-          <form id="task-form" class="formgrid">
-            <div class="full"><label class="field" for="task-title">Co trzeba zrobić?</label><input id="task-title" required maxlength="160" placeholder="Np. przygotować listę produktów"></div>
-            <div><label class="field" for="task-priority">Priorytet</label><select id="task-priority"><option value="normal">Zwykły</option><option value="high">Ważne</option></select></div>
-            <div><label class="field" for="task-due">Termin (opcjonalnie)</label><input id="task-due" type="date"></div>
-            <div style="display:flex;align-items:end"><button type="submit" class="btn primary" style="width:100%">+ Dodaj zadanie</button></div>
-          </form>
-        </div>
-        <div class="panel"><div class="panel-head"><h3>Twoje zadania</h3><span class="tiny-label" id="task-count">0 DO ZROBIENIA</span></div><div id="task-list" class="empty">Nie masz jeszcze zadań.</div></div>
-      </section>
-      <section id="page-ideas" class="page" aria-labelledby="ideas-title" hidden>
-        <div class="section-heading"><h2 id="ideas-title">Generator pomysłów</h2><p>Znajdź inspirację, zapisz ją i zmień w działanie.</p></div>
-        <div class="panel"><h3>Odkryj pomysł</h3><p class="desc">Wybierz temat, a pokażemy jedną inspirację z naszej bazy.</p>
-          <div class="formgrid"><div class="full"><label class="field" for="idea-category">Interesuje mnie</label><select id="idea-category"><option value="biznes">💰 Mały biznes</option><option value="internet">🌍 Internet i aplikacje</option><option value="codziennosc">🌱 Ułatwienie życia</option><option value="tworczosc">🎨 Twórczość</option></select></div></div>
-          <button id="generate-idea" class="btn primary" type="button">✦ Wygeneruj inspirację</button>
-          <div id="idea-output" class="idea-output" hidden><span class="tiny-label">TWÓJ POMYSŁ</span><h3 id="idea-name"></h3><p id="idea-desc"></p><p id="idea-first"></p><div class="button-row"><button id="save-idea" class="btn secondary" type="button">♡ Zapisz pomysł</button></div></div>
-          <p class="note" style="margin-top:15px">Inspiracje pochodzą z przygotowanej bazy, a nie od podłączonego modelu AI.</p>
-        </div>
-        <div class="panel"><div class="panel-head"><h3>Zapisane pomysły</h3><span class="tiny-label" id="ideas-count">0 ZAPISANYCH</span></div><div id="ideas-list" class="empty">Zapisane pomysły pojawią się tutaj.</div></div>
-      </section>
-    </main>
-    <footer class="footer">
-      <div><strong>RZOTKIEWKA AI</strong> · wersja 0.4 · Starter</div>
-      <div class="button-row"><button type="button" class="btn ghost" id="backup-export">↓ Kopia danych</button><button type="button" class="btn ghost" id="backup-import">↑ Przywróć dane</button><input type="file" id="backup-file" accept=".json,application/json" class="sr-only" aria-label="Wybierz kopię danych"></div>
-      <div style="width:100%">🔒 Dane są przechowywane lokalnie, tylko w tej przeglądarce. Przed czyszczeniem danych lub zmianą telefonu pobierz kopię. Nie wpisuj poufnych informacji.</div>
-    </footer>
+<header class="header">
+  <div class="shell head-inner">
+    <a class="brand" href="#start" aria-label="RZOTKIEWKA — strona główna"><span class="brand-emoji" aria-hidden="true">🫜</span><span><span class="brand-name">RZOTKIEWKA</span><span class="brand-caption">FOOTBALL PICKS</span></span></a>
+    <nav class="nav" aria-label="Nawigacja"><a href="#typy">Typy</a><a href="#jak-to-dziala">Zasady</a><a class="nav-premium" href="#premium">Premium ✦</a></nav>
   </div>
-  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-  <script>
-  (() => {
-    'use strict';
-    // Zgodne z wersjami 0.1 / 0.2: ten sam klucz localStorage i format v1. Plany nie są resetowane.
-    const KEY='rzotkiewka_ai_starter_v1';
-    const $=id=>document.getElementById(id);
-    const uid=()=>typeof crypto!=='undefined'&&crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random().toString(36).slice(2)}`;
-    const txt=(val,n=160)=>String(val??'').trim().slice(0,n);
-    const arr=val=>Array.isArray(val)?val.slice(0,250):[];
-    const dayISO=(date=new Date())=>`${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
-    function dateISO(val){
-      const value=txt(val,10);
-      if(!/^\d{4}-\d{2}-\d{2}$/.test(value))return '';
-      const [y,m,d]=value.split('-').map(Number),parsed=new Date(y,m-1,d);
-      return parsed.getFullYear()===y&&parsed.getMonth()===m-1&&parsed.getDate()===d?value:'';
-    }
-    function offsetISO(iso,days){const [y,m,d]=iso.split('-').map(Number);return dayISO(new Date(y,m-1,d+days));}
-    function friendlyDate(iso){if(!iso)return '';const [y,m,d]=iso.split('-').map(Number);return new Date(y,m-1,d).toLocaleDateString('pl-PL',{day:'numeric',month:'short',year:'numeric'});}
-    const todayLabel=()=>new Date().toLocaleDateString('pl-PL',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-    const dueStatus=(date,now=dayISO())=>date<now?'overdue':date===now?'today':'soon';
-    const dueStatusName=kind=>kind==='overdue'?'Po terminie':kind==='today'?'Na dziś':'Wkrótce';
-    const initial=()=>({version:1,tasks:[],plans:[],ideas:[]});
-    function normalize(source){
-      if(!source||typeof source!=='object'||source.version!==1)throw new Error('Nieobsługiwany format kopii.');
-      return {
-        version:1,
-        tasks:arr(source.tasks).filter(x=>x&&typeof x==='object').map(x=>({id:txt(x.id,80)||uid(),title:txt(x.title),priority:x.priority==='high'?'high':'normal',dueDate:dateISO(x.dueDate),done:!!x.done})).filter(x=>x.title),
-        plans:arr(source.plans).filter(x=>x&&typeof x==='object').map(x=>({id:txt(x.id,80)||uid(),title:txt(x.title,120),category:txt(x.category,30),days:[7,14,30].includes(Number(x.days))?Number(x.days):14,steps:arr(x.steps).slice(0,25).filter(s=>s&&typeof s==='object').map(s=>({title:txt(s.title,140),detail:txt(s.detail,250),due:txt(s.due,40),dueDate:dateISO(s.dueDate),done:!!s.done})).filter(s=>s.title)})).filter(x=>x.title&&x.steps.length),
-        ideas:arr(source.ideas).filter(x=>x&&typeof x==='object').map(x=>({id:txt(x.id,80)||uid(),title:txt(x.title,120),desc:txt(x.desc,300),first:txt(x.first,220)})).filter(x=>x.title)
-      };
-    }
-    function load(){try{const raw=localStorage.getItem(KEY);return raw?normalize(JSON.parse(raw)):initial();}catch(err){return initial();}}
-    let data=load(),currentIdea=null,previousIdea='',toastTimer;
-    function toast(message){const el=$('toast');el.textContent=message;el.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.hidden=true,3500);}
-    function save(){try{localStorage.setItem(KEY,JSON.stringify(data));return true;}catch(e){toast('Nie udało się zapisać. Sprawdź pamięć przeglądarki.');return false;}}
-    const element=(tag,cls='',content)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(content!==undefined)el.textContent=content;return el;};
-    const empty=message=>element('div','empty',message);
-    function clear(el){el.replaceChildren();el.classList.remove('empty');}
-    // Poprawka 0.2: pokaż właściwą zakładkę i przewiń DOKŁADNIE do niej / formularza.
-    function showPage(id,focusId=''){
-      if(!['home','today','plans','tasks','ideas'].includes(id))return;
-      document.querySelectorAll('.page').forEach(page=>page.hidden=page.id!==`page-${id}`);
-      document.querySelectorAll('[data-page]').forEach(button=>button.setAttribute('aria-selected',String(button.dataset.page===id)));
-      const target=focusId?$(focusId):$(`page-${id}`);
-      requestAnimationFrame(()=>{
-        if(target)target.scrollIntoView({behavior:'smooth',block:'start'});
-        if(focusId&&target){setTimeout(()=>{try{target.focus({preventScroll:true});}catch(_){target.focus();}},180);}
-      });
-    }
-    document.querySelectorAll('[data-page]').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
-    document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.goto,b.dataset.focus||'')));
-    const templates={
-      biznes:[['Określ odbiorcę','Zapisz, komu dokładnie chcesz pomóc i jaki problem rozwiązujesz.'],['Sprawdź rynek','Znajdź 3 podobne rozwiązania i zapisz, czym Twoje może się różnić.'],['Policz prosty budżet','Zestaw koszty startu, możliwą cenę i sposób dotarcia do klientów.'],['Zrób mały test','Przedstaw ofertę kilku potencjalnym klientom i zbierz konkretne uwagi.'],['Podejmij decyzję','Oceń wyniki testu i zaplanuj kolejną wersję lub zmianę pomysłu.']],
-      nauka:[['Ustal poziom startowy','Wypisz, co już umiesz i czego dokładnie chcesz się nauczyć.'],['Zbierz materiały','Wybierz jedno główne źródło wiedzy i przygotuj harmonogram.'],['Ćwicz podstawy','Poświęć czas na krótkie ćwiczenia i notuj trudności.'],['Zrób własny projekt','Sprawdź wiedzę w praktyce na małym zadaniu.'],['Zweryfikuj postęp','Powtórz materiał, oceń rezultat i ustal kolejną umiejętność.']],
-      podroz:[['Określ trasę i termin','Spisz punkty startu i końca, ramy czasowe i sposób podróży.'],['Policz dystans i koszty','Przygotuj realistyczny budżet i zapas na nieprzewidziane sytuacje.'],['Sprawdź logistykę','Zweryfikuj noclegi, dojazdy, połączenia i wariant awaryjny.'],['Przygotuj sprzęt','Spisz i przetestuj najważniejsze wyposażenie.'],['Zamknij przygotowania','Sprawdź prognozy, bilety oraz kluczowe rezerwacje przed wyjazdem.']],
-      codziennosc:[['Nazwij cel','Zapisz, co ma się konkretnie zmienić i po czym poznasz sukces.'],['Podziel pracę','Wypisz małe czynności, które można wykonać bez dużego przygotowania.'],['Zacznij od jednego kroku','Zrób pierwszy prosty krok i zanotuj wynik.'],['Usuń przeszkody','Zidentyfikuj główny problem i sposób jego obejścia.'],['Sprawdź efekty','Podsumuj, co działa i jaki będzie następny mały krok.']]
+</header>
+<div id="demo-banner" class="banner" role="status">WERSJA DEMONSTRACYJNA — widoczne spotkania i kursy są fikcyjnymi przykładami, nie poradą bukmacherską.</div>
+<main class="shell" id="start">
+  <section class="hero" aria-labelledby="hero-title">
+    <div>
+      <div class="kicker">⚽ TYPUJ ŚWIADOMIE · ANALIZUJ WYNIKI</div>
+      <h1 id="hero-title">Mecze pod <span>lupą.</span></h1>
+      <p class="lead">Typy piłkarskie w jednym miejscu: kurs, krótkie uzasadnienie oraz uczciwie pokazywane wyniki. Bez opowieści o „pewniakach”.</p>
+      <div class="actions"><a class="primary" href="#typy">Zobacz typy →</a><a class="secondary" href="#premium">Poznaj Premium · 19,99 zł</a></div>
+    </div>
+    <div class="visual" aria-hidden="true"><div class="mascot">🫜</div><h3>Nie zgaduj. Analizuj.</h3><p>Prosty interfejs · jasne zasady</p></div>
+  </section>
+  <div class="metrics" aria-label="Statystyki opublikowanych typów">
+    <div class="metric"><span id="stat-count" class="value">—</span><span class="label">Dostępne typy</span></div>
+    <div class="metric"><span id="stat-hit" class="value">—</span><span class="label">Skuteczność zakończonych</span></div>
+    <div class="metric"><span id="stat-profit" class="value">—</span><span class="label">Wynik przy stawce 1 j.</span></div>
+  </div>
+  <section id="typy" aria-labelledby="tips-title">
+    <div class="section-top"><div><h2 id="tips-title">Typy i analizy</h2><p class="section-sub">Dane są publikowane przez właściciela strony. Wynik każdego typu pozostaje w historii.</p></div>
+      <div class="filters" role="group" aria-label="Filtr typów">
+        <button class="filter" type="button" data-filter="all" aria-pressed="true">Wszystkie</button>
+        <button class="filter" type="button" data-filter="free" aria-pressed="false">Darmowe</button>
+        <button class="filter" type="button" data-filter="premium" aria-pressed="false">Premium 🔒</button>
+      </div>
+    </div>
+    <div id="tips-list" class="tips" aria-live="polite"><div class="empty">Wczytywanie typów…</div></div>
+    <div class="status-line"><span id="data-message" role="status">Ładowanie danych…</span> <button type="button" id="reload" class="filter" style="margin-left:8px">↻ Odśwież</button></div>
+  </section>
+  <section id="premium" class="premium-section" aria-labelledby="premium-title">
+    <div><div class="kicker">✦ PAKIET PREMIUM</div><h2 id="premium-title" style="margin-top:13px">Więcej analiz. Jeden prosty abonament.</h2>
+      <p class="section-sub">Docelowy pakiet z dodatkowymi typami, historią wyników i szczegółowymi analizami.</p>
+      <ul><li>Osobna sekcja typów Premium</li><li>Pełne uzasadnienia i przejrzysta historia</li><li>Brak obietnic zysku ani „pewnych kuponów”</li></ul>
+      <p class="coming">⏳ Płatności i dostęp Premium jeszcze nie są aktywne.</p>
+    </div>
+    <div><div class="price">19,99 zł<small> / mies.</small></div><p style="color:var(--muted);font-size:12px;margin:13px 0 0">Cena planowana · nic nie zostanie pobrane.</p></div>
+  </section>
+  <section id="jak-to-dziala" aria-labelledby="how-title"><h2 id="how-title">Co znajdziesz w 🫜?</h2><p class="section-sub" style="margin-bottom:18px">Proste zasady zwiększają zaufanie bardziej niż obietnice wygranej.</p>
+    <div class="info-grid">
+      <div class="info"><div class="symbol">📊</div><h3>Typ z uzasadnieniem</h3><p>Rynek, kurs i argumenty zamiast samych liczb.</p></div>
+      <div class="info"><div class="symbol">✅</div><h3>Pełna historia</h3><p>Typy wygrane, przegrane i zwrócone. Wynik nie znika.</p></div>
+      <div class="info"><div class="symbol">🔐</div><h3>Premium dopiero po wdrożeniu</h3><p>Bez udawanej blokady i fałszywego przycisku zakupu.</p></div>
+    </div>
+  </section>
+</main>
+<footer class="footer"><div class="shell"><strong>🫜 RZOTKIEWKA</strong><span>Serwis informacyjny dla osób pełnoletnich (18+). Zakłady bukmacherskie wiążą się z ryzykiem straty pieniędzy. Nie ma gwarantowanych wygranych. Nie graj za pieniądze, na których stratę nie możesz sobie pozwolić.</span><span id="footer-year"></span></div></footer>
+<script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const state = { tips: [], filter: 'all', mode: 'demo' };
+  const str = (value, max = 180) => String(value ?? '').slice(0, max);
+  const number = value => { const n = Number(value); return Number.isFinite(n) ? n : null; };
+  const el = (tag, cls = '', content = '') => { const node = document.createElement(tag); if (cls) node.className = cls; node.textContent = content; return node; };
+  function formatDate(iso) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(iso || '')) return 'Data nieznana';
+    const d = new Date(iso + 'T12:00:00');
+    return Number.isNaN(d.getTime()) ? 'Data nieznana' : new Intl.DateTimeFormat('pl-PL',{day:'numeric',month:'long',year:'numeric'}).format(d);
+  }
+  function parseTip(item, i) {
+    if (!item || typeof item !== 'object') return null;
+    const tier = item.tier === 'premium' ? 'premium' : 'free';
+    const allowed = ['upcoming','won','lost','void'];
+    const status = allowed.includes(item.status) ? item.status : 'upcoming';
+    return {
+      id: str(item.id ?? String(i),80), tier, status,
+      date: str(item.date,10), time: str(item.time,5), league: str(item.league,70),
+      home: str(item.home,80), away: str(item.away,80),
+      market: tier === 'free' ? str(item.market,100) : '',
+      odds: tier === 'free' ? number(item.odds) : null,
+      reason: tier === 'free' ? str(item.reason,800) : ''
     };
-    function buildPlan(goal,category,days){
-      const today=new Date();const chosen=templates[category]||templates.codziennosc;
-      return {id:uid(),title:goal,category,days,steps:chosen.map(([title,detail],i)=>{const due=new Date(today.getFullYear(),today.getMonth(),today.getDate()+Math.max(1,Math.round(days*(i+1)/5))-1);return {title,detail,due:due.toLocaleDateString('pl-PL',{day:'2-digit',month:'short'}),dueDate:dayISO(due),done:false};})};
+  }
+  function badge(tip) {
+    if (tip.status === 'won') return ['Wygrany ✓','closed'];
+    if (tip.status === 'lost') return ['Przegrany ✕','lost'];
+    if (tip.status === 'void') return ['Zwrot ↩','closed'];
+    return tip.tier === 'premium' ? ['PREMIUM 🔒','premium'] : ['DARMOWY',''];
+  }
+  function renderCard(tip) {
+    const card = el('article','tip');
+    const top = el('div','tip-top');
+    const date = el('p','eyebrow',`${str(tip.league,70) || 'Piłka nożna'} · ${formatDate(tip.date)}${tip.time ? ', ' + tip.time : ''}`);
+    const b = badge(tip), chip = el('span','badge ' + b[1],b[0]);
+    top.append(date,chip);
+    const title = el('h3','',`${tip.home || 'Gospodarze'} – ${tip.away || 'Goście'}`);
+    card.append(top,title);
+    if (tip.tier === 'premium') {
+      const lock = el('div','premium-lock');
+      lock.append(el('div','small','TYP PREMIUM — ZABLOKOWANY'),el('strong','Analiza dostępna po uruchomieniu usługi'));
+      const a = el('a','','Sprawdź plan Premium'); a.href = '#premium'; lock.append(a); card.append(lock);
+      card.append(el('p','rationale','Typ i kurs nie są udostępniane w publicznym pliku strony.'));
+    } else {
+      const choice = el('div','choice');
+      const left = el('div'); left.append(el('div','small','Proponowany typ'), el('strong','',tip.market || 'Brak typu'));
+      choice.append(left,el('div','odd',tip.odds !== null && tip.odds >= 1 ? tip.odds.toFixed(2) : '—'));
+      card.append(choice,el('p','rationale',tip.reason || 'Uzasadnienie w przygotowaniu.'));
     }
-    $('plan-form').addEventListener('submit',event=>{
-      event.preventDefault();const goal=txt($('goal-title').value,120);if(!goal)return;
-      const plan=buildPlan(goal,$('goal-category').value,Number($('goal-days').value));
-      data.plans.unshift(plan);data.plans=data.plans.slice(0,250);save();$('plan-form').reset();render();toast('Plan zapisany!');
-      const first=$('plans-list').querySelector('.plan-card');if(first)setTimeout(()=>first.scrollIntoView({behavior:'smooth',block:'start'}),90);
-    });
-    $('task-form').addEventListener('submit',event=>{
-      event.preventDefault();const title=txt($('task-title').value);if(!title)return;
-      data.tasks.unshift({id:uid(),title,priority:$('task-priority').value==='high'?'high':'normal',dueDate:dateISO($('task-due').value),done:false});data.tasks=data.tasks.slice(0,250);
-      save();$('task-form').reset();render();toast('Dodano zadanie.');
-    });
-    // Helpers for mobile-friendly inline editing. No prompt dialogs for editing.
-    function btn(label,cls,onClick){
-      const b=element('button',`btn ${cls}`,label);b.type='button';b.addEventListener('click',onClick);return b;
-    }
-    function editorField(form,labelText,initial,maxlen,multiline=false){
-      const label=element('label','field',labelText),input=element(multiline?'textarea':'input');
-      input.value=initial??'';input.maxLength=maxlen;input.required=!multiline;
-      label.append(input);form.append(label);return input;
-    }
-    function editorButtons(form,commitText,onCancel){
-      const actions=element('div','button-row');
-      const submit=element('button','btn primary small',commitText);submit.type='submit';
-      actions.append(submit,btn('Anuluj','ghost small',onCancel));form.append(actions);
-    }
-    function editTask(task,item){
-      const form=element('form','edit-zone editing-entry');
-      const title=editorField(form,'Treść zadania',task.title,160);
-      const label=element('label','field','Priorytet'),select=element('select');
-      const normal=element('option','','Zwykły'),high=element('option','','Ważne');normal.value='normal';high.value='high';
-      select.append(normal,high);select.value=task.priority;label.append(select);form.append(label);
-      const dueLabel=element('label','field','Termin (opcjonalnie)'),dueInput=element('input');dueInput.type='date';dueInput.value=task.dueDate||'';dueLabel.append(dueInput);form.append(dueLabel);
-      editorButtons(form,'Zapisz zadanie',()=>render());
-      form.addEventListener('submit',event=>{
-        event.preventDefault();const value=txt(title.value,160);if(!value){toast('Wpisz treść zadania.');return;}
-        task.title=value;task.priority=select.value==='high'?'high':'normal';task.dueDate=dateISO(dueInput.value);save();render();toast('Zadanie zmienione.');
-      });
-      item.replaceWith(form);title.focus();
-    }
-    function makeItem(task){
-      const item=element('div',`item${task.done?' done':''}`),cb=element('input');
-      cb.type='checkbox';cb.checked=task.done;cb.setAttribute('aria-label',`Oznacz jako ${task.done?'niewykonane':'wykonane'}: ${task.title}`);
-      cb.addEventListener('change',()=>{task.done=cb.checked;save();render();});
-      const body=element('div','item-body');body.append(element('div','item-title',task.title));
-      if(task.priority==='high')body.append(element('span','pill high','Ważne'));
-      if(task.dueDate){const status=dueStatus(task.dueDate);body.append(element('span',`pill ${!task.done?status:''}`,`${!task.done?dueStatusName(status)+': ':''}${friendlyDate(task.dueDate)}`));}
-      const actions=element('div','item-actions');
-      const edit=element('button','icon-btn','✎');edit.type='button';edit.title='Edytuj zadanie';edit.setAttribute('aria-label',`Edytuj zadanie: ${task.title}`);edit.addEventListener('click',()=>editTask(task,item));
-      const del=element('button','icon-btn','×');del.type='button';del.title='Usuń zadanie';del.setAttribute('aria-label',`Usuń zadanie: ${task.title}`);
-      del.addEventListener('click',()=>{if(!confirm('Usunąć to zadanie?'))return;data.tasks=data.tasks.filter(t=>t.id!==task.id);save();render();});
-      actions.append(edit,del);item.append(cb,body,actions);return item;
-    }
-    function renderTasks(){
-      const target=$('task-list');clear(target);$('task-count').textContent=`${data.tasks.filter(t=>!t.done).length} DO ZROBIENIA`;
-      const sorted=[...data.tasks].sort((a,b)=>Number(a.done)-Number(b.done));
-      if(!sorted.length)target.append(empty('Nie masz jeszcze zadań. Dodaj pierwsze powyżej.'));
-      for(const task of sorted)target.append(makeItem(task));
-    }
-    function renamePlan(plan,card){
-      if(card.querySelector('.edit-zone')){toast('Zakończ najpierw edycję.');return;}
-      const form=element('form','edit-zone'),title=editorField(form,'Nowa nazwa planu',plan.title,120);
-      editorButtons(form,'Zapisz nazwę',()=>render());
-      form.addEventListener('submit',event=>{event.preventDefault();const v=txt(title.value,120);if(!v){toast('Nazwa planu nie może być pusta.');return;}plan.title=v;save();render();toast('Nazwa planu zmieniona.');});
-      card.querySelector('.plan-tools').after(form);title.focus();
-    }
-    function editStep(plan,index,item){
-      const step=plan.steps[index];const form=element('form','edit-zone editing-entry');
-      const title=editorField(form,'Nazwa kroku',step.title,140);
-      const detail=editorField(form,'Opis kroku (opcjonalnie)',step.detail,250,true);
-      const due=editorField(form,'Dawna notatka o terminie (opcjonalnie)',step.due,40,true);
-      const dateLabel=element('label','field','Dokładny termin kroku (opcjonalnie)'),dateInput=element('input');dateInput.type='date';dateInput.value=step.dueDate||'';dateLabel.append(dateInput);form.append(dateLabel);
-      editorButtons(form,'Zapisz krok',()=>render());
-      form.addEventListener('submit',event=>{
-        event.preventDefault();const v=txt(title.value,140);if(!v){toast('Nazwa kroku nie może być pusta.');return;}
-        step.title=v;step.detail=txt(detail.value,250);step.due=txt(due.value,40);step.dueDate=dateISO(dateInput.value);save();render();toast('Krok zapisany.');
-      });
-      item.replaceWith(form);title.focus();
-    }
-    function addStep(plan,card){
-      if(card.querySelector('.edit-zone')){toast('Zakończ najpierw edycję.');return;}
-      if(plan.steps.length>=25){toast('Limit 25 kroków w jednym planie.');return;}
-      const form=element('form','edit-zone'),title=editorField(form,'Nazwa nowego kroku', '',140);
-      const detail=editorField(form,'Opis (opcjonalnie)','',250,true);
-      const dueLabel=element('label','field','Termin (opcjonalnie)'),dueInput=element('input');dueInput.type='date';dueLabel.append(dueInput);form.append(dueLabel);
-      editorButtons(form,'Dodaj do planu',()=>render());
-      form.addEventListener('submit',event=>{
-        event.preventDefault();const v=txt(title.value,140);if(!v){toast('Wpisz nazwę kroku.');return;}
-        plan.steps.push({title:v,detail:txt(detail.value,250),due:'',dueDate:dateISO(dueInput.value),done:false});save();render();toast('Dodano nowy krok.');
-      });
-      card.append(form);title.focus();
-    }
-    function renderPlans(){
-      const target=$('plans-list');clear(target);$('plans-count').textContent=`${data.plans.length} PLANÓW`;
-      if(!data.plans.length){target.append(empty('Twoje plany pojawią się tutaj.'));return;}
-      for(const plan of data.plans){
-        const card=element('article','plan-card'),top=element('div','plan-card-top'),header=element('div');
-        header.append(element('div','tiny-label',`${plan.days} DNI · ${plan.category.toUpperCase()}`),element('h3','',plan.title));
-        const remove=element('button','icon-btn','×');remove.type='button';remove.title='Usuń plan';remove.setAttribute('aria-label',`Usuń plan: ${plan.title}`);
-        remove.addEventListener('click',()=>{if(confirm('Usunąć ten plan wraz z postępem?')){data.plans=data.plans.filter(p=>p.id!==plan.id);save();render();}});
-        top.append(header,remove);card.append(top);
-        const done=plan.steps.filter(s=>s.done).length,pct=Math.round(100*done/plan.steps.length),progress=element('div','progress'),fill=element('span');fill.style.width=`${pct}%`;progress.append(fill);
-        card.append(progress,element('p','plan-note',`${done}/${plan.steps.length} kroków · ${pct}% wykonane`));
-        const actions=element('div','button-row plan-tools');
-        actions.append(btn('✎ Zmień nazwę','ghost small',()=>renamePlan(plan,card)),btn('＋ Dodaj krok','secondary small',()=>addStep(plan,card)));
-        card.append(actions);
-        const list=element('div','item-list');plan.steps.forEach((step,i)=>{
-          const item=element('div',`item${step.done?' done':''}`),cb=element('input');cb.type='checkbox';cb.checked=step.done;cb.setAttribute('aria-label',`Krok ${i+1}: ${step.title}`);
-          cb.addEventListener('change',()=>{step.done=cb.checked;save();render();});
-          const body=element('div','item-body');body.append(element('div','item-title',`${i+1}. ${step.title}`));
-          if(step.detail)body.append(element('div','item-sub',step.detail));
-          if(step.dueDate){const status=dueStatus(step.dueDate);body.append(element('span',`pill ${!step.done?status:''}`,`${!step.done?dueStatusName(status)+': ':''}${friendlyDate(step.dueDate)}`));}
-          else if(step.due)body.append(element('span','pill',`Orientacyjnie do: ${step.due}`));
-          const buttons=element('div','step-actions');
-          buttons.append(btn('Edytuj','ghost small',()=>editStep(plan,i,item)));
-          const del=element('button','icon-btn','×');del.type='button';del.title='Usuń krok';del.setAttribute('aria-label',`Usuń krok: ${step.title}`);
-          del.addEventListener('click',()=>{if(plan.steps.length<=1){toast('Plan musi mieć przynajmniej jeden krok.');return;}if(!confirm(`Usunąć krok „${step.title}”?`))return;plan.steps.splice(i,1);save();render();});
-          buttons.append(del);item.append(cb,body,buttons);list.append(item);
-        });card.append(list);target.append(card);
-      }
-    }
-    const ideas={
-      biznes:[['Pomoc lokalnym sklepom','Usługa przygotowywania opisów produktów i aktualizacji ofert online.','Porozmawiaj z trzema sklepami o trudnościach przy sprzedaży internetowej.'],['Pakiety prezentowe z lokalnych produktów','Mała marka zestawów prezentowych z produktami regionalnych dostawców.','Sprawdź ceny i koszty pakowania pięciu produktów.'],['Mobilna pomoc techniczna','Podstawowe wsparcie przy ustawianiu telefonów, aplikacji i komputerów.','Zapisz pięć usług, które potrafisz bezpiecznie wykonać.'],['Mikroserwis dla rowerzystów','Usługi sezonowych przeglądów i przygotowania rowerów do podróży.','Sprawdź lokalny popyt i potrzebne narzędzia.']],
-      internet:[['Planer małych celów','Lekka aplikacja zamieniająca cele w zadania i pokazująca postęp.','Wypisz trzy funkcje niezbędne w pierwszej wersji.'],['Przypomnienia dla małych firm','Prosty system terminów, list i przypomnień dla mikroprzedsiębiorców.','Porozmawiaj z trzema potencjalnymi użytkownikami.'],['Katalog lokalnych usług','Czytelna strona pomagająca znaleźć lokalnych wykonawców.','Sprawdź pięć najczęściej poszukiwanych usług.'],['Asystent pakowania na wyjazd','Checklista wyposażenia zależna od celu podróży.','Opracuj pierwszy szablon dla krótkiego wypadu.']],
-      codziennosc:[['Plan tygodnia w 10 minut','Prosty rytuał wybierania trzech priorytetów na tydzień.','Zapisz trzy rzeczy najważniejsze na najbliższe dni.'],['Domowy system rzeczy','Lista przedmiotów i miejsc przechowywania.','Uporządkuj jedną szufladę i przygotuj jej spis.'],['Planer wydatków','Minimalistyczny rejestr kosztów i oszczędności.','Wypisz pięć największych powtarzalnych wydatków.'],['Lista przygotowania do wyjazdu','Checklista sprzętu, dokumentów i spraw przed podróżą.','Zapisz dziesięć rzeczy, o których najczęściej zapominasz.']],
-      tworczosc:[['Seria krótkich poradników','Jeden zwięzły materiał tygodniowo z dziedziny, którą znasz.','Wypisz dziesięć pytań zadawanych w Twojej dziedzinie.'],['Minimarka z charakterem','Opracuj postać, hasło i styl małego projektu.','Zrób trzy warianty hasła i zbierz opinie.'],['Dziennik podróży','Połącz zdjęcia, trasę i krótkie opowieści z wycieczek.','Stwórz pierwszy wpis z jednej wcześniejszej podróży.'],['Cykl przed i po','Dokumentuj przemiany przedmiotów lub miejsc.','Wybierz bezpieczny projekt na start i sfotografuj stan wyjściowy.']]
-    };
-    $('generate-idea').addEventListener('click',()=>{
-      const category=$('idea-category').value,options=ideas[category]||ideas.biznes;
-      let i=Math.floor(Math.random()*options.length);if(options.length>1&&`${category}-${i}`===previousIdea)i=(i+1)%options.length;previousIdea=`${category}-${i}`;
-      const [title,desc,first]=options[i];currentIdea={id:uid(),title,desc,first};$('idea-name').textContent=title;$('idea-desc').textContent=desc;$('idea-first').textContent=`Pierwszy krok: ${first}`;$('idea-output').hidden=false;$('save-idea').disabled=false;$('save-idea').textContent='♡ Zapisz pomysł';$('idea-output').scrollIntoView({behavior:'smooth',block:'nearest'});
-    });
-    $('save-idea').addEventListener('click',()=>{
-      if(!currentIdea)return;if(data.ideas.some(x=>x.title===currentIdea.title)){toast('Ten pomysł jest już zapisany.');return;}
-      data.ideas.unshift({...currentIdea});data.ideas=data.ideas.slice(0,250);save();render();$('save-idea').disabled=true;$('save-idea').textContent='✓ Zapisano';toast('Pomysł zapisany.');
-    });
-    function renderIdeas(){
-      const target=$('ideas-list');clear(target);$('ideas-count').textContent=`${data.ideas.length} ZAPISANYCH`;
-      if(!data.ideas.length){target.append(empty('Zapisz interesujący pomysł, aby zobaczyć go tutaj.'));return;}
-      for(const idea of data.ideas){const card=element('div','item'),body=element('div','item-body');body.append(element('div','item-title',idea.title),element('div','item-sub',idea.desc),element('div','item-sub',`Pierwszy krok: ${idea.first}`));const remove=element('button','icon-btn','×');remove.type='button';remove.title='Usuń pomysł';remove.setAttribute('aria-label',`Usuń pomysł: ${idea.title}`);remove.addEventListener('click',()=>{data.ideas=data.ideas.filter(x=>x.id!==idea.id);save();render();});card.append(body,remove);target.append(card);}
-    }
-    // Dashboard pokazuje tylko terminy, które mają pełną datę ISO. Starsze orientacyjne daty
-    // z wersji 0.2/0.3 zachowujemy w planach bez zgadywania roku.
-    function dueItems(){
-      const list=[];
-      for(const task of data.tasks)if(!task.done&&task.dueDate)list.push({kind:'task',id:task.id,title:task.title,dueDate:task.dueDate,priority:task.priority});
-      for(const plan of data.plans)plan.steps.forEach((step,index)=>{
-        if(!step.done&&step.dueDate)list.push({kind:'step',planId:plan.id,index,title:step.title,planTitle:plan.title,dueDate:step.dueDate,priority:'normal'});
-      });
-      return list.sort((a,b)=>a.dueDate.localeCompare(b.dueDate)||Number(b.priority==='high')-Number(a.priority==='high'));
-    }
-    function renderToday(){
-      const now=dayISO(),week=offsetISO(now,7),items=dueItems();
-      $('today-date').textContent=todayLabel();
-      const late=items.filter(x=>x.dueDate<now),today=items.filter(x=>x.dueDate===now),soon=items.filter(x=>x.dueDate>now&&x.dueDate<=week);
-      $('due-overdue').textContent=late.length;$('due-today').textContent=today.length;$('due-week').textContent=soon.length;
-      const target=$('today-list');clear(target);
-      if(!late.length&&!today.length&&!soon.length)target.append(empty('Brak pilnych terminów. Dodaj datę do zadania lub kroku planu.'));
-      for(const [name,list,status] of [['⚠️ Po terminie',late,'overdue'],['📌 Na dzisiaj',today,'today'],['📅 Najbliższe 7 dni',soon,'soon']]){
-        if(!list.length)continue;
-        const group=element('section','reminder-group'),heading=element('h3','',`${name} · ${list.length}`);group.append(heading);
-        for(const entry of list){
-          const row=element('div','item'),cb=element('input');cb.type='checkbox';cb.setAttribute('aria-label',`Zakończ: ${entry.title}`);
-          cb.addEventListener('change',()=>{
-            if(entry.kind==='task'){const task=data.tasks.find(x=>x.id===entry.id);if(task)task.done=true;}
-            else {const plan=data.plans.find(x=>x.id===entry.planId);if(plan?.steps[entry.index])plan.steps[entry.index].done=true;}
-            save();render();toast('Oznaczono jako wykonane.');
-          });
-          const body=element('div','item-body');body.append(element('div','item-title',entry.title));
-          if(entry.planTitle)body.append(element('div','item-sub',`Plan: ${entry.planTitle}`));
-          body.append(element('span',`pill ${status}`,`${dueStatusName(status)}: ${friendlyDate(entry.dueDate)}`));
-          const go=btn('Otwórz','ghost small',()=>showPage(entry.kind==='task'?'tasks':'plans'));
-          row.append(cb,body,go);group.append(row);
-        }
-        target.append(group);
-      }
-      const metrics=$('detailed-stats');clear(metrics);
-      const taskTotal=data.tasks.length,taskDone=data.tasks.filter(x=>x.done).length;
-      const stepTotal=data.plans.reduce((n,p)=>n+p.steps.length,0),stepDone=data.plans.reduce((n,p)=>n+p.steps.filter(x=>x.done).length,0);
-      for(const [label,done,total] of [['Zadania',taskDone,taskTotal],['Kroki planów',stepDone,stepTotal]]){
-        metrics.append(element('div','item-title',`${label}: ${done} / ${total} · ${total?Math.round(done/total*100):0}%`));
-        const progress=element('div','mini-bar'),fill=element('span');fill.style.width=`${total?Math.round(done/total*100):0}%`;progress.append(fill);metrics.append(progress);
-      }
-      metrics.append(element('div','date-note',`Plany: ${data.plans.length} · Zapisane pomysły: ${data.ideas.length} · Statystyki z tej przeglądarki`));
-    }
-    function renderHome(){
-      $('metric-tasks').textContent=data.tasks.filter(x=>!x.done).length;$('metric-plans').textContent=data.plans.filter(x=>x.steps.some(s=>!s.done)).length;$('metric-ideas').textContent=data.ideas.length;
-      const total=data.plans.reduce((n,p)=>n+p.steps.length,0),done=data.plans.reduce((n,p)=>n+p.steps.filter(s=>s.done).length,0);$('hero-progress').textContent=`${total?Math.round(100*done/total):0}%`;
-      const hp=$('home-plan');clear(hp);const plan=data.plans.find(p=>p.steps.some(s=>!s.done))||data.plans[0];
-      if(!plan)hp.append(empty('Jeszcze nie masz planu. Zacznij od swojego celu.'));
-      else {hp.append(element('div','item-title',plan.title));hp.append(element('p','item-sub',`${plan.steps.filter(s=>s.done).length}/${plan.steps.length} wykonanych kroków`));const next=plan.steps.find(s=>!s.done);hp.append(element('span','pill',next?`Następnie: ${next.title}`:'Plan ukończony!'));}
-      const ht=$('home-tasks');clear(ht);const now=dayISO();
-      const pending=data.tasks.filter(t=>!t.done).sort((a,b)=>Number(!!b.dueDate)-Number(!!a.dueDate)||(a.dueDate||'').localeCompare(b.dueDate||'')).filter(t=>t.dueDate&&t.dueDate<=now||!t.dueDate&&t.priority==='high').slice(0,3);
-      if(!pending.length)ht.append(empty('Brak pilnych zadań. Dodaj termin lub oznacz ważne zadanie.'));
-      else for(const t of pending){const row=makeItem(t);ht.append(row);}
-      const button=btn('Zobacz wszystkie terminy →','ghost small',()=>showPage('today'));button.style.marginTop='10px';ht.append(button);
-    }
-    function render(){renderTasks();renderPlans();renderIdeas();renderHome();renderToday();}
-    $('backup-export').addEventListener('click',()=>{
-      const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`rzotkiewka-kopia-${new Date().toISOString().slice(0,10)}.json`;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);toast('Kopia danych gotowa do pobrania.');
-    });
-    $('backup-import').addEventListener('click',()=>$('backup-file').click());
-    $('backup-file').addEventListener('change',async event=>{
-      const file=event.target.files?.[0];if(!file)return;
-      try{if(file.size>2*1024*1024)throw new Error('Plik jest zbyt duży (maks. 2 MB).');const parsed=normalize(JSON.parse(await file.text()));if(confirm('Zastąpić aktualne dane zawartością kopii zapasowej?')){data=parsed;save();render();toast('Przywrócono dane z kopii.');}}
-      catch(err){toast(`Błąd kopii: ${err.message}`);}finally{event.target.value='';}
-    });
+    const resultName = {upcoming:'Przed meczem',won:'Wygrany',lost:'Przegrany',void:'Zwrot'};
+    const foot = el('div','tip-foot');foot.append(el('span','','RZOTKIEWKA · 18+'),el('span','',resultName[tip.status]));card.append(foot);
+    return card;
+  }
+  function render() {
+    const tips = state.tips.filter(t => state.filter === 'all' || t.tier === state.filter);
+    const target = $('tips-list'); target.replaceChildren();
+    if (!tips.length) target.append(el('div','empty','Brak typów w tej kategorii. Dodaj je do pliku tips.json.'));
+    else for (const tip of tips) target.append(renderCard(tip));
+    $('stat-count').textContent = String(state.tips.length);
+    const ended = state.tips.filter(t => t.tier === 'free' && ['won','lost'].includes(t.status) && t.odds !== null && t.odds >= 1);
+    $('stat-hit').textContent = ended.length ? (100 * ended.filter(t => t.status === 'won').length / ended.length).toFixed(1).replace('.',',') + '%' : '—';
+    const profit = ended.reduce((sum,t) => sum + (t.status === 'won' ? t.odds - 1 : -1),0);
+    $('stat-profit').textContent = ended.length ? `${profit > 0 ? '+' : ''}${profit.toFixed(2).replace('.',',')} j.` : '—';
+    $('demo-banner').hidden = state.mode !== 'demo';
+  }
+  async function loadTips() {
+    $('data-message').textContent = 'Wczytywanie danych…';
+    $('reload').disabled = true;
+    try {
+      const res = await fetch('./tips.json', { cache: 'no-store' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const payload = await res.json();
+      if (!Array.isArray(payload.tips)) throw new Error('Niepoprawny format tips.json');
+      state.mode = payload.mode === 'live' ? 'live' : 'demo';
+      state.tips = payload.tips.slice(0,500).map(parseTip).filter(Boolean);
+      $('data-message').textContent = `Aktualizacja: ${formatDate(payload.updatedAt)} · ${state.tips.length} typów${state.mode === 'demo' ? ' · TRYB DEMO' : ''}`;
+    } catch (error) {
+      state.tips = []; state.mode = 'demo';
+      $('data-message').textContent = 'Nie udało się wczytać tips.json. Upewnij się, że plik leży obok index.html w repozytorium.';
+      console.error('RZOTKIEWKA: błąd ładowania danych:', error);
+    } finally { $('reload').disabled = false; render(); }
+  }
+  document.querySelectorAll('[data-filter]').forEach(btn => btn.addEventListener('click', () => {
+    state.filter = btn.dataset.filter;
+    document.querySelectorAll('[data-filter]').forEach(other => other.setAttribute('aria-pressed',String(other === btn)));
     render();
-  })();
-  </script>
+  }));
+  $('reload').addEventListener('click',loadTips);
+  $('footer-year').textContent = '© ' + new Date().getFullYear() + ' RZOTKIEWKA · wersja 1.0';
+  loadTips();
+})();
+</script>
 </body>
 </html>

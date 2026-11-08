@@ -1,0 +1,52 @@
+{
+  "mode": "demo",
+  "updatedAt": "2026-11-08",
+  "tips": [
+    {
+      "id": "demo-001",
+      "date": "2026-11-08",
+      "time": "18:00",
+      "league": "DEMO / przykładowe rozgrywki",
+      "home": "Drużyna A",
+      "away": "Drużyna B",
+      "market": "Powyżej 1,5 gola",
+      "odds": 1.42,
+      "reason": "To wyłącznie przykład wyglądu analizy. Nie przedstawia prawdziwego spotkania ani sprawdzonej prognozy.",
+      "tier": "free",
+      "status": "upcoming"
+    },
+    {
+      "id": "demo-002",
+      "date": "2026-11-08",
+      "time": "20:30",
+      "league": "DEMO / przykładowe rozgrywki",
+      "home": "Drużyna C",
+      "away": "Drużyna D",
+      "market": "Obie drużyny strzelą",
+      "odds": 1.78,
+      "reason": "Dane demonstracyjne. Przed publikacją prawdziwych typów potrzebne są zweryfikowane terminarze i rzetelna analiza.",
+      "tier": "free",
+      "status": "upcoming"
+    },
+    {
+      "id": "demo-003",
+      "date": "2026-11-09",
+      "time": "19:00",
+      "league": "DEMO / przykładowe rozgrywki",
+      "home": "Drużyna E",
+      "away": "Drużyna F",
+      "tier": "premium",
+      "status": "upcoming"
+    },
+    {
+      "id": "demo-004",
+      "date": "2026-11-09",
+      "time": "21:00",
+      "league": "DEMO / przykładowe rozgrywki",
+      "home": "Drużyna G",
+      "away": "Drużyna H",
+      "tier": "premium",
+      "status": "upcoming"
+    }
+  ]
+}
