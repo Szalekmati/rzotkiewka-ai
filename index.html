@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0a0e13">
-  <meta name="description" content="🫜 RZOTKIEWKA 1.7 — publiczny ranking prognoz 1X2, zweryfikowane archiwum, wyniki i analiza. Brak gwarancji wygranej.">
-  <title>🫜 RZOTKIEWKA 1.7 — Ranking prognoz i wyniki 1X2</title>
+  <meta name="description" content="🫜 RZOTKIEWKA 1.8 — publiczny ranking prognoz 1X2, zweryfikowane archiwum, wyniki i analiza. Brak gwarancji wygranej.">
+  <title>🫜 RZOTKIEWKA 1.8 — Ranking prognoz i wyniki 1X2</title>
   <style>
     :root{color-scheme:dark;--bg:#0a0e13;--surface:#131a22;--surface2:#19232d;--line:#293743;--ink:#f4f8f8;--muted:#a2b1bc;--accent:#a6f475;--accent2:#dfffc8;--red:#ff858b;--gold:#f4c77f;--radius:18px}
     *{box-sizing:border-box}
@@ -164,7 +164,7 @@
     .archive-error{color:#ffd8a6!important}
     @media(max-width:420px){.archive-panel{padding:14px}.archive-metric{padding:10px}.archive-metric strong{font-size:21px}}
 
-    /* RZOTKIEWKA 1.7 — publiczny ranking, wyłącznie zatwierdzone snapshoty */
+    /* RZOTKIEWKA 1.8 — publiczny ranking, wyłącznie zatwierdzone snapshoty */
     .ranking-section{margin:4px 0 58px}
     .rank-shell{border:1px solid #345a43;background:linear-gradient(145deg,#14231c,#131c24 70%);border-radius:24px;padding:clamp(16px,4vw,26px)}
     .rank-shell h2{margin:0 0 9px}
@@ -200,7 +200,7 @@
     .rank-by-league p{font-size:12px;color:var(--muted)}
     @media(max-width:660px){.rank-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.rank-cards{grid-template-columns:1fr}.rank-shell{padding:16px}.rank-metric{padding:12px}}
   
-    /* RZOTKIEWKA 1.7: raport wyłącznie zweryfikowanych prognoz */
+    /* RZOTKIEWKA 1.8: raport wyłącznie zweryfikowanych prognoz */
     .audit-section{margin:0 0 58px;scroll-margin-top:92px}
     .audit-panel{padding:clamp(16px,3.6vw,28px);background:linear-gradient(155deg,#18231e,#141c25);border:1px solid #355545;border-radius:24px}
     .audit-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
@@ -227,16 +227,45 @@
     .audit-subtitle{font-size:15px;margin:26px 0 10px}
     .audit-empty{color:var(--muted);font-size:13px;padding:15px}
     @media(max-width:600px){.audit-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.audit-head h2{font-size:25px}.audit-download{width:100%}}
+
+    /* RZOTKIEWKA 1.8 — kontrola jakości publicznych prognoz. */
+    .quality-section{margin:0 0 58px;scroll-margin-top:95px}
+    .quality-panel{border:1px solid #59734c;border-radius:24px;padding:clamp(17px,3vw,26px);background:linear-gradient(145deg,#1a2a1e,#131d24 68%)}
+    .quality-top{display:flex;gap:15px;align-items:start;justify-content:space-between;flex-wrap:wrap}
+    .quality-top h2{margin:12px 0 8px}
+    .quality-sub{font-size:13px;color:var(--muted);max-width:850px;line-height:1.65}
+    .quality-refresh{border:1px solid #557352;background:#1d3427;color:#dbf8d5;border-radius:11px;padding:10px 14px;font-weight:780}
+    .quality-refresh:disabled{opacity:.5;cursor:wait}
+    .quality-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:20px 0}
+    .quality-kpi{padding:13px;border-radius:13px;background:#111c1c;border:1px solid #375443;min-width:0}
+    .quality-kpi strong{display:block;font-size:clamp(23px,3vw,31px);color:var(--accent);line-height:1.2;font-variant-numeric:tabular-nums}
+    .quality-kpi span{display:block;color:var(--muted);font-size:11px;margin-top:6px}
+    .quality-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:13px}
+    .quality-box{background:#101b21;border:1px solid #314a3b;border-radius:15px;padding:18px;min-width:0}
+    .quality-box h3{font-size:16px;margin:0 0 15px}
+    .quality-dist-row{margin:0 0 14px}
+    .quality-dist-label{display:flex;justify-content:space-between;gap:12px;font-size:13px;margin-bottom:6px}
+    .quality-dist-label strong{font-variant-numeric:tabular-nums}
+    .quality-track{height:12px;background:#2a3936;border-radius:30px;overflow:hidden}
+    .quality-fill{height:100%;width:0;background:#a6f475;border-radius:30px;transition:width .2s linear}
+    .quality-fill.draw{background:#f4c77f}.quality-fill.away{background:#91b8e3}
+    .quality-info{font-size:13px;color:#d1dfdc;line-height:1.65;margin:0}
+    .quality-info strong{color:var(--accent)}
+    .quality-alert{margin:15px 0 0;border:1px solid #7c6540;background:#2b261a;color:#ffe2ac;padding:14px;border-radius:12px;font-size:13px;line-height:1.65}
+    .quality-alert.good{border-color:#446e58;background:#182b24;color:#c9efcf}
+    .quality-note{font-size:11px;color:var(--muted);line-height:1.6;margin:14px 0 0}
+    .rank-filter-note{color:#b8d3c2;font-size:12px;margin:-4px 0 13px}
+    @media(max-width:720px){.quality-grid{grid-template-columns:1fr}.quality-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.quality-box{padding:15px}}
   </style>
 </head>
 <body>
 <header class="header">
   <div class="shell head-inner">
-    <a class="brand" href="#start" aria-label="RZOTKIEWKA — strona główna"><span class="brand-emoji" aria-hidden="true">🫜</span><span><span class="brand-name">RZOTKIEWKA</span><span class="brand-caption">FOOTBALL LAB · 1.7</span></span></a>
-    <nav class="nav" aria-label="Nawigacja"><a href="#mecze">Mecze</a><a href="#ranking">Ranking</a><a href="#raport">Raport</a><a href="#typy">Typy demo</a><a href="#jak-to-dziala">Zasady</a><a class="nav-premium" href="#premium">Premium ✦</a></nav>
+    <a class="brand" href="#start" aria-label="RZOTKIEWKA — strona główna"><span class="brand-emoji" aria-hidden="true">🫜</span><span><span class="brand-name">RZOTKIEWKA</span><span class="brand-caption">FOOTBALL LAB · 1.8</span></span></a>
+    <nav class="nav" aria-label="Nawigacja"><a href="#mecze">Mecze</a><a href="#ranking">Ranking</a><a href="#jakosc">Jakość modelu</a><a href="#raport">Raport</a><a href="#typy">Typy demo</a><a href="#jak-to-dziala">Zasady</a><a class="nav-premium" href="#premium">Premium ✦</a></nav>
   </div>
 </header>
-<div id="demo-banner" class="banner" role="status">WERSJA 1.7 — szczegółowy raport wyników i eksport CSV. Typy demonstracyjne są fikcyjne.</div>
+<div id="demo-banner" class="banner" role="status">WERSJA 1.8 — kontrola jakości modelu, ranking i eksport CSV. Typy demonstracyjne są fikcyjne.</div>
 <main class="shell" id="start">
   <section class="hero" aria-labelledby="hero-title">
     <div>
@@ -269,17 +298,56 @@
         <label class="field-select" for="rank-order">Sortuj
           <select id="rank-order"><option value="confidence">Szansa lidera ↓</option><option value="kickoff">Termin meczu ↑</option></select>
         </label>
+        <label class="field-select" for="rank-minprob">Minimalna szansa lidera
+          <select id="rank-minprob"><option value="0">Całe archiwum</option><option value="0.45">Od 45%</option><option value="0.50" selected>Od 50%</option><option value="0.55">Od 55%</option><option value="0.60">Od 60%</option></select>
+        </label>
       </div>
+      <p id="rank-filter-note" class="rank-filter-note" role="status">Próg 50% służy filtrowaniu, nie oznacza sprawdzonej skuteczności.</p>
       <div id="rank-list" class="rank-cards" aria-live="polite"><div class="rank-empty">Trwa weryfikacja archiwum…</div></div>
       <details class="rank-by-league"><summary>Skuteczność i Brier w podziale na ligi</summary><div id="rank-leagues"><p>Wczytywanie statystyk ligowych…</p></div></details>
       <p class="rank-footer">Dane: publiczny plik <a href="./predictions.json" class="archive-link">predictions.json</a> i historia <a href="https://github.com/Szalekmati/rzotkiewka-ai/commits/main/predictions.json" target="_blank" rel="noopener noreferrer" class="archive-link">commitów GitHub</a>. Źródłem wyników jest OpenLigaDB. SHA-256 wykrywa niespójność danych, ale nie stanowi niezależnego audytu. Nie podajemy ROI bez rzeczywistych kursów bukmacherskich. Brak gwarancji skuteczności.</p>
     </div>
   </section>
 
+  <section id="jakosc" class="quality-section" aria-labelledby="quality-title">
+    <div class="quality-panel">
+      <div class="quality-top">
+        <div>
+          <div class="kicker">🧪 LABORATORIUM PROGNOZ · 1.8</div>
+          <h2 id="quality-title">Kontrola jakości modelu</h2>
+          <p class="quality-sub">Analiza oparta wyłącznie na prognozach publicznie zapisanych przed meczami, zweryfikowanych przez SHA-256. Wykrywamy nietypowe proporcje wskazań, liczymy trafność po wynikach i oznaczamy zbyt małą próbę.</p>
+        </div>
+        <button id="quality-refresh" class="quality-refresh" type="button">↻ Sprawdź najnowsze wyniki</button>
+      </div>
+      <div class="quality-kpis" aria-label="Podstawowe wskaźniki kontroli jakości">
+        <div class="quality-kpi"><strong id="quality-total">—</strong><span>Prognoz w archiwum</span></div>
+        <div class="quality-kpi"><strong id="quality-home">—</strong><span>Wskazań na gospodarzy</span></div>
+        <div class="quality-kpi"><strong id="quality-strong">—</strong><span>Wskazań lidera ≥ 50%</span></div>
+        <div class="quality-kpi"><strong id="quality-graded">—</strong><span>Rozliczonych meczów</span></div>
+      </div>
+      <div class="quality-grid">
+        <div class="quality-box">
+          <h3>Jakie wyniki najczęściej wybiera model?</h3>
+          <div class="quality-dist-row"><div class="quality-dist-label"><span>1 · Gospodarze</span><strong id="quality-home-count">—</strong></div><div class="quality-track"><div id="quality-bar-home" class="quality-fill"></div></div></div>
+          <div class="quality-dist-row"><div class="quality-dist-label"><span>X · Remis</span><strong id="quality-draw-count">—</strong></div><div class="quality-track"><div id="quality-bar-draw" class="quality-fill draw"></div></div></div>
+          <div class="quality-dist-row"><div class="quality-dist-label"><span>2 · Goście</span><strong id="quality-away-count">—</strong></div><div class="quality-track"><div id="quality-bar-away" class="quality-fill away"></div></div></div>
+          <p id="quality-mean" class="quality-note">Średnie prawdopodobieństwa: oczekiwanie na archiwum…</p>
+        </div>
+        <div class="quality-box">
+          <h3>Weryfikacja po zakończeniu meczu</h3>
+          <p id="quality-accuracy" class="quality-info">Pobieranie danych…</p>
+          <p id="quality-calibration" class="quality-info" style="margin-top:12px">Porównanie prognoz z wynikami będzie możliwe po rozliczeniu spotkań.</p>
+        </div>
+      </div>
+      <p id="quality-alert" class="quality-alert" role="status" aria-live="polite">Sprawdzanie udziału prognoz na gospodarzy i wielkości próby…</p>
+      <p class="quality-note">Próg alarmu: co najmniej 8 prognoz i co najmniej 80% wskazań jednego wyniku. To sygnał ostrzegawczy, nie dowód błędu modelu. Próg 50% to filtr techniczny, nie rekomendacja obstawiania. Statystyki nie obejmują fikcyjnej sekcji Demo.</p>
+    </div>
+  </section>
+
   <section id="raport" class="audit-section" aria-labelledby="audit-title">
     <div class="audit-panel">
       <div class="audit-head">
-        <div><div class="kicker">🔎 ARCHIWUM PRZED MECZEM · RAPORT 1.7</div><h2 id="audit-title">Raport skuteczności AI</h2></div>
+        <div><div class="kicker">🔎 ARCHIWUM PRZED MECZEM · RAPORT 1.8</div><h2 id="audit-title">Raport skuteczności AI</h2></div>
         <button type="button" class="audit-download" id="audit-export" disabled>↓ Pobierz raport CSV</button>
       </div>
       <p class="rank-explainer">Dane tylko z publicznych prognoz zapisanych przed rozpoczęciem spotkania i sprawdzonych SHA-256. Trafność i Brier wyliczamy wyłącznie z potwierdzonych wyników — nigdy z oczekujących meczów.</p>
@@ -706,7 +774,9 @@
       :!state.archiveReady?'Weryfikowanie archiwum prognoz…'
       :`Zweryfikowanych zapisów: ${data.length} · rozliczonych: ${stats.graded}. ${stats.graded?`Trafionych liderów: ${stats.hits}/${stats.graded}.`:'Za mało rozliczonych spotkań do obliczenia skuteczności.'} ${state.archiveAt?'Ostatnia zmiana archiwum: '+new Date(state.archiveAt).toLocaleString('pl-PL')+'.':''}`;
     const league=$('rank-league').value, status=$('rank-state').value, order=$('rank-order').value, now=Date.now();
+    const minimum=Number($('rank-minprob').value)||0;
     const rows=data.filter(r=>{
+      if(leaderOf(r).confidence+1e-10<minimum)return false;
       if(league!=='all'&&r.snapshot.league!==league)return false;
       if(status==='graded')return scored(r);
       if(status==='upcoming')return !scored(r)&&new Date(r.snapshot.kickoff).getTime()>now;
@@ -716,9 +786,12 @@
       if(order==='kickoff')return dt||a.id.localeCompare(b.id);
       return leaderOf(b).confidence-leaderOf(a).confidence||dt||a.id.localeCompare(b.id);
     });
+    $('rank-filter-note').textContent=state.archiveReady
+      ?`Filtr: ${minimum?`lider ≥ ${formattedPercent(minimum)}`:'całe archiwum'} · ${rows.length} pasujących meczów, pokazujemy maksymalnie 16. Progi nie oznaczają sprawdzonej skuteczności; wszystkie prognozy są nadal w Raporcie.`
+      :'Najpierw weryfikujemy archiwum. Próg nie oznacza sprawdzonej skuteczności.';
     const root=$('rank-list');root.replaceChildren();
     if(!state.archiveReady){root.append(make('p','rank-empty',state.archiveFailed?'Błąd pobierania lub sprawdzania danych. Nie wyświetlamy niezweryfikowanych prognoz.':'Weryfikowanie danych…'));}
-    else if(!rows.length){root.append(make('p','rank-empty',status==='upcoming'?'Brak przyszłych prognoz dla wybranego filtra. Zobacz rozliczone lub zmień ligę.':status==='graded'?'Nie ma jeszcze rozliczonych prognoz dla tego filtra.':'Brak meczów oczekujących na potwierdzenie wyniku.'));}
+    else if(!rows.length){root.append(make('p','rank-empty','Brak prognoz dla wybranych filtrów i progu. Obniż minimalną szansę albo wybierz „Całe archiwum”.'));}
     for(const [i,r] of rows.slice(0,16).entries()){
       const s=r.snapshot, p=s.probabilities, lead=leaderOf(r), isGraded=scored(r);
       const card=make('article','rank-card');
@@ -753,7 +826,7 @@
     table.append(tbody);leaguesRoot.append(table);
     leaguesRoot.append(make('p','','Wyniki dotyczą opublikowanych prognoz, a nie testu retrospektywnego. Niewielka liczba rozliczonych spotkań nie pozwala ocenić wiarygodnie modelu.'));
   }
-  for(const id of ['rank-league','rank-state','rank-order'])$(id).addEventListener('change',renderRanking);
+  for(const id of ['rank-league','rank-state','rank-order','rank-minprob'])$(id).addEventListener('change',renderRanking);
 
   function renderArchive(){
     const chosen=state.archive.filter(r=>r.snapshot?.league===state.league&&r.snapshot?.season===state.season);
@@ -809,7 +882,11 @@
     const hex=Array.from(new Uint8Array(digest),x=>x.toString(16).padStart(2,'0')).join('');
     return hex===rec.snapshot_sha256;
   }
+  let archiveLoading=false;
   async function loadArchive(){
+    if(archiveLoading)return;
+    archiveLoading=true;
+    $('quality-refresh').disabled=true;
     const url='./predictions.json?t='+Math.floor(Date.now()/60000);
     try{
       if(!globalThis.crypto?.subtle)throw new Error('Weryfikacja SHA-256 wymaga HTTPS');
@@ -831,6 +908,8 @@
       $('archive-status').textContent='Nie udało się pobrać lub zweryfikować publicznego archiwum. Uruchom stronę przez HTTPS i sprawdź predictions.json.';
       console.warn('RZOTKIEWKA: archiwum niedostepne',err);
     }
+    archiveLoading=false;
+    $('quality-refresh').disabled=false;
     render();
   }
 
@@ -850,6 +929,67 @@
     card.append(grid);
     card.append(make('div','real-foot','Statystyki z zakończonych spotkań przed tym meczem, tylko bieżący wybrany sezon. Nie stanowią prognozy ani rekomendacji zakładu.'));
     return card;
+  }
+
+
+  /* 1.8 — dashboard jakości: wyłącznie state.archive po walidacji SHA-256. */
+  function renderQuality(){
+    const ready=state.archiveReady, data=ready?state.archive:[];
+    const n=data.length, wins={'1':0,'X':0,'2':0};
+    const means={'1':0,'X':0,'2':0};
+    let strong=0;
+    for(const rec of data){
+      const leader=leaderOf(rec),p=rec.snapshot.probabilities;
+      wins[leader.outcome]++;
+      if(leader.confidence>=0.50)strong++;
+      for(const k of ['1','X','2'])means[k]+=p[k];
+    }
+    const graded=data.filter(scored),hit=graded.filter(r=>leaderOf(r).outcome===r.settlement.outcome).length;
+    const percent=(v)=>formattedPercent(v);
+    const counts={'quality-total':ready?n:'—','quality-home':ready?`${wins['1']}/${n}`:'—',
+      'quality-strong':ready?`${strong}/${n}`:'—','quality-graded':ready?graded.length:'—'};
+    for(const [id,value] of Object.entries(counts))$(id).textContent=String(value);
+    for(const [key,name] of [['1','home'],['X','draw'],['2','away']]){
+      $('quality-'+name+'-count').textContent=ready?`${wins[key]} (${n?percent(wins[key]/n):'—'})`:'—';
+      $('quality-bar-'+name).style.width=ready&&n?`${(wins[key]/n*100).toFixed(2)}%`:'0%';
+    }
+    $('quality-mean').textContent=n
+      ?`Średnie oszacowania modelu: 1 ${percent(means['1']/n)} · X ${percent(means.X/n)} · 2 ${percent(means['2']/n)}.`
+      :'Brak zweryfikowanych prognoz, dlatego nie liczymy średnich.';
+    const status=$('quality-alert');status.classList.remove('good');
+    if(state.archiveFailed){
+      status.textContent='Nie udało się zweryfikować archiwum. Kontrola jakości jest niedostępna; nie wyświetlamy zastępczych liczb.';
+    }else if(!ready){
+      status.textContent='Weryfikujemy archiwum prognoz…';
+    }else if(!n){
+      status.textContent='Archiwum jest jeszcze puste. Poczekaj na rzeczywiste prognozy przed meczami.';
+    }else{
+      const [dominant,count]=Object.entries(wins).sort((a,b)=>b[1]-a[1])[0];
+      const keyText={'1':'gospodarzy','X':'remisy','2':'gości'}[dominant];
+      const share=count/n;
+      if(n>=8&&share>=0.8){
+        status.textContent=`⚠️ Sygnał nierównowagi: ${count} z ${n} (${percent(share)}) prognoz wskazuje ${keyText}. Warto sprawdzić model na większej próbie i porównać z częstością rzeczywistych wyników. Sam rozkład wskazań nie dowodzi błędu.`;
+      }else if(n<30){
+        status.classList.add('good');
+        status.textContent=`Próba jest niewielka: ${n} prognoz. Nie wykryto przekroczenia alarmu 80% przy próbie ≥ 8, ale to nie potwierdza kalibracji ani jakości modelu.`;
+      }else{
+        status.classList.add('good');
+        status.textContent=`Rozkład wskazań: najczęściej ${keyText} (${percent(share)}). Alarm 80% nie został przekroczony. Sprawdź również kalibrację wyników po rozliczeniu.`;
+      }
+    }
+    $('quality-accuracy').textContent=!ready?'Brak zweryfikowanych danych.'
+      :graded.length===0?'Brak rozliczonych spotkań. Nie można jeszcze policzyć skuteczności ani błędu Brier.'
+      :`Trafienia: ${hit}/${graded.length} (${percent(hit/graded.length)}). Średni Brier: ${(graded.reduce((sum,r)=>sum+brierOf(r),0)/graded.length).toFixed(3).replace('.',',')}. ${graded.length<30?'Mała próba — wartości wstępne.':'Wynik z publicznego archiwum.'}`;
+    if(!ready||graded.length===0){
+      $('quality-calibration').textContent='Kalibrację oszacujemy po rozliczeniu co najmniej 30 prognoz; do tego czasu brak wiarygodnego porównania.';
+    }else if(graded.length<30){
+      $('quality-calibration').textContent=`Do wstępnego porównania oszacowanej szansy z trafnością potrzeba jeszcze ${30-graded.length} rozliczonych prognoz. Liczba 30 to próg informacyjny, nie gwarancja stabilnego pomiaru.`;
+    }else{
+      const mean=graded.reduce((sum,r)=>sum+leaderOf(r).confidence,0)/graded.length;
+      const observed=hit/graded.length;
+      const gap=observed-mean;
+      $('quality-calibration').textContent=`Średnia szansa lidera: ${percent(mean)}, rzeczywista trafność lidera: ${percent(observed)}, różnica: ${gap>=0?'+':''}${probFormatter.format(gap*100)} p.p. To uproszczony wskaźnik, nie pełna kalibracja wieloklasowa.`;
+    }
   }
 
   // 1.7: raport tylko z danych, które loadArchive() zweryfikował za pomocą SHA-256.
@@ -933,7 +1073,7 @@
     }
     const blob=new Blob(['\ufeff',lines.join('\r\n')],{type:'text/csv;charset=utf-8'});
     const url=URL.createObjectURL(blob),link=document.createElement('a');
-    link.href=url;link.download='RZOTKIEWKA_raport_1_7.csv';link.hidden=true;
+    link.href=url;link.download='RZOTKIEWKA_raport_1_8.csv';link.hidden=true;
     document.body.append(link);link.click();link.remove();
     setTimeout(()=>URL.revokeObjectURL(url),2000);
   });
@@ -941,6 +1081,7 @@
   function render() {
     renderArchive();
     renderRanking();
+    renderQuality();
     renderAudit();
     $('live-all').textContent=String(state.matches.length);
     const completed=state.matches.filter(m=>m.score);
@@ -1012,6 +1153,8 @@
     render();
   }));
   load();
+  $('quality-refresh').addEventListener('click',loadArchive);
+  setInterval(()=>{if(!document.hidden)loadArchive();},10*60*1000);
   loadArchive();
 })();
 </script>
