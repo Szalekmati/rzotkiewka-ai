@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0a0e13">
-  <meta name="description" content="🫜 RZOTKIEWKA 1.5 — publiczny ranking prognoz 1X2, zweryfikowane archiwum, wyniki i analiza. Brak gwarancji wygranej.">
-  <title>🫜 RZOTKIEWKA 1.5 — Ranking prognoz i wyniki 1X2</title>
+  <meta name="description" content="🫜 RZOTKIEWKA 1.7 — publiczny ranking prognoz 1X2, zweryfikowane archiwum, wyniki i analiza. Brak gwarancji wygranej.">
+  <title>🫜 RZOTKIEWKA 1.7 — Ranking prognoz i wyniki 1X2</title>
   <style>
     :root{color-scheme:dark;--bg:#0a0e13;--surface:#131a22;--surface2:#19232d;--line:#293743;--ink:#f4f8f8;--muted:#a2b1bc;--accent:#a6f475;--accent2:#dfffc8;--red:#ff858b;--gold:#f4c77f;--radius:18px}
     *{box-sizing:border-box}
@@ -164,7 +164,7 @@
     .archive-error{color:#ffd8a6!important}
     @media(max-width:420px){.archive-panel{padding:14px}.archive-metric{padding:10px}.archive-metric strong{font-size:21px}}
 
-    /* RZOTKIEWKA 1.5 — publiczny ranking, wyłącznie zatwierdzone snapshoty */
+    /* RZOTKIEWKA 1.7 — publiczny ranking, wyłącznie zatwierdzone snapshoty */
     .ranking-section{margin:4px 0 58px}
     .rank-shell{border:1px solid #345a43;background:linear-gradient(145deg,#14231c,#131c24 70%);border-radius:24px;padding:clamp(16px,4vw,26px)}
     .rank-shell h2{margin:0 0 9px}
@@ -199,16 +199,44 @@
     .rank-by-league th{font-weight:650;color:var(--muted)}
     .rank-by-league p{font-size:12px;color:var(--muted)}
     @media(max-width:660px){.rank-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.rank-cards{grid-template-columns:1fr}.rank-shell{padding:16px}.rank-metric{padding:12px}}
+  
+    /* RZOTKIEWKA 1.7: raport wyłącznie zweryfikowanych prognoz */
+    .audit-section{margin:0 0 58px;scroll-margin-top:92px}
+    .audit-panel{padding:clamp(16px,3.6vw,28px);background:linear-gradient(155deg,#18231e,#141c25);border:1px solid #355545;border-radius:24px}
+    .audit-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+    .audit-head h2{margin:9px 0}
+    .audit-download{border:0;border-radius:11px;padding:12px 18px;background:var(--accent);color:#152018;font-weight:850}
+    .audit-download:disabled{opacity:.45;cursor:not-allowed}
+    .audit-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0}
+    .audit-kpis div{border:1px solid #354b40;border-radius:13px;background:#111d1b;padding:15px}
+    .audit-kpis strong{display:block;font-size:clamp(21px,3vw,31px);font-weight:850;font-variant-numeric:tabular-nums;color:var(--accent)}
+    .audit-kpis span{color:var(--muted);font-size:11px}
+    .audit-filters{display:flex;gap:12px;flex-wrap:wrap;margin:20px 0 13px}
+    .audit-filters label{color:var(--muted);font-size:12px;display:flex;flex-direction:column;gap:6px}
+    .audit-filters select{background:var(--surface2);color:var(--ink);padding:9px 28px 9px 10px;border:1px solid #496153;border-radius:9px;font:inherit;font-size:13px}
+    .audit-table-wrap{overflow-x:auto;max-width:100%;border:1px solid #314538;border-radius:13px}
+    .audit-table{width:100%;border-collapse:collapse;font-size:12px;min-width:680px}
+    .audit-table th,.audit-table td{text-align:left;padding:11px 9px;border-bottom:1px solid #2f4539;vertical-align:top}
+    .audit-table thead th{color:#d7ecd5;background:#213025;font-weight:800}
+    .audit-table tr:last-child td{border-bottom:0}
+    .audit-table td{color:#dce7e2}
+    .audit-table .subtle{display:block;color:var(--muted);font-size:11px;margin-top:3px}
+    .audit-table .hit{color:#b7ed9b;font-weight:800}
+    .audit-table .miss{color:#ffb8ae;font-weight:800}
+    .audit-note{color:var(--muted);font-size:12px;margin:13px 0 0;line-height:1.65}
+    .audit-subtitle{font-size:15px;margin:26px 0 10px}
+    .audit-empty{color:var(--muted);font-size:13px;padding:15px}
+    @media(max-width:600px){.audit-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.audit-head h2{font-size:25px}.audit-download{width:100%}}
   </style>
 </head>
 <body>
 <header class="header">
   <div class="shell head-inner">
-    <a class="brand" href="#start" aria-label="RZOTKIEWKA — strona główna"><span class="brand-emoji" aria-hidden="true">🫜</span><span><span class="brand-name">RZOTKIEWKA</span><span class="brand-caption">FOOTBALL LAB · 1.6</span></span></a>
-    <nav class="nav" aria-label="Nawigacja"><a href="#mecze">Mecze</a><a href="#ranking">Ranking</a><a href="#typy">Typy demo</a><a href="#jak-to-dziala">Zasady</a><a class="nav-premium" href="#premium">Premium ✦</a></nav>
+    <a class="brand" href="#start" aria-label="RZOTKIEWKA — strona główna"><span class="brand-emoji" aria-hidden="true">🫜</span><span><span class="brand-name">RZOTKIEWKA</span><span class="brand-caption">FOOTBALL LAB · 1.7</span></span></a>
+    <nav class="nav" aria-label="Nawigacja"><a href="#mecze">Mecze</a><a href="#ranking">Ranking</a><a href="#raport">Raport</a><a href="#typy">Typy demo</a><a href="#jak-to-dziala">Zasady</a><a class="nav-premium" href="#premium">Premium ✦</a></nav>
   </div>
 </header>
-<div id="demo-banner" class="banner" role="status">WERSJA 1.6 — publiczny ranking prognoz przed meczami i rzeczywiste statystyki. Typy demonstracyjne są fikcyjne.</div>
+<div id="demo-banner" class="banner" role="status">WERSJA 1.7 — szczegółowy raport wyników i eksport CSV. Typy demonstracyjne są fikcyjne.</div>
 <main class="shell" id="start">
   <section class="hero" aria-labelledby="hero-title">
     <div>
@@ -223,7 +251,7 @@
     <div class="rank-shell">
       <div class="kicker">📊 PUBLICZNE WYNIKI · BEZ OBIETNIC</div>
       <h2 id="ranking-title" style="margin-top:14px">Ranking prognoz RZOTKIEWKA</h2>
-      <p class="rank-explainer">Tylko prognozy opublikowane przed spotkaniem i pozytywnie zweryfikowane SHA-256. Kontrola wyników jest zaplanowana co 2 godziny (harmonogram GitHub może mieć opóźnienia). Ranking sortuje według <strong>najwyższego pojedynczego prawdopodobieństwa 1X2</strong> wyliczonego przez model, a nie według pewności wygranej. Kolejność nie oznacza opłacalności zakładu.</p>
+      <p class="rank-explainer">Tylko prognozy opublikowane przed spotkaniem i pozytywnie zweryfikowane SHA-256. Ranking sortuje według <strong>najwyższego pojedynczego prawdopodobieństwa 1X2</strong> wyliczonego przez model, a nie według pewności wygranej. Kolejność nie oznacza opłacalności zakładu.</p>
       <div class="rank-metrics" aria-label="Wyniki wszystkich zweryfikowanych prognoz">
         <div class="rank-metric"><strong id="rank-total">—</strong><span>Opublikowane prognozy</span></div>
         <div class="rank-metric"><strong id="rank-graded">—</strong><span>Rozliczone mecze</span></div>
@@ -236,7 +264,7 @@
           <select id="rank-league"><option value="all">Wszystkie ligi</option><option value="bl1">Bundesliga</option><option value="bl2">2. Bundesliga</option><option value="bl3">3. Liga</option></select>
         </label>
         <label class="field-select" for="rank-state">Stan meczu
-          <select id="rank-state"><option value="all" selected>Wszystkie mecze</option><option value="upcoming">Przed meczem</option><option value="graded">Rozliczone</option><option value="awaiting">Oczekują na wynik</option></select>
+          <select id="rank-state"><option value="upcoming">Przed meczem</option><option value="graded">Rozliczone</option><option value="awaiting">Oczekują na wynik</option></select>
         </label>
         <label class="field-select" for="rank-order">Sortuj
           <select id="rank-order"><option value="confidence">Szansa lidera ↓</option><option value="kickoff">Termin meczu ↑</option></select>
@@ -245,6 +273,36 @@
       <div id="rank-list" class="rank-cards" aria-live="polite"><div class="rank-empty">Trwa weryfikacja archiwum…</div></div>
       <details class="rank-by-league"><summary>Skuteczność i Brier w podziale na ligi</summary><div id="rank-leagues"><p>Wczytywanie statystyk ligowych…</p></div></details>
       <p class="rank-footer">Dane: publiczny plik <a href="./predictions.json" class="archive-link">predictions.json</a> i historia <a href="https://github.com/Szalekmati/rzotkiewka-ai/commits/main/predictions.json" target="_blank" rel="noopener noreferrer" class="archive-link">commitów GitHub</a>. Źródłem wyników jest OpenLigaDB. SHA-256 wykrywa niespójność danych, ale nie stanowi niezależnego audytu. Nie podajemy ROI bez rzeczywistych kursów bukmacherskich. Brak gwarancji skuteczności.</p>
+    </div>
+  </section>
+
+  <section id="raport" class="audit-section" aria-labelledby="audit-title">
+    <div class="audit-panel">
+      <div class="audit-head">
+        <div><div class="kicker">🔎 ARCHIWUM PRZED MECZEM · RAPORT 1.7</div><h2 id="audit-title">Raport skuteczności AI</h2></div>
+        <button type="button" class="audit-download" id="audit-export" disabled>↓ Pobierz raport CSV</button>
+      </div>
+      <p class="rank-explainer">Dane tylko z publicznych prognoz zapisanych przed rozpoczęciem spotkania i sprawdzonych SHA-256. Trafność i Brier wyliczamy wyłącznie z potwierdzonych wyników — nigdy z oczekujących meczów.</p>
+      <div class="audit-kpis" aria-label="Podsumowanie archiwum">
+        <div><strong id="audit-total">—</strong><span>Zweryfikowane prognozy</span></div>
+        <div><strong id="audit-pending">—</strong><span>Oczekujące na wynik</span></div>
+        <div><strong id="audit-graded">—</strong><span>Rozliczone</span></div>
+        <div><strong id="audit-hits">—</strong><span>Trafione 1X2</span></div>
+        <div><strong id="audit-rate">—</strong><span>Skuteczność 1X2</span></div>
+        <div><strong id="audit-brier">—</strong><span>Średni Brier (mniej = lepiej)</span></div>
+      </div>
+      <p id="audit-message" class="audit-note" role="status" aria-live="polite">Trwa pobieranie i weryfikacja archiwum…</p>
+      <h3 class="audit-subtitle">Wyniki według lig</h3>
+      <div id="audit-leagues" class="audit-table-wrap"><p class="audit-empty">Wczytywanie…</p></div>
+      <h3 class="audit-subtitle">Rejestr wszystkich prognoz</h3>
+      <div class="audit-filters">
+        <label for="audit-league">Liga<select id="audit-league"><option value="all">Wszystkie ligi</option><option value="bl1">Bundesliga</option><option value="bl2">2. Bundesliga</option><option value="bl3">3. Liga</option></select></label>
+        <label for="audit-status">Status<select id="audit-status"><option value="all">Wszystkie</option><option value="graded">Rozliczone</option><option value="pending">Oczekujące</option></select></label>
+        <label for="audit-order">Kolejność<select id="audit-order"><option value="new">Najnowsze mecze</option><option value="old">Najstarsze mecze</option></select></label>
+      </div>
+      <p class="audit-note">Na telefonie tabelę można przesuwać poziomo. Eksport CSV obejmuje widoczne filtry i wszystkie pasujące rekordy, nie tylko pierwsze 50 wierszy.</p>
+      <div id="audit-matches" class="audit-table-wrap"><p class="audit-empty">Wczytywanie…</p></div>
+      <p class="audit-note">Brier = średnia z trzech kwadratów błędów prawdopodobieństw 1/X/2. Trafność to odsetek rozliczonych spotkań, w których zdarzenie o najwyższej prognozowanej szansie wystąpiło. Przy małej próbie wyniki są niepewne; to nie dowód zysku ani rekomendacja zakładu.</p>
     </div>
   </section>
   <section id="mecze" class="real-section" aria-labelledby="live-title">
@@ -422,7 +480,7 @@
     render();
   }));
   $('reload').addEventListener('click',loadTips);
-  $('footer-year').textContent = '© ' + new Date().getFullYear() + ' RZOTKIEWKA · wersja 1.6';
+  $('footer-year').textContent = '© ' + new Date().getFullYear() + ' RZOTKIEWKA · wersja 1.5';
   loadTips();
 })();
 </script>
@@ -621,7 +679,7 @@
 
 
 
-  /* 1.6: ranking oparty WYŁĄCZNIE na archiwum po weryfikacji SHA-256. */
+  /* 1.5: ranking oparty WYŁĄCZNIE na archiwum po weryfikacji SHA-256. */
   function scored(r){
     return r.settlement.state==='graded' && Array.isArray(r.settlement.score);
   }
@@ -646,11 +704,10 @@
     $('rank-status').textContent=state.archiveFailed
       ?'Nie udało się zweryfikować archiwum. Poniższy ranking jest niedostępny.'
       :!state.archiveReady?'Weryfikowanie archiwum prognoz…'
-      :`Zweryfikowanych zapisów: ${data.length} · rozliczonych: ${stats.graded} · przed meczem: ${data.filter(r=>!scored(r)&&new Date(r.snapshot.kickoff).getTime()>Date.now()).length} · oczekuje na wynik: ${data.filter(r=>!scored(r)&&new Date(r.snapshot.kickoff).getTime()<=Date.now()).length}. ${stats.graded?`Trafionych liderów: ${stats.hits}/${stats.graded}.`:'Skuteczność będzie dostępna po rozliczeniu meczów.'} ${state.archiveAt?'Ostatnia ZMIANA archiwum: '+new Date(state.archiveAt).toLocaleString('pl-PL')+'.':''}`;
+      :`Zweryfikowanych zapisów: ${data.length} · rozliczonych: ${stats.graded}. ${stats.graded?`Trafionych liderów: ${stats.hits}/${stats.graded}.`:'Za mało rozliczonych spotkań do obliczenia skuteczności.'} ${state.archiveAt?'Ostatnia zmiana archiwum: '+new Date(state.archiveAt).toLocaleString('pl-PL')+'.':''}`;
     const league=$('rank-league').value, status=$('rank-state').value, order=$('rank-order').value, now=Date.now();
     const rows=data.filter(r=>{
       if(league!=='all'&&r.snapshot.league!==league)return false;
-      if(status==='all')return true;
       if(status==='graded')return scored(r);
       if(status==='upcoming')return !scored(r)&&new Date(r.snapshot.kickoff).getTime()>now;
       return !scored(r)&&new Date(r.snapshot.kickoff).getTime()<=now;
@@ -661,13 +718,13 @@
     });
     const root=$('rank-list');root.replaceChildren();
     if(!state.archiveReady){root.append(make('p','rank-empty',state.archiveFailed?'Błąd pobierania lub sprawdzania danych. Nie wyświetlamy niezweryfikowanych prognoz.':'Weryfikowanie danych…'));}
-    else if(!rows.length){root.append(make('p','rank-empty',status==='all'?'Brak zapisanych prognoz dla tego filtra.':status==='upcoming'?'Brak przyszłych prognoz dla wybranego filtra. Zobacz rozliczone lub zmień ligę.':status==='graded'?'Nie ma jeszcze rozliczonych prognoz dla tego filtra.':'Brak meczów oczekujących na potwierdzenie wyniku.'));}
+    else if(!rows.length){root.append(make('p','rank-empty',status==='upcoming'?'Brak przyszłych prognoz dla wybranego filtra. Zobacz rozliczone lub zmień ligę.':status==='graded'?'Nie ma jeszcze rozliczonych prognoz dla tego filtra.':'Brak meczów oczekujących na potwierdzenie wyniku.'));}
     for(const [i,r] of rows.slice(0,16).entries()){
       const s=r.snapshot, p=s.probabilities, lead=leaderOf(r), isGraded=scored(r);
       const card=make('article','rank-card');
       const head=make('div','rank-top');
       head.append(make('span','rank-index',`#${i+1} · ${allowedLeagues[s.league]||s.league} · ${s.season}/${s.season+1}`));
-      head.append(make('span','rank-tag'+(isGraded?' graded':''),isGraded?'ROZLICZONY':new Date(s.kickoff).getTime()<=now?'OCZEKUJE NA WYNIK':'ZAPISANY PRZED MECZEM'));
+      head.append(make('span','rank-tag'+(isGraded?' graded':''),isGraded?'ROZLICZONY':status==='awaiting'?'OCZEKUJE':'ZAPISANY PRZED MECZEM'));
       card.append(head,make('h3','',`${s.home} – ${s.away}`));
       card.append(make('p','rank-date',`Początek: ${new Date(s.kickoff).toLocaleString('pl-PL')}`));
       const leader=make('div','rank-leader');
@@ -677,8 +734,6 @@
       if(isGraded){
         const hit=lead.outcome===r.settlement.outcome;
         card.append(make('p','rank-result',`Wynik ${r.settlement.score.join(':')} · ${hit?'TRAFIONY':'NIETRAFIONY'} lider 1X2`));
-      } else if(new Date(s.kickoff).getTime()<=now){
-        card.append(make('p','rank-caption','Trwa oczekiwanie na końcowy wynik w OpenLigaDB. Automatyczne kontrole są planowane co 2 godziny; rozliczenie możliwe najwcześniej 3 godziny po rozpoczęciu meczu.'));
       }
       card.append(make('p','rank-caption',`Zapisano: ${new Date(s.created_at).toLocaleString('pl-PL')} · SHA-256 ${r.snapshot_sha256.slice(0,14)}…`));
       root.append(card);
@@ -796,9 +851,97 @@
     card.append(make('div','real-foot','Statystyki z zakończonych spotkań przed tym meczem, tylko bieżący wybrany sezon. Nie stanowią prognozy ani rekomendacji zakładu.'));
     return card;
   }
+
+  // 1.7: raport tylko z danych, które loadArchive() zweryfikował za pomocą SHA-256.
+  // Wskazanie modelu = najbardziej prawdopodobny wynik 1X2, bez kursów bukmacherskich.
+  let auditVisible=[];
+  function auditLabel(v){return v===null||v===undefined?'—':String(v);}
+  function auditBuildTable(root,headings,rows){
+    root.replaceChildren();
+    if(!rows.length){root.append(make('p','audit-empty','Brak danych do pokazania.'));return;}
+    const table=make('table','audit-table');
+    const head=make('thead'),tr=make('tr');
+    for(const h of headings)tr.append(make('th','',h));
+    head.append(tr);table.append(head);
+    const body=make('tbody');
+    for(const cells of rows){
+      const row=make('tr');
+      for(const val of cells)row.append(make('td','',val));
+      body.append(row);
+    }
+    table.append(body);root.append(table);
+  }
+  function renderAudit(){
+    const ready=state.archiveReady, records=ready?state.archive:[], g=rankGroup(records);
+    const status=state.archiveFailed?'Nie udało się pobrać lub zweryfikować archiwum; raport jest niedostępny.'
+      :!ready?'Weryfikowanie archiwum…'
+      :g.graded===0?'Archiwum załadowane, ale nie ma jeszcze rozliczonych spotkań. Nie wyświetlamy fikcyjnych wyników.'
+      :g.graded<30?`Próba: ${g.graded} ${g.graded===1?'rozliczony mecz':'rozliczonych meczów'}. Wyniki są wstępne — do stabilnej oceny potrzeba znacznie więcej danych.`
+      :`Wyniki obliczono na ${g.graded} rozliczonych spotkaniach.`;
+    $('audit-message').textContent=status;
+    const stats={'audit-total':ready?g.total:'—','audit-pending':ready?g.total-g.graded:'—',
+      'audit-graded':ready?g.graded:'—','audit-hits':ready&&g.graded?g.hits:'—',
+      'audit-rate':ready&&g.graded?formattedPercent(g.hitrate):'—',
+      'audit-brier':ready&&g.graded?g.brier.toFixed(3).replace('.',','):'—'};
+    for(const [id,value] of Object.entries(stats))$(id).textContent=String(value);
+    const leagueRows=[];
+    if(ready){
+      for(const [code,label] of Object.entries(allowedLeagues)){
+        const l=rankGroup(records.filter(r=>r.snapshot.league===code));
+        leagueRows.push([label,String(l.total),String(l.graded),String(l.hits),l.hitrate===null?'—':formattedPercent(l.hitrate),l.brier===null?'—':l.brier.toFixed(3).replace('.',',')]);
+      }
+    }
+    auditBuildTable($('audit-leagues'),['Liga','Zapisane','Rozliczone','Trafione','Trafność','Brier'],leagueRows);
+    const league=$('audit-league').value, mode=$('audit-status').value, order=$('audit-order').value;
+    auditVisible=records.filter(r=>(league==='all'||r.snapshot.league===league)&&
+      (mode==='all'||(mode==='graded'?scored(r):!scored(r)))).sort((a,b)=>{
+        const delta=new Date(b.snapshot.kickoff)-new Date(a.snapshot.kickoff);
+        return (order==='new'?delta:-delta)||a.id.localeCompare(b.id);
+      });
+    const matchRows=auditVisible.slice(0,50).map(r=>{
+      const s=r.snapshot,lead=leaderOf(r),done=scored(r),hit=done&&lead.outcome===r.settlement.outcome;
+      return [new Date(s.kickoff).toLocaleString('pl-PL'),
+        `${s.home} – ${s.away}`,
+        allowedLeagues[s.league]||s.league,
+        `${lead.outcome} (${formattedPercent(lead.confidence)})`,
+        `${formattedPercent(s.probabilities['1'])} / ${formattedPercent(s.probabilities.X)} / ${formattedPercent(s.probabilities['2'])}`,
+        done?`${r.settlement.score.join(':')} · ${hit?'TRAFIONY':'NIETRAFIONY'}`:'Oczekuje',
+        done?brierOf(r).toFixed(3).replace('.',','):'—'];
+    });
+    auditBuildTable($('audit-matches'),['Początek','Spotkanie','Liga','Lider','1 / X / 2','Wynik / ocena','Brier'],matchRows);
+    $('audit-export').disabled=!ready||auditVisible.length===0;
+  }
+  for(const id of ['audit-league','audit-status','audit-order'])$(id).addEventListener('change',renderAudit);
+  // Excel: UTF-8 BOM, średniki dla polskich ustawień regionalnych; zabezpieczenie formuł w komórkach tekstowych.
+  function auditCsvField(value){
+    let v=String(value??'');
+    if(/^[\s]*[=+@\-\t\r]/.test(v))v="'"+v;
+    return '"'+v.replace(/"/g,'""')+'"';
+  }
+  $('audit-export').addEventListener('click',()=>{
+    if(!state.archiveReady||!auditVisible.length)return;
+    const header=['id','liga','sezon','data_meczu_utc','zapis_utc','gospodarze','goscie',
+      'p_1','p_X','p_2','najwyzsza_szansa','wskazanie_1X2','status','wynik','rzeczywiste_1X2','trafione_1X2','brier','model_version','sha256'];
+    const lines=[header.map(auditCsvField).join(';')];
+    for(const r of auditVisible){
+      const s=r.snapshot,lead=leaderOf(r),done=scored(r),st=r.settlement;
+      const row=[r.id,s.league,s.season,s.kickoff,s.created_at,s.home,s.away,
+        s.probabilities['1'],s.probabilities.X,s.probabilities['2'],lead.confidence,lead.outcome,
+        done?'graded':'pending',done?st.score.join(':'):'',done?st.outcome:'',
+        done?(lead.outcome===st.outcome?'1':'0'):'',done?brierOf(r):'',s.model_version,r.snapshot_sha256];
+      lines.push(row.map(auditCsvField).join(';'));
+    }
+    const blob=new Blob(['\ufeff',lines.join('\r\n')],{type:'text/csv;charset=utf-8'});
+    const url=URL.createObjectURL(blob),link=document.createElement('a');
+    link.href=url;link.download='RZOTKIEWKA_raport_1_7.csv';link.hidden=true;
+    document.body.append(link);link.click();link.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),2000);
+  });
+
   function render() {
     renderArchive();
     renderRanking();
+    renderAudit();
     $('live-all').textContent=String(state.matches.length);
     const completed=state.matches.filter(m=>m.score);
     $('live-finished').textContent=String(completed.length);
