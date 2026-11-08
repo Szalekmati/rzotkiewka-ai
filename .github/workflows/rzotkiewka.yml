@@ -1,8 +1,8 @@
-name: RZOTKIEWKA - archiwum prognoz
+name: RZOTKIEWKA - prognozy i wyniki 1.6
 
 on:
   schedule:
-    - cron: '17 */6 * * *'
+    - cron: '17 */2 * * *'
   workflow_dispatch:
 
 permissions:
@@ -15,36 +15,30 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 12
     steps:
       - name: Pobierz repozytorium
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
         with:
           persist-credentials: true
-
       - name: Przygotuj Python
-        uses: actions/setup-python@v7
+        uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-
-      - name: Sprawdz skladnie silnika
+      - name: Sprawdz kod
         run: python -m py_compile forecast_engine.py
-
-      # Testy zaczna sie wykonywac automatycznie po dodaniu
-      # tests/test_forecast_engine.py do repozytorium.
-      - name: Uruchom testy archiwum
-        if: ${{ hashFiles('tests/test_forecast_engine.py') != '' }}
+      - name: Testy bez internetu
         run: python -m unittest discover -s tests -v
-
-      - name: Pobierz mecze i rozlicz prognozy
+      - name: Pobierz nowe mecze i rozlicz potwierdzone wyniki
         run: python forecast_engine.py
-
-      - name: Zapisz nowe prognozy w historii GitHuba
+      - name: Opublikuj zmiany w archiwum
         run: |
-          git config user.name 'rzotkiewka-bot'
+          git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add predictions.json
           if ! git diff --cached --quiet; then
-            git commit -m 'RZOTKIEWKA: nowa prognoza / wynik'
+            git commit -m 'RZOTKIEWKA: nowa prognoza lub potwierdzony wynik'
             git push
+          else
+            echo 'Bez nowych prognoz i wynikow: archiwum pozostaje bez zmian.'
           fi
