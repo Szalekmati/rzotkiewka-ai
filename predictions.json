@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updated_at": "2026-11-08T08:15:21Z",
+  "updated_at": "2026-11-08T17:56:27Z",
   "forecasts": [
     {
       "id": "bl2-2026-83678",
@@ -46,10 +46,13 @@
       },
       "snapshot_sha256": "e318cbc68aad511d8ec6629888bb8f18a2a47aac9fff73beecce4d500921016c",
       "settlement": {
-        "state": "pending",
-        "score": null,
-        "outcome": null,
-        "graded_at": null
+        "state": "graded",
+        "score": [
+          2,
+          2
+        ],
+        "outcome": "X",
+        "graded_at": "2026-11-08T17:56:27Z"
       }
     },
     {
@@ -96,10 +99,13 @@
       },
       "snapshot_sha256": "60ab028c9f933d4b16db3eda85889057909c883f9a2644d4433b5ea7bf8a9999",
       "settlement": {
-        "state": "pending",
-        "score": null,
-        "outcome": null,
-        "graded_at": null
+        "state": "graded",
+        "score": [
+          3,
+          2
+        ],
+        "outcome": "1",
+        "graded_at": "2026-11-08T17:56:27Z"
       }
     },
     {
@@ -146,10 +152,13 @@
       },
       "snapshot_sha256": "2c20159197634d7310adfba499bed5e259b09237fd185afa8841f6ab61ca4846",
       "settlement": {
-        "state": "pending",
-        "score": null,
-        "outcome": null,
-        "graded_at": null
+        "state": "graded",
+        "score": [
+          4,
+          1
+        ],
+        "outcome": "1",
+        "graded_at": "2026-11-08T17:56:27Z"
       }
     },
     {
@@ -196,10 +205,13 @@
       },
       "snapshot_sha256": "117d451f90b192fea1731ce79c3043326da816a7bab6cdc90da69be526290359",
       "settlement": {
-        "state": "pending",
-        "score": null,
-        "outcome": null,
-        "graded_at": null
+        "state": "graded",
+        "score": [
+          2,
+          1
+        ],
+        "outcome": "1",
+        "graded_at": "2026-11-08T17:56:27Z"
       }
     },
     {
@@ -246,10 +258,13 @@
       },
       "snapshot_sha256": "57debd18a9f3393690a669cdbca85d251514bc3daad39443d60897159f9c462f",
       "settlement": {
-        "state": "pending",
-        "score": null,
-        "outcome": null,
-        "graded_at": null
+        "state": "graded",
+        "score": [
+          1,
+          2
+        ],
+        "outcome": "2",
+        "graded_at": "2026-11-08T17:56:27Z"
       }
     },
     {
