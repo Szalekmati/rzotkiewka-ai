@@ -1,0 +1,35 @@
+
+name: RZOTKIEWKA - badanie lig
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 4 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  research:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Pobierz katalog lig
+        run: |
+          mkdir -p reports
+          curl --fail --silent --show-error \
+            --retry 3 \
+            https://api.openligadb.de/getavailableleagues \
+            -o reports/research_leagues.json
+          python -m json.tool \
+            reports/research_leagues.json > /dev/null
+          python -c "import json; d=json.load(open('reports/research_leagues.json')); assert isinstance(d,list); print('Liczba wpisow:', len(d))"
+
+      - name: Zapisz raport
+        uses: actions/upload-artifact@v4
+        with:
+          name: katalog-lig
+          path: reports/research_leagues.json
+          if-no-files-found: error
+          
