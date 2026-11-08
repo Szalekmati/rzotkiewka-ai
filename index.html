@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0a0e13">
-  <meta name="description" content="🫜 RZOTKIEWKA 1.8 — publiczny ranking prognoz 1X2, zweryfikowane archiwum, wyniki i analiza. Brak gwarancji wygranej.">
-  <title>🫜 RZOTKIEWKA 1.8 — Ranking prognoz i wyniki 1X2</title>
+  <meta name="description" content="🫜 RZOTKIEWKA 1.9 — publiczny ranking prognoz 1X2, zweryfikowane archiwum, wyniki i analiza. Brak gwarancji wygranej.">
+  <title>🫜 RZOTKIEWKA 1.9 — Ranking prognoz i wyniki 1X2</title>
   <style>
     :root{color-scheme:dark;--bg:#0a0e13;--surface:#131a22;--surface2:#19232d;--line:#293743;--ink:#f4f8f8;--muted:#a2b1bc;--accent:#a6f475;--accent2:#dfffc8;--red:#ff858b;--gold:#f4c77f;--radius:18px}
     *{box-sizing:border-box}
@@ -162,9 +162,16 @@
     .archive-chip{display:inline-block;font-size:11px;border:1px solid #4a8057;padding:4px 8px;border-radius:30px;color:#d2f4c2;margin:0 0 8px}
     .archive-chip.graded{border-color:#618d84;color:#dcf5ef}
     .archive-error{color:#ffd8a6!important}
+    /* 1.9: etapy rozliczania pokazywane niezaleznie od daty ostatniej aktualizacji GitHub. */
+    .archive-monitor{border:1px solid #3c6048;background:#12251d;padding:13px 15px;border-radius:13px;margin:13px 0 17px}
+    .archive-monitor strong{display:block;font-size:13px;color:#d8f4d4;margin-bottom:6px}
+    .archive-monitor p{margin:0;font-size:12px;color:#bed1c4;line-height:1.65}
+    .archive-monitor a{color:var(--accent);text-decoration:underline;text-underline-offset:2px}
+    .archive-time-note{font-size:11px;color:#c7d4cb;margin:5px 0 9px;line-height:1.6}
+    .archive-chip.waiting{border-color:#987a4a;color:#ffdfad}
     @media(max-width:420px){.archive-panel{padding:14px}.archive-metric{padding:10px}.archive-metric strong{font-size:21px}}
 
-    /* RZOTKIEWKA 1.8 — publiczny ranking, wyłącznie zatwierdzone snapshoty */
+    /* RZOTKIEWKA 1.9 — publiczny ranking, wyłącznie zatwierdzone snapshoty */
     .ranking-section{margin:4px 0 58px}
     .rank-shell{border:1px solid #345a43;background:linear-gradient(145deg,#14231c,#131c24 70%);border-radius:24px;padding:clamp(16px,4vw,26px)}
     .rank-shell h2{margin:0 0 9px}
@@ -228,7 +235,7 @@
     .audit-empty{color:var(--muted);font-size:13px;padding:15px}
     @media(max-width:600px){.audit-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.audit-head h2{font-size:25px}.audit-download{width:100%}}
 
-    /* RZOTKIEWKA 1.8 — kontrola jakości publicznych prognoz. */
+    /* RZOTKIEWKA 1.9 — kontrola jakości publicznych prognoz. */
     .quality-section{margin:0 0 58px;scroll-margin-top:95px}
     .quality-panel{border:1px solid #59734c;border-radius:24px;padding:clamp(17px,3vw,26px);background:linear-gradient(145deg,#1a2a1e,#131d24 68%)}
     .quality-top{display:flex;gap:15px;align-items:start;justify-content:space-between;flex-wrap:wrap}
@@ -261,11 +268,11 @@
 <body>
 <header class="header">
   <div class="shell head-inner">
-    <a class="brand" href="#start" aria-label="RZOTKIEWKA — strona główna"><span class="brand-emoji" aria-hidden="true">🫜</span><span><span class="brand-name">RZOTKIEWKA</span><span class="brand-caption">FOOTBALL LAB · 1.8</span></span></a>
+    <a class="brand" href="#start" aria-label="RZOTKIEWKA — strona główna"><span class="brand-emoji" aria-hidden="true">🫜</span><span><span class="brand-name">RZOTKIEWKA</span><span class="brand-caption">FOOTBALL LAB · 1.9</span></span></a>
     <nav class="nav" aria-label="Nawigacja"><a href="#mecze">Mecze</a><a href="#ranking">Ranking</a><a href="#jakosc">Jakość modelu</a><a href="#raport">Raport</a><a href="#typy">Typy demo</a><a href="#jak-to-dziala">Zasady</a><a class="nav-premium" href="#premium">Premium ✦</a></nav>
   </div>
 </header>
-<div id="demo-banner" class="banner" role="status">WERSJA 1.8 — kontrola jakości modelu, ranking i eksport CSV. Typy demonstracyjne są fikcyjne.</div>
+<div id="demo-banner" class="banner" role="status">WERSJA 1.9 — monitor rozliczeń prognoz, ranking i raport CSV. Typy demonstracyjne są fikcyjne.</div>
 <main class="shell" id="start">
   <section class="hero" aria-labelledby="hero-title">
     <div>
@@ -313,7 +320,7 @@
     <div class="quality-panel">
       <div class="quality-top">
         <div>
-          <div class="kicker">🧪 LABORATORIUM PROGNOZ · 1.8</div>
+          <div class="kicker">🧪 LABORATORIUM PROGNOZ · 1.9</div>
           <h2 id="quality-title">Kontrola jakości modelu</h2>
           <p class="quality-sub">Analiza oparta wyłącznie na prognozach publicznie zapisanych przed meczami, zweryfikowanych przez SHA-256. Wykrywamy nietypowe proporcje wskazań, liczymy trafność po wynikach i oznaczamy zbyt małą próbę.</p>
         </div>
@@ -347,7 +354,7 @@
   <section id="raport" class="audit-section" aria-labelledby="audit-title">
     <div class="audit-panel">
       <div class="audit-head">
-        <div><div class="kicker">🔎 ARCHIWUM PRZED MECZEM · RAPORT 1.8</div><h2 id="audit-title">Raport skuteczności AI</h2></div>
+        <div><div class="kicker">🔎 ARCHIWUM PRZED MECZEM · RAPORT 1.9</div><h2 id="audit-title">Raport skuteczności AI</h2></div>
         <button type="button" class="audit-download" id="audit-export" disabled>↓ Pobierz raport CSV</button>
       </div>
       <p class="rank-explainer">Dane tylko z publicznych prognoz zapisanych przed rozpoczęciem spotkania i sprawdzonych SHA-256. Trafność i Brier wyliczamy wyłącznie z potwierdzonych wyników — nigdy z oczekujących meczów.</p>
@@ -404,6 +411,11 @@
         <div class="archive-metric"><strong id="archive-hit">—</strong><span>Trafień 1X2</span></div>
       </div>
       <p id="archive-status" role="status" aria-live="polite">Ładowanie archiwum prognoz…</p>
+      <div class="archive-monitor" aria-label="Monitor etapów rozliczenia">
+        <strong>⏱ Monitor rozliczeń</strong>
+        <p id="archive-monitor-status" role="status" aria-live="polite">Czekamy na dane archiwum.</p>
+        <p>Prognoza nie zostanie oceniona przed otrzymaniem końcowego wyniku i automatycznym uruchomieniem silnika. <a href="https://github.com/Szalekmati/rzotkiewka-ai/actions" target="_blank" rel="noopener noreferrer">Sprawdź GitHub Actions ↗</a></p>
+      </div>
       <div id="archive-list" aria-live="polite"></div>
       <p><a class="archive-link" href="https://github.com/Szalekmati/rzotkiewka-ai/commits/main/predictions.json" target="_blank" rel="noopener noreferrer">Sprawdź historię zapisów na GitHubie ↗</a></p>
       <p>Oceniana jest wyłącznie prawidłowość wyniku 1/X/2. Małe próbki i opóźnione wyniki nie dowodzą przewagi nad ofertami bukmacherów.</p>
@@ -755,6 +767,23 @@
     const outcome=bestOutcome(r.snapshot.probabilities);
     return {outcome,confidence:r.snapshot.probabilities[outcome]};
   }
+  // Dynamic status *presentation*, not a second settlement engine.
+  // Never infer final result or actual match status solely from scheduled kickoff.
+  function archivePhase(r, at=Date.now()){
+    if(scored(r))return {label:'ROZLICZONY',note:'Wynik potwierdzony w publicznym archiwum.',kind:'graded'};
+    const kickoff=new Date(r.snapshot.kickoff).getTime();
+    if(!Number.isFinite(kickoff))return {label:'OCZEKUJE NA DANE',note:'Brak prawidłowego terminu meczu.',kind:'waiting'};
+    if(at<kickoff){
+      const mins=Math.ceil((kickoff-at)/60000);
+      const eta=mins>=1440?`${Math.floor(mins/1440)} d ${Math.floor(mins%1440/60)} godz.`
+        :mins>=60?`${Math.floor(mins/60)} godz. ${mins%60} min`: `${mins} min`;
+      return {label:'ZAPISANY PRZED MECZEM',note:`Planowany początek za ${eta}.`,kind:''};
+    }
+    if(at<kickoff+3*60*60*1000){
+      return {label:'PO GODZINIE STARTU',note:'Minęła zaplanowana godzina rozpoczęcia. Wynik w archiwum nadal oczekuje; nie potwierdzamy, czy mecz trwa lub się zakończył.',kind:'waiting'};
+    }
+    return {label:'CZEKA NA ROZLICZENIE',note:'Minęły 3 godziny od planowanego startu. Rozliczenie wymaga wyniku końcowego w OpenLigaDB i kolejnego uruchomienia GitHub Actions.',kind:'waiting'};
+  }
   function brierOf(r){
     return ['1','X','2'].reduce((sum,k)=>sum+(r.snapshot.probabilities[k]-(r.settlement.outcome===k?1:0))**2,0)/3;
   }
@@ -793,13 +822,14 @@
     if(!state.archiveReady){root.append(make('p','rank-empty',state.archiveFailed?'Błąd pobierania lub sprawdzania danych. Nie wyświetlamy niezweryfikowanych prognoz.':'Weryfikowanie danych…'));}
     else if(!rows.length){root.append(make('p','rank-empty','Brak prognoz dla wybranych filtrów i progu. Obniż minimalną szansę albo wybierz „Całe archiwum”.'));}
     for(const [i,r] of rows.slice(0,16).entries()){
-      const s=r.snapshot, p=s.probabilities, lead=leaderOf(r), isGraded=scored(r);
+      const s=r.snapshot, p=s.probabilities, lead=leaderOf(r), isGraded=scored(r), phase=archivePhase(r,now);
       const card=make('article','rank-card');
       const head=make('div','rank-top');
       head.append(make('span','rank-index',`#${i+1} · ${allowedLeagues[s.league]||s.league} · ${s.season}/${s.season+1}`));
-      head.append(make('span','rank-tag'+(isGraded?' graded':''),isGraded?'ROZLICZONY':status==='awaiting'?'OCZEKUJE':'ZAPISANY PRZED MECZEM'));
+      head.append(make('span','rank-tag'+(isGraded?' graded':''),phase.label));
       card.append(head,make('h3','',`${s.home} – ${s.away}`));
       card.append(make('p','rank-date',`Początek: ${new Date(s.kickoff).toLocaleString('pl-PL')}`));
+      if(!isGraded)card.append(make('p','archive-time-note',phase.note));
       const leader=make('div','rank-leader');
       const choice=make('div','rank-choice',`Najwyższy wynik modelu: ${lead.outcome} · ${lead.outcome==='1'?'gospodarze':lead.outcome==='2'?'goście':'remis'}`);
       leader.append(choice,make('strong','',formattedPercent(lead.confidence)));
@@ -836,6 +866,19 @@
     $('archive-total').textContent=String(chosen.length);
     $('archive-graded').textContent=String(graded.length);
     $('archive-hit').textContent=graded.length?probFormatter.format(hits/graded.length*100)+'%':'—';
+    const monitor=$('archive-monitor-status');
+    if(!state.archiveReady){
+      monitor.textContent=state.archiveFailed?'Archiwum niedostępne — brak wiarygodnych statusów.':'Weryfikowanie danych archiwum…';
+    }else{
+      const stages={before:0,started:0,waiting:0};
+      for(const rec of chosen.filter(r=>!scored(r))){
+        const kickoff=new Date(rec.snapshot.kickoff).getTime(), now=Date.now();
+        if(now<kickoff)stages.before++;
+        else if(now<kickoff+3*60*60*1000)stages.started++;
+        else stages.waiting++;
+      }
+      monitor.textContent=`Wybrana liga i sezon: ${stages.before} przed planowanym startem · ${stages.started} po godzinie startu (poniżej 3 h) · ${stages.waiting} czeka na końcowy wynik i rozliczenie · ${graded.length} rozliczonych.`;
+    }
     const root=$('archive-list');root.replaceChildren();
     if(!chosen.length){
       root.append(make('p','','Nie ma jeszcze publicznie zapisanych prognoz dla tej ligi i sezonu. Uruchomienie GitHub Actions pozwoli je zapisywać przed meczami.'));
@@ -845,11 +888,12 @@
     root.append(make('p','',details));
     const shown=chosen.slice().sort((a,b)=>b.snapshot.kickoff.localeCompare(a.snapshot.kickoff)).slice(0,12);
     for(const r of shown){
-      const s=r.snapshot,p=s.probabilities,finished=r.settlement.state==='graded';
+      const s=r.snapshot,p=s.probabilities,finished=r.settlement.state==='graded',phase=archivePhase(r);
       const entry=make('article','archive-entry');
-      entry.append(make('span','archive-chip'+(finished?' graded':''),finished?'ROZLICZONA':'PRZED MECZEM / OCZEKUJE'));
+      entry.append(make('span','archive-chip'+(finished?' graded':phase.kind==='waiting'?' waiting':''),phase.label));
       entry.append(make('strong','',s.home+' – '+s.away));
       entry.append(make('div','archive-meta','Mecz: '+new Date(s.kickoff).toLocaleString('pl-PL')+' · zapis: '+new Date(s.created_at).toLocaleString('pl-PL')));
+      if(!finished)entry.append(make('p','archive-time-note',phase.note));
       entry.append(make('div','archive-probs',`1: ${formattedPercent(p['1'])} · X: ${formattedPercent(p.X)} · 2: ${formattedPercent(p['2'])}`));
       if(finished)entry.append(make('div','archive-meta','Wynik: '+r.settlement.score.join(':')+' · '+(bestOutcome(p)===r.settlement.outcome?'trafienie 1X2':'nietrafione 1X2')));
       entry.append(make('div','archive-meta','SHA256: '+r.snapshot_sha256.slice(0,16)+'…'));
@@ -1045,7 +1089,7 @@
         allowedLeagues[s.league]||s.league,
         `${lead.outcome} (${formattedPercent(lead.confidence)})`,
         `${formattedPercent(s.probabilities['1'])} / ${formattedPercent(s.probabilities.X)} / ${formattedPercent(s.probabilities['2'])}`,
-        done?`${r.settlement.score.join(':')} · ${hit?'TRAFIONY':'NIETRAFIONY'}`:'Oczekuje',
+        done?`${r.settlement.score.join(':')} · ${hit?'TRAFIONY':'NIETRAFIONY'}`:archivePhase(r).label,
         done?brierOf(r).toFixed(3).replace('.',','):'—'];
     });
     auditBuildTable($('audit-matches'),['Początek','Spotkanie','Liga','Lider','1 / X / 2','Wynik / ocena','Brier'],matchRows);
@@ -1073,7 +1117,7 @@
     }
     const blob=new Blob(['\ufeff',lines.join('\r\n')],{type:'text/csv;charset=utf-8'});
     const url=URL.createObjectURL(blob),link=document.createElement('a');
-    link.href=url;link.download='RZOTKIEWKA_raport_1_8.csv';link.hidden=true;
+    link.href=url;link.download='RZOTKIEWKA_raport_1_9.csv';link.hidden=true;
     document.body.append(link);link.click();link.remove();
     setTimeout(()=>URL.revokeObjectURL(url),2000);
   });
@@ -1154,6 +1198,7 @@
   }));
   load();
   $('quality-refresh').addEventListener('click',loadArchive);
+  setInterval(()=>{if(!document.hidden && state.archiveReady){renderArchive();renderRanking();renderAudit();}},60*1000);
   setInterval(()=>{if(!document.hidden)loadArchive();},10*60*1000);
   loadArchive();
 })();
