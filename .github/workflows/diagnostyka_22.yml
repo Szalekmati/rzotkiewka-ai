@@ -1,0 +1,31 @@
+name: "RZOTKIEWKA - diagnostyka 2.2"
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Pobierz repozytorium
+        uses: actions/checkout@v4
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Testy bezpieczenstwa obliczen
+        run: python analiza_22.py --self-test
+      - name: Sprawdz dane i porownaj kalibracje
+        run: python analiza_22.py --csv data/mecze_21.csv --out wyniki_22
+      - name: Udostepnij raport i pelne wyniki
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: RZOTKIEWKA_DIAGNOSTYKA_22
+          path: wyniki_22/
+          if-no-files-found: warn
+          retention-days: 30
