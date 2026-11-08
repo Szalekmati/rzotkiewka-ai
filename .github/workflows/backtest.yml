@@ -1,0 +1,36 @@
+name: RZOTKIEWKA - backtest 1.3 vs 2.0
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Pobierz repozytorium
+        uses: actions/checkout@v4
+      - name: Przygotuj Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Testy backtestu bez internetu
+        run: python backtest.py --self-test
+      - name: Testy istniejacego silnika
+        run: python -m unittest discover -s tests -v
+      - name: Pobierz archiwalne mecze i porownaj modele
+        run: python backtest.py --seasons 2024 2025 --leagues bl1 bl2 bl3 --lead-hours 168 --out-dir backtest_reports
+      - name: Pokaz raport w GitHub Actions
+        if: success()
+        run: cat backtest_reports/RAPORT.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Zapisz raport do pobrania
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: RZOTKIEWKA_BACKTEST_WYNIKI
+          path: backtest_reports/
+          if-no-files-found: warn
+          retention-days: 30
