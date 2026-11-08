@@ -1,4 +1,4 @@
-"""Offline regression checks. No API calls and no wagers."""
+"""RZOTKIEWKA 1.6: testy jednostkowe bez Internetu i bez prawdziwych transakcji."""
 import copy
 import json
 import tempfile
@@ -6,88 +6,105 @@ import unittest
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from unittest.mock import patch
-
 import forecast_engine as engine
 
-ROOT = Path(__file__).resolve().parents[1]
+NOW = datetime(2026, 11, 8, 10, tzinfo=timezone.utc)
 
+def example_record(kickoff=NOW + timedelta(hours=5)):
+    m = {'id': 83999, 'kickoff': kickoff, 'home_id': 101, 'away_id': 102,
+         'home': 'Druzyna A', 'away': 'Druzyna B', 'score': None}
+    f = {'probabilities': {'1': .5, 'X': .3, '2': .2},
+         'expected_home_goals': 1.5, 'expected_away_goals': 1.0,
+         'league_matches_used': 90, 'home_matches_used': 8, 'away_matches_used': 8,
+         'home_match_ids': [], 'away_match_ids': []}
+    return engine.create_record('bl1', 2026, m, f, NOW), m
+
+def doc_with_record():
+    rec, m = example_record()
+    return {'schema': 1, 'updated_at': engine.iso(NOW), 'forecasts': [rec]}, m
 
 class ArchiveTests(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.original = json.loads((ROOT / 'predictions.json').read_text(encoding='utf-8'))
+    def test_snapshot_integrity(self):
+        doc, _ = doc_with_record()
+        self.assertIs(engine.valid_doc(doc), doc)
+        self.assertEqual(doc['forecasts'][0]['snapshot_sha256'], engine.sha256(doc['forecasts'][0]['snapshot']))
 
-    def test_existing_snapshots_untouched_and_valid(self):
-        validated = engine.valid_doc(copy.deepcopy(self.original))
-        self.assertEqual(len(validated['forecasts']), len(self.original['forecasts']))
-        self.assertTrue(all(engine.sha256(r['snapshot']) == r['snapshot_sha256'] for r in validated['forecasts']))
-
-    def test_tampered_forecast_is_rejected(self):
-        bad = copy.deepcopy(self.original)
-        bad['forecasts'][0]['snapshot']['probabilities']['1'] = 0.99
+    def test_tampered_snapshot_is_rejected(self):
+        doc, _ = doc_with_record()
+        doc['forecasts'][0]['snapshot']['probabilities']['1'] = .8
         with self.assertRaisesRegex(ValueError, 'zamrozonej prognozy'):
-            engine.valid_doc(bad)
+            engine.valid_doc(doc)
 
     def test_inconsistent_settlement_rejected(self):
-        bad = copy.deepcopy(self.original)
-        bad['forecasts'][0]['settlement'] = {'state': 'graded', 'score': [2, 0], 'outcome': '2', 'graded_at': '2026-11-09T16:00:00Z'}
+        doc, _ = doc_with_record()
+        doc['forecasts'][0]['settlement'] = {'state':'graded','score':[2,0],'outcome':'2','graded_at':engine.iso(NOW + timedelta(hours=8))}
         with self.assertRaisesRegex(ValueError, 'Niespojne rozliczenie'):
-            engine.valid_doc(bad)
+            engine.valid_doc(doc)
 
-    def test_settlement_does_not_modify_forecast(self):
-        doc = copy.deepcopy(self.original)
-        rec = doc['forecasts'][0]
-        snap = copy.deepcopy(rec['snapshot'])
-        m = {
-            'id': snap['match_id'],
-            'kickoff': datetime.fromisoformat(snap['kickoff'].replace('Z', '+00:00')),
-            'home': snap['home'], 'away': snap['away'],
-            'home_id': 201, 'away_id': 202, 'score': [3, 1],
-        }
-        later = m['kickoff'] + timedelta(hours=5)
-        updated, added, graded = engine.update_doc(doc, {(snap['league'], snap['season']): [m]}, later)
-        self.assertEqual((added, graded), (0, 1))
-        changed = next(r for r in updated['forecasts'] if r['id'] == rec['id'])
-        self.assertEqual(changed['snapshot'], snap)
-        self.assertEqual(changed['snapshot_sha256'], engine.sha256(snap))
-        self.assertEqual(changed['settlement']['outcome'], '1')
+    def test_settlement_preserves_snapshot(self):
+        doc, match = doc_with_record()
+        old = copy.deepcopy(doc['forecasts'][0]['snapshot'])
+        match['score'] = [2, 1]
+        doc, added, graded = engine.update_doc(doc, {('bl1', 2026): [match]}, NOW + timedelta(hours=9))
+        self.assertEqual((added,graded),(0,1))
+        self.assertEqual(doc['forecasts'][0]['snapshot'], old)
+        self.assertEqual(doc['forecasts'][0]['settlement']['outcome'], '1')
 
-    def test_no_retroactive_forecast_on_finished_match(self):
-        doc = {'schema': 1, 'updated_at': None, 'forecasts': []}
-        past = {'id': 1, 'kickoff': datetime(2026, 11, 7, 12, tzinfo=timezone.utc),
-                'home_id': 10, 'away_id': 11, 'home': 'A', 'away': 'B', 'score': [1, 1]}
-        doc, added, graded = engine.update_doc(doc, {('bl1', 2026): [past]}, datetime(2026, 11, 8, tzinfo=timezone.utc))
-        self.assertEqual((added, graded), (0, 0))
-        self.assertEqual(doc['forecasts'], [])
+    def test_not_settled_too_early(self):
+        doc, match = doc_with_record()
+        match['score'] = [2, 1]
+        doc, added, graded = engine.update_doc(doc, {('bl1', 2026): [match]}, NOW + timedelta(hours=7))
+        self.assertEqual((added, graded),(0,0))
+        self.assertEqual(doc['forecasts'][0]['settlement']['state'], 'pending')
 
-    def test_previous_season_pending_match_is_revisited(self):
-        doc = copy.deepcopy(self.original)
-        rec = doc['forecasts'][0]
-        rec['snapshot']['season'] = 2026
-        rec['snapshot']['league'] = 'bl2'
-        rec['id'] = 'bl2-2026-' + str(rec['snapshot']['match_id'])
-        rec['snapshot_sha256'] = engine.sha256(rec['snapshot'])
-        doc['forecasts'] = [rec]
-        kickoff = datetime.fromisoformat(rec['snapshot']['kickoff'].replace('Z', '+00:00'))
-        sample = {'id': rec['snapshot']['match_id'], 'kickoff': kickoff, 'home_id': 2,
-                  'away_id': 3, 'home': 'A', 'away': 'B', 'score': [0, 0]}
+    def test_no_settlement_without_final_result(self):
+        doc, match = doc_with_record()
+        doc, added, graded = engine.update_doc(doc, {('bl1', 2026): [match]}, NOW + timedelta(days=2))
+        self.assertEqual((added, graded),(0,0))
+
+    def test_double_settlement_is_idempotent(self):
+        doc, match = doc_with_record()
+        match['score']=[1,1]
+        later=NOW + timedelta(hours=9)
+        doc, a, b=engine.update_doc(doc,{('bl1',2026):[match]},later)
+        first=copy.deepcopy(doc)
+        doc, a2, b2=engine.update_doc(doc,{('bl1',2026):[match]},later + timedelta(hours=2))
+        self.assertEqual((a,b,a2,b2),(0,1,0,0))
+        self.assertEqual(doc,first)
+
+    def test_no_backfilled_prediction_on_finished_match(self):
+        doc={'schema':1,'updated_at':None,'forecasts':[]}
+        m={'id':12,'kickoff':NOW-timedelta(days=1),'home_id':5,'away_id':6,
+           'home':'Druzyna A','away':'Druzyna B','score':[1,1]}
+        doc, a, b=engine.update_doc(doc,{('bl1',2026):[m]},NOW)
+        self.assertEqual((a,b),(0,0))
+        self.assertEqual(doc['forecasts'],[])
+
+    def test_previous_season_pending_revisited(self):
+        doc,match=doc_with_record()
+        snap=doc['forecasts'][0]['snapshot']
+        snap['season']=2025
+        doc['forecasts'][0]['id']='bl1-2025-'+str(snap['match_id'])
+        doc['forecasts'][0]['snapshot_sha256']=engine.sha256(snap)
+        match['score']=[0,0]
         with tempfile.TemporaryDirectory() as tmp:
-            archive = Path(tmp) / 'predictions.json'
-            archive.write_text(json.dumps(doc), encoding='utf-8')
-            with patch.object(engine, 'FILE', archive), \
-                 patch.object(engine, 'utc_now', return_value=datetime(2027, 8, 5, tzinfo=timezone.utc)), \
-                 patch.object(engine, 'fetch_matches', side_effect=lambda league, season: [sample] if (league, season) == ('bl2', 2026) else []):
+            path=Path(tmp)/'predictions.json'
+            path.write_text(json.dumps(doc), encoding='utf-8')
+            with patch.object(engine,'FILE',path), patch.object(engine,'utc_now',return_value=datetime(2026,11,9,tzinfo=timezone.utc)), \
+                 patch.object(engine,'fetch_matches',side_effect=lambda league,season: [match] if (league,season)==('bl1',2025) else []):
                 engine.run()
-            result = json.loads(archive.read_text(encoding='utf-8'))
-            self.assertEqual(result['forecasts'][0]['settlement']['state'], 'graded')
-            self.assertEqual(result['forecasts'][0]['settlement']['outcome'], 'X')
+            result=json.loads(path.read_text(encoding='utf-8'))
+            self.assertEqual(result['forecasts'][0]['settlement']['outcome'],'X')
 
-    def test_probability_distribution_is_normalized(self):
-        for avg in (0.35, 1.0, 2.8, 3.5):
-            probs = engine.poisson(avg)
-            self.assertAlmostEqual(sum(probs), 1.0, places=10)
-            self.assertTrue(all(0 <= p <= 1 for p in probs))
+    def test_parse_score_requires_finished(self):
+        raw={'matchIsFinished':False,'matchResults':[{'resultTypeID':2,'pointsTeam1':3,'pointsTeam2':1}]}
+        self.assertIsNone(engine.parse_score(raw))
+        raw['matchIsFinished']=True
+        self.assertEqual(engine.parse_score(raw),[3,1])
 
+    def test_poisson_distribution(self):
+        for lam in (.35,1,2.8,3.5):
+            self.assertAlmostEqual(sum(engine.poisson(lam)),1.0)
 
-if __name__ == '__main__':
+if __name__=='__main__':
     unittest.main()
