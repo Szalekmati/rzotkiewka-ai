@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""RZOTKIEWKA AI 2.0 — prognozy 1X2, archiwum i rozliczanie.
+"""RZOTKIEWKA AI 2.1 — prognozy 1X2, archiwum i rozliczanie.
 
 Wersja testowa modelu statystycznego, bez gwarancji skutecznosci.
 Uzywa wylacznie danych historycznych dostepnych przed utworzeniem prognozy.
@@ -21,7 +21,7 @@ from zoneinfo import ZoneInfo
 BASE = 'https://api.openligadb.de/getmatchdata'
 LEAGUES = {'bl1': 'Bundesliga', 'bl2': '2. Bundesliga', 'bl3': '3. Liga'}
 FILE = Path(__file__).resolve().parent / 'predictions.json'
-MODEL_VERSION = '2.0.0'
+MODEL_VERSION = '2.1.0'
 MIN_LEAGUE = 24
 MIN_TEAM = 4
 RECENT = 8
@@ -170,6 +170,40 @@ def poisson(lam):
     return result
 
 
+
+def calibrate_draw(probs, history, avg_home, avg_away):
+    """Ostrozne przesuniecie log-odds remisu na podstawie WYŁĄCZNIE przeszlych meczow.
+
+    Punkt odniesienia to szansa remisu w niezaleznym Poissonie dla srednich
+    bramek w lidze. Empiryczna czestosc remisow jest wygładzona 48 pseudo-meczami
+    z a priori Poissona (1.45, 1.15); to nie jest estymator wytrenowany na
+    przyszlych meczach. Nie wymuszamy typu X ani nie zakladamy poprawy.
+    """
+    n = len(history)
+    draws = sum(m['score'][0] == m['score'][1] for m in history)
+    prior_x = sum(a * b for a, b in zip(poisson(1.45), poisson(1.15)))
+    empirical_x = (draws + 48.0 * prior_x) / (n + 48.0)
+    league_poisson_x = sum(a * b for a, b in zip(poisson(avg_home), poisson(avg_away)))
+
+    def logit(p):
+        p = clamp(p, 1e-8, 1.0 - 1e-8)
+        return math.log(p / (1.0 - p))
+
+    # Pozostawiamy sygnal modelu; korygujemy tylko konserwatywna czesc bledu
+    # sredniego P(X), i ograniczamy iloraz szans do exp(+/-0.22).
+    correction = clamp(0.40 * (logit(empirical_x) - logit(league_poisson_x)), -0.22, 0.22)
+    x = probs['X']
+    adjusted_x = 1.0 / (1.0 + math.exp(-(logit(x) + correction)))
+    scale = (1.0 - adjusted_x) / (1.0 - x)
+    adjusted = {'1': probs['1'] * scale, 'X': adjusted_x, '2': probs['2'] * scale}
+    return adjusted, {
+        'method': 'smoothed_league_draw_logodds_v1',
+        'games': n, 'draws': draws,
+        'raw_draw_probability': round(x, 6),
+        'draw_odds_log_shift': round(correction, 6),
+    }
+
+
 def predict(match, matches, now):
     history = prior_history(matches, match['kickoff'], now)
     home_rows = team_recent(history, match['home_id'])
@@ -193,10 +227,13 @@ def predict(match, matches, now):
         for j, p2 in enumerate(poisson(exp_away)):
             probs['1' if i > j else 'X' if i == j else '2'] += p1 * p2
     total = sum(probs.values())
-    probs = {k: round(probs[k] / total, 6) for k in ('1', 'X', '2')}
+    raw_probs = {k: probs[k] / total for k in ('1', 'X', '2')}
+    calibrated_probs, calibration = calibrate_draw(raw_probs, history, avg_home, avg_away)
+    probs = {k: round(calibrated_probs[k], 6) for k in ('1', 'X', '2')}
     probs['2'] = round(1.0 - probs['1'] - probs['X'], 6)
     return {
         'probabilities': probs,
+        'calibration': calibration,
         'expected_home_goals': round(exp_home, 3),
         'expected_away_goals': round(exp_away, 3),
         'league_matches_used': len(history),
@@ -284,7 +321,7 @@ def valid_doc(doc):
 
 def fetch_matches(league, season):
     url = f'{BASE}/{league}/{season}'
-    req = Request(url, headers={'User-Agent': 'Rzotkiewka-FootballLab/2.0 (public GitHub Actions)',
+    req = Request(url, headers={'User-Agent': 'Rzotkiewka-FootballLab/2.1 (public GitHub Actions)',
                                 'Accept': 'application/json'})
     data = None
     for attempt in range(3):
