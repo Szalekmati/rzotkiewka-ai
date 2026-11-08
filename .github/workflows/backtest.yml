@@ -1,4 +1,4 @@
-name: RZOTKIEWKA - backtest 1.3 vs 2.0
+name: RZOTKIEWKA - backtest 2.0 vs 2.1
 
 on:
   workflow_dispatch:
@@ -18,11 +18,11 @@ jobs:
         with:
           python-version: '3.12'
       - name: Testy backtestu bez internetu
-        run: python backtest.py --self-test
+        run: python backtest_21.py --self-test
       - name: Testy istniejacego silnika
         run: python -m unittest discover -s tests -v
       - name: Pobierz archiwalne mecze i porownaj modele
-        run: python backtest.py --seasons 2024 2025 --leagues bl1 bl2 bl3 --lead-hours 168 --out-dir backtest_reports
+        run: python backtest_21.py --seasons 2024 2025 --leagues bl1 bl2 bl3 --lead-hours 168 --out-dir backtest_reports
       - name: Pokaz raport w GitHub Actions
         if: success()
         run: cat backtest_reports/RAPORT.md >> "$GITHUB_STEP_SUMMARY"
@@ -30,7 +30,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: RZOTKIEWKA_BACKTEST_WYNIKI
+          name: RZOTKIEWKA_BACKTEST_2_1_WYNIKI
           path: backtest_reports/
           if-no-files-found: warn
           retention-days: 30
