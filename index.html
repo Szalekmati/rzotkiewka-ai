@@ -173,6 +173,14 @@
 
     /* RZOTKIEWKA 1.14 — publiczny ranking, wyłącznie zatwierdzone snapshoty */
     .ranking-section{margin:4px 0 58px}
+    /* Free-to-premium path: real archived forecasts, never demo betting tips. */
+    .free-showcase{margin:17px 0 21px;padding:clamp(17px,3vw,24px);background:linear-gradient(125deg,#213c27,#182b30);border:1px solid #6c965e;border-radius:17px}
+    .free-showcase-tag{display:inline-block;color:#d8fabc;font-size:11px;font-weight:850;letter-spacing:.065em}
+    .free-showcase h3{font-size:clamp(21px,3vw,27px);letter-spacing:-.025em;line-height:1.22;margin:10px 0}
+    .free-showcase p{max-width:850px;line-height:1.65;font-size:14px;color:#d0dfd3;margin:0}
+    .free-showcase .free-showcase-note{font-size:12px;color:#b4c5bc;margin-top:15px}
+    .free-showcase-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:17px}
+    .free-showcase-actions a{font-size:13px;text-align:center}
     .rank-shell{border:1px solid #345a43;background:linear-gradient(145deg,#14231c,#131c24 70%);border-radius:24px;padding:clamp(16px,4vw,26px)}
     .rank-shell h2{margin:0 0 9px}
     .rank-explainer{color:var(--muted);font-size:13px;max-width:810px;margin:0 0 17px;line-height:1.7}
@@ -334,17 +342,17 @@ button:disabled{opacity:.55;cursor:wait}
 <header class="header">
   <div class="shell head-inner">
     <a class="brand" href="#start" aria-label="RZOTKIEWKA — strona główna"><span class="brand-emoji" aria-hidden="true">🫜</span><span><span class="brand-name">RZOTKIEWKA</span><span class="brand-caption">SPORTS LAB · 1.14</span></span></a>
-    <nav class="nav" aria-label="Nawigacja"><a data-page-link href="#mecze"><span aria-hidden="true">⚽</span> Mecze</a><a data-page-link href="#ranking"><span aria-hidden="true">☆</span> Prognozy</a><a data-page-link href="#sporty"><span aria-hidden="true">◈</span> Sporty</a><a data-page-link href="#raport"><span aria-hidden="true">▤</span> Raport</a><a data-page-link href="#wiecej"><span aria-hidden="true">☰</span> Więcej</a></nav>
+    <nav class="nav" aria-label="Nawigacja"><a data-page-link href="#mecze"><span aria-hidden="true">⚽</span> Mecze</a><a data-page-link href="#ranking"><span aria-hidden="true">🔓</span> Darmowe</a><a data-page-link href="#sporty"><span aria-hidden="true">◈</span> Sporty</a><a data-page-link href="#raport"><span aria-hidden="true">▤</span> Raport</a><a data-page-link href="#wiecej"><span aria-hidden="true">☰</span> Więcej</a></nav>
   </div>
 </header>
 <div id="demo-banner" class="banner" role="status">WERSJA 1.14 · Mecze, prognozy i przejrzysty status LAB</div>
-<main class="shell" id="start"><nav class="app-nav" aria-label="Zakładki aplikacji"><a data-page-link href="#mecze"><span aria-hidden="true">⚽</span> Mecze</a><a data-page-link href="#ranking"><span aria-hidden="true">☆</span> Prognozy</a><a data-page-link href="#sporty"><span aria-hidden="true">◈</span> Sporty</a><a data-page-link href="#raport"><span aria-hidden="true">▤</span> Raport</a><a data-page-link href="#wiecej"><span aria-hidden="true">☰</span> Więcej</a></nav>
+<main class="shell" id="start"><nav class="app-nav" aria-label="Zakładki aplikacji"><a data-page-link href="#mecze"><span aria-hidden="true">⚽</span> Mecze</a><a data-page-link href="#ranking"><span aria-hidden="true">🔓</span> Darmowe</a><a data-page-link href="#sporty"><span aria-hidden="true">◈</span> Sporty</a><a data-page-link href="#raport"><span aria-hidden="true">▤</span> Raport</a><a data-page-link href="#wiecej"><span aria-hidden="true">☰</span> Więcej</a></nav>
   <section class="hero" aria-labelledby="hero-title">
     <div>
       <div class="kicker">⚽ PRAWDZIWE MECZE · PUBLICZNE ARCHIWUM PROGNOZ</div>
       <h1 id="hero-title">Mecze pod <span>lupą.</span></h1>
       <p class="lead">Prawdziwe mecze i prawdopodobieństwa 1–X–2. Oddzielamy szacunki na żywo od prognoz zapisanych przed pierwszym gwizdkiem.</p>
-      <div class="actions"><a class="primary" href="#mecze">Przeglądaj mecze →</a><a class="secondary" href="#lab">Postęp testu LAB</a></div>
+      <div class="actions"><a class="primary" href="#ranking">🔓 Darmowe prognozy i wyniki →</a><a class="secondary" href="#mecze">Przeglądaj mecze</a></div>
     </div>
     <div class="visual" aria-hidden="true"><div class="mascot">🫜</div><h3>Zapisz. Sprawdź. Ucz się.</h3><p>Prosty interfejs · jasne zasady</p></div>
   </section>
@@ -499,7 +507,18 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
   <section hidden id="ranking" class="ranking-section" aria-labelledby="ranking-title">
     <div class="rank-shell">
       <div class="kicker">📊 PUBLICZNE WYNIKI · BEZ OBIETNIC</div>
-      <h2 id="ranking-title" style="margin-top:14px">Ranking prognoz RZOTKIEWKA</h2>
+      <h2 id="ranking-title" style="margin-top:14px">Darmowe prognozy i wyniki RZOTKIEWKA</h2>
+      <div class="free-showcase" aria-label="Darmowe prognozy RZOTKIEWKA">
+        <span class="free-showcase-tag">🔓 BEZ OPŁAT · PUBLICZNE WYNIKI</span>
+        <h3>Zobacz prognozy. Sprawdź także nietrafione.</h3>
+        <p>Udostępniamy prognozy 1/X/2 i ich rozliczenia — bez wybierania wyłącznie udanych wyników. Wszystkie rekordy są w tym samym publicznym archiwum, z datą zapisu przed meczem. To eksperymentalne prawdopodobieństwa modelu, a nie kursy bukmacherskie ani gotowe kupony.</p>
+        <div class="free-showcase-actions">
+          <a class="primary" href="#raport">Pełne statystyki i błędy modelu →</a>
+          <a class="secondary" href="#premium">Co planujemy w Premium?</a>
+        </div>
+        <p class="free-showcase-note">Statystyki poniżej obejmują całą zweryfikowaną próbę. Mała liczba meczów nie dowodzi przewagi ani przyszłych zysków. Dostęp do prognoz jest obecnie darmowy.</p>
+      </div>
+
       <p class="rank-explainer">Tylko prognozy opublikowane przed spotkaniem i pozytywnie zweryfikowane SHA-256. Ranking sortuje według <strong>najwyższego pojedynczego prawdopodobieństwa 1X2</strong> wyliczonego przez model, a nie według pewności wygranej. Kolejność nie oznacza opłacalności zakładu.</p>
       <div class="rank-metrics" aria-label="Wyniki wszystkich zweryfikowanych prognoz">
         <div class="rank-metric"><strong id="rank-total">—</strong><span>Opublikowane prognozy</span></div>
@@ -614,8 +633,9 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
   </section>
   <section hidden id="premium" class="premium-section" aria-labelledby="premium-title">
     <div><div class="kicker">✦ PAKIET PREMIUM</div><h2 id="premium-title" style="margin-top:13px">Więcej analiz. Jeden prosty abonament.</h2>
-      <p class="section-sub">Docelowy pakiet z dodatkowymi typami, historią wyników i szczegółowymi analizami.</p>
-      <ul><li>Osobna sekcja typów Premium</li><li>Pełne uzasadnienia i przejrzysta historia</li><li>Brak obietnic zysku ani „pewnych kuponów”</li></ul>
+      <p class="section-sub">Najpierw zobacz bezpłatne prognozy i komplet ich wyników. Planowany Premium ma oferować dodatkową głębię analiz i wygodę, nie obietnicę skuteczniejszych zakładów.</p>
+      <ul><li><strong>Darmowe:</strong> prognozy 1/X/2 opublikowane przed meczem, rozliczenia trafień i pomyłek, historia zmian</li><li><strong>Planowane Premium:</strong> szersze analizy i objaśnienia, filtry oraz dodatkowe rozgrywki po sprawdzeniu jakości źródeł</li><li>Pełna historia wyników powinna pozostać jawna także dla przyszłych analiz Premium</li><li>Brak „pewniaków” i gwarancji zarobku — produkt badawczy, 18+</li></ul>
+      <p><a class="secondary" href="#ranking">🔓 Najpierw sprawdź darmowe prognozy →</a></p>
       <p class="coming">⏳ Płatności i dostęp Premium jeszcze nie są aktywne.</p>
     </div>
     <div><div class="price">19,99 zł<small> / mies.</small></div><p style="color:var(--muted);font-size:12px;margin:13px 0 0">Cena planowana · nic nie zostanie pobrane.</p></div>
@@ -1461,7 +1481,7 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
   loadArchive();
 })();
 </script>
-<nav class="mobile-nav" aria-label="Główne zakładki"><a data-page-link href="#mecze"><span aria-hidden="true">⚽</span> Mecze</a><a data-page-link href="#ranking"><span aria-hidden="true">☆</span> Prognozy</a><a data-page-link href="#sporty"><span aria-hidden="true">◈</span> Sporty</a><a data-page-link href="#raport"><span aria-hidden="true">▤</span> Raport</a><a data-page-link href="#wiecej"><span aria-hidden="true">☰</span> Więcej</a></nav>
+<nav class="mobile-nav" aria-label="Główne zakładki"><a data-page-link href="#mecze"><span aria-hidden="true">⚽</span> Mecze</a><a data-page-link href="#ranking"><span aria-hidden="true">🔓</span> Darmowe</a><a data-page-link href="#sporty"><span aria-hidden="true">◈</span> Sporty</a><a data-page-link href="#raport"><span aria-hidden="true">▤</span> Raport</a><a data-page-link href="#wiecej"><span aria-hidden="true">☰</span> Więcej</a></nav>
 <script type="application/json" id="research-original-json">{
   "protocol": "expanding-seasons-v1; T-168h; result buffer 3h",
   "candidate": "Original LAB 2.2 algorithm on v2.0, refitted annually on earlier seasons only",

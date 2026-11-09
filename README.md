@@ -12,6 +12,12 @@ Publiczny, eksperymentalny serwis z terminarzem piłkarskim, modelem prawdopodob
 - Oddzielny test historyczny, jednoznacznie oznaczony jako retrospektywny.
 - Fikcyjne typy **DEMO** w `tips.json`; widok planowanego Premium za 19,99 zł miesięcznie.
 
+## Darmowe prognozy i przyszły Premium
+
+Zakładka **🔓 Darmowe** pokazuje realnie zapisane przed meczem prognozy 1/X/2, ich rozliczenia oraz całe archiwum (trafienia i pomyłki). Widok Premium jest planem produktu; płatności i bezpieczna kontrola dostępu nie działają. Plik `tips.json` zawiera wyłącznie fikcyjne rekordy DEMO — nie można przedstawiać ich jako historii skutecznych zakładów.
+
+Pomysł produktowy: bezpłatna, możliwa do zweryfikowania próbka może pomagać użytkownikom ocenić usługę. Nie zakładamy wzrostu konwersji bez pomiaru. Statystyki trafień 1/X/2 nie są zwrotem z kuponów ani dowodem przewagi nad kursami. Przed uruchomieniem płatności i marketingu trzeba sprawdzić wymagania prawne i ograniczenia wiekowe.
+
 ## Czego jeszcze nie ma
 
 - Prawdziwych płatności, kont ani bezpiecznej blokady Premium.
