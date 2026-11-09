@@ -28,7 +28,18 @@ class ForwardLabSafetyTests(unittest.TestCase):
         text = self.workflow
         self.assertRegex(text, r"(?m)^on:\s*\n  workflow_dispatch:\s*\n  schedule:\s*\n")
         self.assertRegex(text, r"(?m)^\s+- cron: '37 \* \* \* \*'\s*$")
-        self.assertNotRegex(text, r"(?m)^  (workflow_run|push|pull_request):")
+        self.assertNotRegex(text, r"(?m)^  (push|pull_request|pull_request_target):")
+        for line in (
+            '  workflow_run:',
+            'workflows: ["RZOTKIEWKA - prognozy i wyniki 1.6"]',
+            'types: [completed]',
+            'branches: [main]',
+            "github.event.workflow_run.conclusion == 'success'",
+            "github.event.workflow_run.event == 'schedule'",
+            "github.event.workflow_run.head_branch == github.event.repository.default_branch",
+            "github.event.workflow_run.repository.full_name == github.repository",
+        ):
+            self.assertIn(line, text)
         self.assertIn("group: rzotkiewka-forward-lab", text)
         self.assertIn("cancel-in-progress: false", text)
         self.assertIn("contents: write", text)
@@ -58,6 +69,8 @@ class ForwardLabSafetyTests(unittest.TestCase):
         text = self.workflow
         for term in (
             "'event': os.environ['GITHUB_EVENT_NAME']",
+            "'upstream_event': os.environ.get('UPSTREAM_EVENT') or None",
+            "'upstream_run_id': os.environ.get('UPSTREAM_RUN_ID') or None",
             "'observed_at': datetime.now(timezone.utc).isoformat",
             "'observation_outcome': os.environ['OBSERVATION_OUTCOME']",
             "'planned_cron_utc': '37 * * * *'",
@@ -67,7 +80,9 @@ class ForwardLabSafetyTests(unittest.TestCase):
             self.assertIn(term, text)
         status = json.loads((ROOT / "lab_forward" / "run_status.json")
                             .read_text(encoding="utf-8"))
-        self.assertIn(status["event"], ("workflow_dispatch", "schedule"))
+        self.assertIn(status["event"], ("workflow_dispatch", "schedule", "workflow_run"))
+        if status["event"] == "workflow_run":
+            self.assertEqual(status.get("upstream_event"), "schedule")
         self.assertEqual(status["planned_cron_utc"], EXPECTED_CRON)
         observed = datetime.fromisoformat(
             status["observed_at"].replace("Z", "+00:00"))

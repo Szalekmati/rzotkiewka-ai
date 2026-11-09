@@ -101,6 +101,8 @@ class SiteIntegrity(unittest.TestCase):
         self.assertIn("./lab_forward/run_status.json?t=", js)
         self.assertIn("status.event==='schedule'", js)
         self.assertIn("status.event==='workflow_dispatch'", js)
+        self.assertIn("status.event==='workflow_run'&&status.upstream_event==='schedule'", js)
+        self.assertIn("const automatic=status.event==='schedule'||backup;", js)
         self.assertIn("Udany test ręczny nie potwierdza działania harmonogramu.", js)
         self.assertIn("ageHours>3", js)
         self.assertIn("void loadLabAutomation(controller.signal);", js)

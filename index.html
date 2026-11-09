@@ -514,7 +514,7 @@ button:disabled{opacity:.55;cursor:wait}
     <aside class="lab-automation" aria-labelledby="lab-automation-heading">
       <div class="lab-automation-head"><strong id="lab-automation-heading">⏱ Automatyzacja eksperymentu</strong><span id="lab-run-badge" class="lab-run-badge">SPRAWDZANIE</span></div>
       <p id="lab-run-detail" role="status" aria-live="polite">Sprawdzanie ostatniego zapisanego uruchomienia LAB…</p>
-      <p class="lab-automation-foot">Harmonogram GitHub może być opóźniony lub pominięty. Ten status pochodzi z zapisanego pliku, nie z bieżącej listy zadań GitHub. Brak prognoz może także oznaczać, że nie ma jeszcze meczów w oknie 162–168 godzin.</p>
+      <p class="lab-automation-foot">Własny harmonogram LAB i wyzwalanie zapasowe po pomyślnym automatycznym zadaniu głównym mogą zostać opóźnione lub pominięte. Ten status pochodzi z zapisanego pliku, nie z bieżącej listy zadań GitHub. Brak prognoz może także oznaczać, że nie ma jeszcze meczów w oknie 162–168 godzin.</p>
       <a href="https://github.com/Szalekmati/rzotkiewka-ai/actions/workflows/test_przedmeczowy.yml" target="_blank" rel="noopener noreferrer">Sprawdź uruchomienia LAB w GitHub Actions ↗</a>
     </aside>
     <div class="lab-metrics"><div><strong id="lab-pairs">—</strong><span>Zapisane pary prognoz</span></div><div><strong id="lab-settled">—</strong><span>Rozliczone pary</span></div><div><strong id="lab-errors">—</strong><span>Zgłoszone błędy pobierania</span></div></div>
@@ -2023,7 +2023,10 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
       const status=await res.json();
       const at=Date.parse(status.observed_at),ageHours=(Date.now()-at)/3600000;
       if(!Number.isFinite(at)||!Number.isFinite(ageHours)||ageHours<0)throw new Error('Błędna data statusu');
-      const event=status.event==='schedule'?'automatyczne'
+      const backup=status.event==='workflow_run'&&status.upstream_event==='schedule';
+      const automatic=status.event==='schedule'||backup;
+      const event=backup?'automatyczne (zapasowe po zadaniu głównym)'
+        :status.event==='schedule'?'automatyczne (własny harmonogram)'
         :status.event==='workflow_dispatch'?'ręczne':'inne ('+String(status.event||'nieznane').slice(0,35)+')';
       const observed=new Date(at).toLocaleString('pl-PL',{timeZone:'Europe/Warsaw'});
       const outcome=status.observation_outcome==='success'?'bez zgłoszonego błędu':'z wynikiem '+String(status.observation_outcome||'nieznanym').slice(0,35);
@@ -2031,7 +2034,7 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
       if(ageHours>3||status.observation_outcome!=='success'){
         badge.classList.add('warning');
         badge.textContent='WYMAGA KONTROLI';
-      }else if(status.event==='schedule'){
+      }else if(automatic){
         badge.classList.add('automatic');
         badge.textContent='OSTATNIO AUTOMATYCZNIE';
       }else{
@@ -2040,7 +2043,7 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
       }
       detail.textContent='Ostatni zapis: '+observed+' (czas polski); uruchomienie '+event+', '+outcome
         +'. '+(ageHours>3?'Minęły ponad 3 godziny — potwierdź w GitHub Actions, czy harmonogram pracuje.':
-               status.event==='schedule'?'To potwierdza ostatnie automatyczne uruchomienie, nie gwarantuje kolejnych.':
+               automatic?'To potwierdza ostatnie automatyczne uruchomienie, nie gwarantuje kolejnych.':
                'Udany test ręczny nie potwierdza działania harmonogramu.');
     }catch{
       badge.classList.add('warning');
