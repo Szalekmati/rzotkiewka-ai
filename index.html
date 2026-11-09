@@ -519,7 +519,7 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
         <p class="free-showcase-note">Statystyki poniżej obejmują całą zweryfikowaną próbę. Mała liczba meczów nie dowodzi przewagi ani przyszłych zysków. Dostęp do prognoz jest obecnie darmowy.</p>
       </div>
 
-      <p class="rank-explainer">Tylko prognozy opublikowane przed spotkaniem i pozytywnie zweryfikowane SHA-256. Ranking sortuje według <strong>najwyższego pojedynczego prawdopodobieństwa 1X2</strong> wyliczonego przez model, a nie według pewności wygranej. Kolejność nie oznacza opłacalności zakładu.</p>
+      <p class="rank-explainer">Tylko prognozy opublikowane przed spotkaniem i pozytywnie zweryfikowane SHA-256. <strong>Domyślnie widać wszystkie: trafione, nietrafione i oczekujące.</strong> Najnowsze są na początku; możesz też sortować według najwyższego prawdopodobieństwa 1X2. Kolejność ani wysoki procent nie oznaczają opłacalności zakładu.</p>
       <div class="rank-metrics" aria-label="Wyniki wszystkich zweryfikowanych prognoz">
         <div class="rank-metric"><strong id="rank-total">—</strong><span>Opublikowane prognozy</span></div>
         <div class="rank-metric"><strong id="rank-graded">—</strong><span>Rozliczone mecze</span></div>
@@ -532,18 +532,18 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
           <select id="rank-league"><option value="all">Wszystkie ligi</option><option value="bl1">Bundesliga</option><option value="bl2">2. Bundesliga</option><option value="bl3">3. Liga</option></select>
         </label>
         <label class="field-select" for="rank-state">Stan meczu
-          <select id="rank-state"><option value="upcoming">Przed meczem</option><option value="graded">Rozliczone</option><option value="awaiting">Oczekują na wynik</option></select>
+          <select id="rank-state"><option value="all" selected>Wszystkie prognozy</option><option value="upcoming">Przed meczem</option><option value="graded">Rozliczone</option><option value="awaiting">Oczekują na wynik</option></select>
         </label>
         <label class="field-select" for="rank-order">Sortuj
-          <select id="rank-order"><option value="confidence">Szansa lidera ↓</option><option value="kickoff">Termin meczu ↑</option></select>
+          <select id="rank-order"><option value="newest" selected>Najnowsze najpierw</option><option value="confidence">Szansa lidera ↓</option><option value="kickoff">Termin meczu ↑</option></select>
         </label>
         <label class="field-select" for="rank-minprob">Minimalna szansa lidera
-          <select id="rank-minprob"><option value="0">Całe archiwum</option><option value="0.45">Od 45%</option><option value="0.50" selected>Od 50%</option><option value="0.55">Od 55%</option><option value="0.60">Od 60%</option></select>
+          <select id="rank-minprob"><option value="0" selected>Całe archiwum</option><option value="0.45">Od 45%</option><option value="0.50">Od 50%</option><option value="0.55">Od 55%</option><option value="0.60">Od 60%</option></select>
         </label>
       </div>
       <div class="match-search"><label for="rank-search">Szukaj w prognozach<input id="rank-search" type="search" placeholder="Nazwa gospodarzy lub gości…" maxlength="90" autocomplete="off"></label><button id="rank-watched" class="watch-button" type="button" aria-pressed="false">☆ Tylko obserwowane</button></div>
       <p id="watch-storage-note" class="watch-note">Obserwowane prognozy zapisują się w tej przeglądarce na tym urządzeniu.</p>
-      <p id="rank-filter-note" class="rank-filter-note" role="status">Próg 50% służy filtrowaniu, nie oznacza sprawdzonej skuteczności.</p>
+      <p id="rank-filter-note" class="rank-filter-note" role="status">Pokazujemy całe publiczne archiwum. Nie ukrywamy nieudanych prognoz.</p>
       <div id="rank-list" class="rank-cards" aria-live="polite"><div class="rank-empty">Trwa weryfikacja archiwum…</div></div>
       <details class="rank-by-league"><summary>Skuteczność i Brier w podziale na ligi</summary><div id="rank-leagues"><p>Wczytywanie statystyk ligowych…</p></div></details>
       <p class="rank-footer">Dane: publiczny plik <a href="./predictions.json" class="archive-link">predictions.json</a> i historia <a href="https://github.com/Szalekmati/rzotkiewka-ai/commits/main/predictions.json" target="_blank" rel="noopener noreferrer" class="archive-link">commitów GitHub</a>. Źródłem wyników jest OpenLigaDB. SHA-256 wykrywa niespójność danych, ale nie stanowi niezależnego audytu. Nie podajemy ROI bez rzeczywistych kursów bukmacherskich. Brak gwarancji skuteczności.</p>
@@ -1073,11 +1073,13 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
       if(!matchesQuery(r.snapshot.home,r.snapshot.away,$('rank-search').value))return false;
       if(leaderOf(r).confidence+1e-10<minimum)return false;
       if(league!=='all'&&r.snapshot.league!==league)return false;
+      if(status==='all')return true;
       if(status==='graded')return scored(r);
       if(status==='upcoming')return !scored(r)&&new Date(r.snapshot.kickoff).getTime()>now;
       return !scored(r)&&new Date(r.snapshot.kickoff).getTime()<=now;
     }).sort((a,b)=>{
       const dt=new Date(a.snapshot.kickoff).getTime()-new Date(b.snapshot.kickoff).getTime();
+      if(order==='newest')return -dt||a.id.localeCompare(b.id);
       if(order==='kickoff')return dt||a.id.localeCompare(b.id);
       return leaderOf(b).confidence-leaderOf(a).confidence||dt||a.id.localeCompare(b.id);
     });
