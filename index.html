@@ -342,6 +342,17 @@ button:disabled{opacity:.55;cursor:wait}
 @media(max-width:720px){.nav{display:none}.app-nav{gap:5px;padding:12px 0}.app-nav a{padding:9px 6px;flex-direction:column;gap:2px;font-size:11px;min-width:55px}.window-cards,.competition-grid,.more-grid{grid-template-columns:1fr}.compact-hero{padding:12px 0 20px}.compact-hero .kicker{font-size:10px}.quick-lab{padding:14px}.lab-window{padding:14px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}}
 
+    /* Forward-LAB automation health: saved-observation evidence, never live GitHub state. */
+    .lab-automation{border:1px solid #476951;background:linear-gradient(130deg,#152a27,#101e28);border-radius:15px;padding:16px 18px;margin:17px 0 23px}
+    .lab-automation-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .lab-automation-head strong{color:#e6f8df;font-size:14px}
+    .lab-run-badge{display:inline-flex;border:1px solid #61734f;border-radius:100px;padding:5px 10px;font-weight:850;font-size:10px;letter-spacing:.065em;color:#e8f0c6;background:#303e2b}
+    .lab-run-badge.manual{background:#3b3324;border-color:#917548;color:#ffe3a8}
+    .lab-run-badge.warning{background:#432b29;border-color:#a36a64;color:#ffcac4}
+    .lab-run-badge.automatic{background:#294a30;border-color:#5c9965;color:#d5ffc7}
+    #lab-run-detail{margin:11px 0 8px;font-size:13px;color:#d7e7da;line-height:1.6}
+    .lab-automation .lab-automation-foot{font-size:11px;color:#b4c5bc;line-height:1.6;margin:7px 0 12px}
+    .lab-automation a{display:inline-block;min-height:44px;font-size:12px;font-weight:850;color:#d2ffb0;text-decoration:underline;text-underline-offset:3px;padding:9px 0}
     /* RZOTKIEWKA 2.0: editorial sports dashboard; preserves original data engine. */
     :root{--bg:#071119;--surface:#121f27;--surface2:#182b30;--line:#2b4148;--ink:#f4faf5;--muted:#a6b7b9;--accent:#c4ff69;--accent2:#e3ffb5;--gold:#ffdc91}
     body{background:radial-gradient(ellipse 75% 36% at 10% 0%,#17392c 0%,transparent 78%),radial-gradient(ellipse 60% 24% at 98% 28%,#163035 0%,transparent 80%),#071119;background-attachment:fixed}
@@ -500,6 +511,12 @@ button:disabled{opacity:.55;cursor:wait}
   <section hidden id="lab" class="lab-panel" aria-labelledby="lab-heading">
     <div class="lab-head"><div><div class="kicker">🧪 TEST PRZEDMECZOWY · 2.1 / 2.2 LAB</div><h2 id="lab-heading">Badania i wyniki silnika</h2></div><button id="lab-refresh" class="watch-button" type="button">↻ Odśwież status</button></div>
     <p>Porównujemy dwie wersje modelu na prognozach zapisanych 162–168 godzin przed meczem. Rozwój strony trwa równolegle.</p>
+    <aside class="lab-automation" aria-labelledby="lab-automation-heading">
+      <div class="lab-automation-head"><strong id="lab-automation-heading">⏱ Automatyzacja eksperymentu</strong><span id="lab-run-badge" class="lab-run-badge">SPRAWDZANIE</span></div>
+      <p id="lab-run-detail" role="status" aria-live="polite">Sprawdzanie ostatniego zapisanego uruchomienia LAB…</p>
+      <p class="lab-automation-foot">Harmonogram GitHub może być opóźniony lub pominięty. Ten status pochodzi z zapisanego pliku, nie z bieżącej listy zadań GitHub. Brak prognoz może także oznaczać, że nie ma jeszcze meczów w oknie 162–168 godzin.</p>
+      <a href="https://github.com/Szalekmati/rzotkiewka-ai/actions/workflows/test_przedmeczowy.yml" target="_blank" rel="noopener noreferrer">Sprawdź uruchomienia LAB w GitHub Actions ↗</a>
+    </aside>
     <div class="lab-metrics"><div><strong id="lab-pairs">—</strong><span>Zapisane pary prognoz</span></div><div><strong id="lab-settled">—</strong><span>Rozliczone pary</span></div><div><strong id="lab-errors">—</strong><span>Zgłoszone błędy pobierania</span></div></div>
     <p id="lab-status" role="status" aria-live="polite">Pobieranie raportu testu…</p>
     <progress id="lab-progress" max="300" value="0" hidden aria-label="Rozliczone pary do przeglądu wyników"></progress>
@@ -1995,10 +2012,48 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
     }
     $('lab-comparison').hidden=false;
   }
+  async function loadLabAutomation(signal){
+    const badge=$('lab-run-badge'),detail=$('lab-run-detail');
+    badge.className='lab-run-badge';
+    badge.textContent='SPRAWDZANIE';
+    detail.textContent='Sprawdzanie ostatniego zapisanego uruchomienia LAB…';
+    try{
+      const res=await fetch('./lab_forward/run_status.json?t='+Math.floor(Date.now()/60000),{cache:'no-store',signal});
+      if(!res.ok)throw new Error('Nie można odczytać statusu');
+      const status=await res.json();
+      const at=Date.parse(status.observed_at),ageHours=(Date.now()-at)/3600000;
+      if(!Number.isFinite(at)||!Number.isFinite(ageHours)||ageHours<0)throw new Error('Błędna data statusu');
+      const event=status.event==='schedule'?'automatyczne'
+        :status.event==='workflow_dispatch'?'ręczne':'inne ('+String(status.event||'nieznane').slice(0,35)+')';
+      const observed=new Date(at).toLocaleString('pl-PL',{timeZone:'Europe/Warsaw'});
+      const outcome=status.observation_outcome==='success'?'bez zgłoszonego błędu':'z wynikiem '+String(status.observation_outcome||'nieznanym').slice(0,35);
+      // A green manual run cannot prove that cron is being delivered.
+      if(ageHours>3||status.observation_outcome!=='success'){
+        badge.classList.add('warning');
+        badge.textContent='WYMAGA KONTROLI';
+      }else if(status.event==='schedule'){
+        badge.classList.add('automatic');
+        badge.textContent='OSTATNIO AUTOMATYCZNIE';
+      }else{
+        badge.classList.add('manual');
+        badge.textContent='OSTATNIO RĘCZNIE';
+      }
+      detail.textContent='Ostatni zapis: '+observed+' (czas polski); uruchomienie '+event+', '+outcome
+        +'. '+(ageHours>3?'Minęły ponad 3 godziny — potwierdź w GitHub Actions, czy harmonogram pracuje.':
+               status.event==='schedule'?'To potwierdza ostatnie automatyczne uruchomienie, nie gwarantuje kolejnych.':
+               'Udany test ręczny nie potwierdza działania harmonogramu.');
+    }catch{
+      badge.classList.add('warning');
+      badge.textContent='BRAK POTWIERDZENIA';
+      detail.textContent='Nie można odczytać ostatniego statusu automatyzacji. Nie oznacza to, że eksperyment został uruchomiony; sprawdź GitHub Actions.';
+    }
+  }
   async function loadLab(){
     $('lab-refresh').disabled=true;
     $('lab-status').textContent='Pobieranie aktualnego raportu…';
     const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);
+    // Separate from the research report: no false 'automatic' claim from a manual run.
+    void loadLabAutomation(controller.signal);
     try{
       const res=await fetch('./lab_forward/RAPORT.md',{cache:'no-store',signal:controller.signal});
       if(!res.ok)throw new Error('Raport niedostępny');

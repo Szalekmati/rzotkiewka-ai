@@ -94,6 +94,18 @@ class SiteIntegrity(unittest.TestCase):
         self.assertIn("share-forecast-button", self.html)
         self.assertIn("Nie znaleziono tej prognozy w zweryfikowanym archiwum", js)
 
+    def test_lab_automation_is_honest_about_manual_runs(self):
+        for ident in ("lab-run-badge", "lab-run-detail", "lab-automation-heading"):
+            self.assertIn(ident, self.page.ids)
+        js = "\n".join(self.page.js)
+        self.assertIn("./lab_forward/run_status.json?t=", js)
+        self.assertIn("status.event==='schedule'", js)
+        self.assertIn("status.event==='workflow_dispatch'", js)
+        self.assertIn("Udany test ręczny nie potwierdza działania harmonogramu.", js)
+        self.assertIn("ageHours>3", js)
+        self.assertIn("void loadLabAutomation(controller.signal);", js)
+        self.assertIn("Brak prognoz może także oznaczać", self.html)
+
     def test_no_default_cherry_picking(self):
         self.assertRegex(self.html, r'<select id="rank-state">\s*<option value="all" selected>')
         self.assertRegex(self.html, r'<select id="rank-minprob">\s*<option value="0" selected>')

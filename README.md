@@ -24,6 +24,10 @@ Pomysł produktowy: bezpłatna, możliwa do zweryfikowania próbka może pomaga�
 
 W zakładce **Darmowe** każda karta z publicznego, zweryfikowanego archiwum oferuje **Udostępnij analizę**. Na Androidzie otwiera systemowe udostępnianie, a w innych przeglądarkach próbuje skopiować link lub pokazuje okno ręcznego kopiowania. Link ma postać `?forecast=<identyfikator>#ranking`; odbiorca zobaczy wyróżniony, konkretny rekord tylko wtedy, gdy nadal znajduje się w archiwum po weryfikacji SHA-256. Dane nie są generowane ponownie ani ukrywane według wyniku. Brak kont, śledzenia kliknięć, kursów i obietnic zysku.
 
+## Status automatyzacji LAB
+
+Zakładka **Test LAB** w interfejsie strony 2.0 pokazuje teraz ostatnie *zapisane* zdarzenie z `lab_forward/run_status.json`: czas, rodzaj zdarzenia (ręczne lub `schedule`) i jego wynik. Jeśli status jest starszy niż 3 godziny, pojawia się ostrzeżenie i odnośnik do [historii GitHub Actions](https://github.com/Szalekmati/rzotkiewka-ai/actions/workflows/test_przedmeczowy.yml). **To nie jest odczyt bieżącego stanu GitHub Actions**, więc ostrzeżenie nie dowodzi awarii, a zielony test ręczny nie dowodzi sprawnego harmonogramu. Nie zmieniono zamrożonych silników 2.1/2.2, okna 162–168 h ani plików archiwum.
+
 ## Kontrola jakości strony
 
 Automatyczne testy na GitHubie sprawdzają unikalne identyfikatory HTML, domyślne filtry darmowych prognoz bez pomijania porażek, etykiety DEMO/Premium, integralność archiwum i składnię JavaScript (Node.js). Kontrola uruchamia się po zmianach strony lub danych, nie pobiera kursów ani nie wykonuje transakcji. Wymaga Node.js tylko do testu JavaScript; bez Node ten test lokalnie jest pomijany. Zielony test nie zastępuje sprawdzenia strony w przeglądarce i nie blokuje automatycznie publikacji GitHub Pages.
