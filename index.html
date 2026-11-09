@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0a0e13">
-  <meta name="description" content="🫜 RZOTKIEWKA 1.12 — publiczny ranking prognoz 1X2, zweryfikowane archiwum, wyniki i analiza. Brak gwarancji wygranej.">
-  <title>🫜 RZOTKIEWKA 1.12 — Ranking prognoz i wyniki 1X2</title>
+  <meta name="description" content="🫜 RZOTKIEWKA 1.13 — publiczny ranking prognoz 1X2, zweryfikowane archiwum, wyniki i analiza. Brak gwarancji wygranej.">
+  <title>🫜 RZOTKIEWKA 1.13 — Ranking prognoz i wyniki 1X2</title>
   <style>
     :root{color-scheme:dark;--bg:#0a0e13;--surface:#131a22;--surface2:#19232d;--line:#293743;--ink:#f4f8f8;--muted:#a2b1bc;--accent:#a6f475;--accent2:#dfffc8;--red:#ff858b;--gold:#f4c77f;--radius:18px}
     *{box-sizing:border-box}
@@ -171,7 +171,7 @@
     .archive-chip.waiting{border-color:#987a4a;color:#ffdfad}
     @media(max-width:420px){.archive-panel{padding:14px}.archive-metric{padding:10px}.archive-metric strong{font-size:21px}}
 
-    /* RZOTKIEWKA 1.12 — publiczny ranking, wyłącznie zatwierdzone snapshoty */
+    /* RZOTKIEWKA 1.13 — publiczny ranking, wyłącznie zatwierdzone snapshoty */
     .ranking-section{margin:4px 0 58px}
     .rank-shell{border:1px solid #345a43;background:linear-gradient(145deg,#14231c,#131c24 70%);border-radius:24px;padding:clamp(16px,4vw,26px)}
     .rank-shell h2{margin:0 0 9px}
@@ -235,7 +235,7 @@
     .audit-empty{color:var(--muted);font-size:13px;padding:15px}
     @media(max-width:600px){.audit-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.audit-head h2{font-size:25px}.audit-download{width:100%}}
 
-    /* RZOTKIEWKA 1.12 — kontrola jakości publicznych prognoz. */
+    /* RZOTKIEWKA 1.13 — kontrola jakości publicznych prognoz. */
     .quality-section{margin:0 0 58px;scroll-margin-top:95px}
     .quality-panel{border:1px solid #59734c;border-radius:24px;padding:clamp(17px,3vw,26px);background:linear-gradient(145deg,#1a2a1e,#131d24 68%)}
     .quality-top{display:flex;gap:15px;align-items:start;justify-content:space-between;flex-wrap:wrap}
@@ -264,7 +264,7 @@
     .rank-filter-note{color:#b8d3c2;font-size:12px;margin:-4px 0 13px}
     @media(max-width:720px){.quality-grid{grid-template-columns:1fr}.quality-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.quality-box{padding:15px}}
 
-    /* 1.12: nawigacja mobilna, wyszukiwanie i obserwowane prognozy. */
+    /* 1.13: nawigacja mobilna, wyszukiwanie i obserwowane prognozy. */
     section[id]{scroll-margin-top:100px}
     .match-search{display:flex;gap:12px;flex-wrap:wrap;align-items:end;margin:16px 0}
     .match-search label{flex:1;min-width:180px;display:grid;gap:6px;color:var(--muted);font-size:13px}
@@ -298,11 +298,11 @@
 <body>
 <header class="header">
   <div class="shell head-inner">
-    <a class="brand" href="#start" aria-label="RZOTKIEWKA — strona główna"><span class="brand-emoji" aria-hidden="true">🫜</span><span><span class="brand-name">RZOTKIEWKA</span><span class="brand-caption">SPORTS LAB · 1.12</span></span></a>
+    <a class="brand" href="#start" aria-label="RZOTKIEWKA — strona główna"><span class="brand-emoji" aria-hidden="true">🫜</span><span><span class="brand-name">RZOTKIEWKA</span><span class="brand-caption">SPORTS LAB · 1.13</span></span></a>
     <nav class="nav" aria-label="Nawigacja"><a data-page-link href="#mecze"><span aria-hidden="true">⚽</span> Mecze</a><a data-page-link href="#ranking"><span aria-hidden="true">☆</span> Prognozy</a><a data-page-link href="#sporty"><span aria-hidden="true">◈</span> Sporty</a><a data-page-link href="#raport"><span aria-hidden="true">▤</span> Raport</a><a data-page-link href="#wiecej"><span aria-hidden="true">☰</span> Więcej</a></nav>
   </div>
 </header>
-<div id="demo-banner" class="banner" role="status">WERSJA 1.12 · Osobne zakładki · Katalog sportów i lig</div>
+<div id="demo-banner" class="banner" role="status">WERSJA 1.13 · Wyniki badań i status testu przedmeczowego</div>
 <main class="shell" id="start"><nav class="app-nav" aria-label="Zakładki aplikacji"><a data-page-link href="#mecze"><span aria-hidden="true">⚽</span> Mecze</a><a data-page-link href="#ranking"><span aria-hidden="true">☆</span> Prognozy</a><a data-page-link href="#sporty"><span aria-hidden="true">◈</span> Sporty</a><a data-page-link href="#raport"><span aria-hidden="true">▤</span> Raport</a><a data-page-link href="#wiecej"><span aria-hidden="true">☰</span> Więcej</a></nav>
   <section class="hero" aria-labelledby="hero-title">
     <div>
@@ -372,14 +372,91 @@
   </section>
 
   <section hidden id="lab" class="lab-panel" aria-labelledby="lab-heading">
-    <div class="lab-head"><div><div class="kicker">🧪 TEST PRZEDMECZOWY · 2.1 / 2.2 LAB</div><h2 id="lab-heading">Jak idzie sprawdzanie modelu?</h2></div><button id="lab-refresh" class="watch-button" type="button">↻ Odśwież status</button></div>
+    <div class="lab-head"><div><div class="kicker">🧪 TEST PRZEDMECZOWY · 2.1 / 2.2 LAB</div><h2 id="lab-heading">Badania i wyniki silnika</h2></div><button id="lab-refresh" class="watch-button" type="button">↻ Odśwież status</button></div>
     <p>Porównujemy dwie wersje modelu na prognozach zapisanych 162–168 godzin przed meczem. Rozwój strony trwa równolegle.</p>
     <div class="lab-metrics"><div><strong id="lab-pairs">—</strong><span>Zapisane pary prognoz</span></div><div><strong id="lab-settled">—</strong><span>Rozliczone pary</span></div><div><strong id="lab-errors">—</strong><span>Zgłoszone błędy pobierania</span></div></div>
     <p id="lab-status" role="status" aria-live="polite">Pobieranie raportu testu…</p>
     <progress id="lab-progress" max="300" value="0" hidden aria-label="Rozliczone pary do przeglądu wyników"></progress>
     <p id="lab-progress-note">Próg przeglądu wyników będzie odczytany z konfiguracji eksperymentu.</p>
     <p id="lab-updated">Ostatnia obserwacja: —</p>
+    <div class="audit-table-wrap" id="lab-comparison" hidden tabindex="0" role="region" aria-label="Bieżące wyniki testu przedmeczowego">
+      <table class="audit-table"><caption>Test przedmeczowy · ten sam zestaw rozliczonych par</caption><thead><tr><th scope="col">Model</th><th scope="col">Pary</th><th scope="col">Trafność</th><th scope="col">Brier ↓ (suma)</th><th scope="col">Log loss ↓</th></tr></thead><tbody id="lab-comparison-body"></tbody></table>
+    </div>
+    <p class="research-note">Zielone zakończenie zadania potwierdza wykonanie programu. Skuteczność modelu oceniamy dopiero na rozliczonych prognozach. Każdy zapis wymaga meczu w oknie 162–168 h; nie skracamy go po to, by zwiększyć liczniki.</p>
     <p><a href="./lab_forward/RAPORT.md" target="_blank" rel="noopener">Pełny raport LAB ↗</a> · <a href="https://github.com/Szalekmati/rzotkiewka-ai/actions" target="_blank" rel="noopener noreferrer">Uruchomienia testów ↗</a></p>
+
+    <div class="research-history" aria-labelledby="research-history-title">
+      <span class="archive-chip">ZAKOŃCZONY TEST HISTORYCZNY</span>
+      <h3 id="research-history-title">Wyniki, od których zaczynamy</h3>
+      <p>3512 wspólnych meczów · ocena sezonów 2022/23–2025/26 · 2021/22 jako pierwsza kalibracja. Symulacja zapisu 168 godzin przed meczem; wynik uznawany za dostępny po 3 godzinach.</p>
+      <div class="audit-table-wrap" tabindex="0" role="region" aria-label="Historyczne porównanie silników; tabela przewijana poziomo">
+      <table class="audit-table"><caption>Test historyczny z zachowanego raportu z 9 listopada 2026</caption><thead><tr><th scope="col">Zakres</th><th scope="col">Model</th><th scope="col">Mecze</th><th scope="col">Trafność</th><th scope="col">Brier ↓</th><th scope="col">Log loss ↓</th></tr></thead><tbody><tr><td>Łącznie</td><td>2.1 produkcyjny</td><td>3512</td><td>46,90%</td><td>0,63423</td><td>1,05278</td></tr><tr><td>Łącznie</td><td>2.2 LAB · kalibracja co sezon</td><td>3512</td><td>46,98%</td><td>0,63337</td><td>1,05144</td></tr><tr><td>Bundesliga</td><td>2.1 produkcyjny</td><td>1187</td><td>50,38%</td><td>0,62091</td><td>1,03429</td></tr><tr><td>Bundesliga</td><td>2.2 LAB · kalibracja co sezon</td><td>1187</td><td>49,87%</td><td>0,62090</td><td>1,03396</td></tr><tr><td>2. Bundesliga</td><td>2.1 produkcyjny</td><td>1148</td><td>43,82%</td><td>0,64579</td><td>1,06858</td></tr><tr><td>2. Bundesliga</td><td>2.2 LAB · kalibracja co sezon</td><td>1148</td><td>44,43%</td><td>0,64423</td><td>1,06634</td></tr><tr><td>3. Liga</td><td>2.1 produkcyjny</td><td>1177</td><td>46,39%</td><td>0,63639</td><td>1,05603</td></tr><tr><td>3. Liga</td><td>2.2 LAB · kalibracja co sezon</td><td>1177</td><td>46,56%</td><td>0,63535</td><td>1,05454</td></tr></tbody></table></div>
+      <p><strong>Wniosek:</strong> LAB uzyskał 3 dodatkowe trafienia i nieco niższy Brier. Wynik różni się między ligami. Model 2.1 pozostaje produkcyjny; LAB wymaga dalszego testu przedmeczowego.</p>
+      <p>To diagnostyka na danych historycznych używanych wcześniej w rozwoju, a nie niezależny test przyszłych wyników. W 3. Lidze 2022/23 źródło zawiera tylko 140 zakończonych spotkań. Brak kursów i oceny zyskowności.</p>
+      <p><strong>Różne skale Brier:</strong> tutaj i w LAB używamy sumy trzech błędów (0–2). Raport archiwum na stronie używa ich średniej (0–2/3). Aby sprowadzić wartości do tej samej skali, podziel Brier z tej tabeli przez 3. Wyniki porównuj na tych samych meczach.</p>
+      <details><summary>Źródło, protokół i oryginalny raport</summary><p>Wyniki przepisano z pliku <code>results.json</code> w paczce <code>RZOTKIEWKA_POROWNANIE_5_SEZONOW.zip</code>. SHA-256 pliku: <code class="research-hash">d45d11bf34f2ab796c21fea3de4985d51e3023694bb6ce0d445821fe8d1a5d0e</code>. Skrót pozwala porównać kopie; nie jest niezależnym potwierdzeniem daty publikacji.</p><p>LAB historyczny kalibrowano przed każdym sezonem. Bieżący eksperyment ma parametry zamrożone na 2024/25 — są to różne protokoły.</p><pre class="research-report"># RZOTKIEWKA — porównanie na zamrożonych danych
+
+Status: eksperyment; bez wdrożenia do produkcji.
+
+Odtworzono dokładnie wynik silnika 2.1.0: 4435 meczów, trafność 46,313416%.
+Źródło: ta sama paczka 5705 wyników. Symulacja T−168 h, dostępność wyniku po 3 h.
+2021/22 jest pierwszym sezonem kalibracji. Ocena obejmuje 2022/23–2025/26.
+LAB 2.2 używa oryginalnego algorytmu i silnika 2.0. Parametry są dopasowane na nowo przed każdym sezonem tylko na wcześniejszych sezonach. Nie jest to ten sam zamrożony zestaw parametrów co w poprzednim raporcie LAB 2.2.
+Nie dobierano wariantów ani parametrów do wyników ocenianego sezonu.
+
+| Zakres | Model | N | Trafność 1X2 | Brier ↓ | Log loss ↓ |
+|---|---|---:|---:|---:|---:|
+| Łącznie | 2.0 | 3512 | 46.90% | 0.63422 | 1.05276 |
+| Łącznie | 2.1 produkcyjny | 3512 | 46.90% | 0.63423 | 1.05278 |
+| Łącznie | 2.2 LAB, kalibracja co sezon | 3512 | 46.98% | 0.63337 | 1.05144 |
+| Łącznie | Częstości historyczne | 3512 | 44.82% | 0.64753 | 1.07078 |
+| bl1 | 2.0 | 1187 | 50.38% | 0.62102 | 1.03461 |
+| bl1 | 2.1 produkcyjny | 1187 | 50.38% | 0.62091 | 1.03429 |
+| bl1 | 2.2 LAB, kalibracja co sezon | 1187 | 49.87% | 0.62090 | 1.03396 |
+| bl1 | Częstości historyczne | 1187 | 43.56% | 0.65023 | 1.07444 |
+| bl2 | 2.0 | 1148 | 43.82% | 0.64580 | 1.06850 |
+| bl2 | 2.1 produkcyjny | 1148 | 43.82% | 0.64579 | 1.06858 |
+| bl2 | 2.2 LAB, kalibracja co sezon | 1148 | 44.43% | 0.64423 | 1.06634 |
+| bl2 | Częstości historyczne | 1148 | 44.77% | 0.64886 | 1.07273 |
+| bl3 | 2.0 | 1177 | 46.39% | 0.63623 | 1.05571 |
+| bl3 | 2.1 produkcyjny | 1177 | 46.39% | 0.63639 | 1.05603 |
+| bl3 | 2.2 LAB, kalibracja co sezon | 1177 | 46.56% | 0.63535 | 1.05454 |
+| bl3 | Częstości historyczne | 1177 | 46.13% | 0.64353 | 1.06520 |
+| 2022 | 2.0 | 690 | 48.12% | 0.62966 | 1.04630 |
+| 2022 | 2.1 produkcyjny | 690 | 48.12% | 0.62991 | 1.04681 |
+| 2022 | 2.2 LAB, kalibracja co sezon | 690 | 48.12% | 0.62866 | 1.04495 |
+| 2022 | Częstości historyczne | 690 | 48.41% | 0.63817 | 1.05745 |
+| 2023 | 2.0 | 932 | 48.18% | 0.63016 | 1.04718 |
+| 2023 | 2.1 produkcyjny | 932 | 48.18% | 0.63002 | 1.04684 |
+| 2023 | 2.2 LAB, kalibracja co sezon | 932 | 48.39% | 0.62959 | 1.04612 |
+| 2023 | Częstości historyczne | 932 | 44.64% | 0.64784 | 1.07125 |
+| 2024 | 2.0 | 940 | 45.11% | 0.65152 | 1.07709 |
+| 2024 | 2.1 produkcyjny | 940 | 45.11% | 0.65136 | 1.07685 |
+| 2024 | 2.2 LAB, kalibracja co sezon | 940 | 44.89% | 0.65000 | 1.07477 |
+| 2024 | Częstości historyczne | 940 | 41.81% | 0.65603 | 1.08303 |
+| 2025 | 2.0 | 950 | 46.53% | 0.62438 | 1.03886 |
+| 2025 | 2.1 produkcyjny | 950 | 46.53% | 0.62454 | 1.03914 |
+| 2025 | 2.2 LAB, kalibracja co sezon | 950 | 46.84% | 0.62404 | 1.03830 |
+| 2025 | Częstości historyczne | 950 | 45.37% | 0.64563 | 1.06789 |
+
+Orientacyjny 95% przedział różnicy Brier LAB 2.2 − 2.1: -0.00151 do -0.00026. Ujemna różnica sprzyja LAB 2.2.
+
+Brier: suma trzech kwadratów błędów, skala 0–2. Niższy Brier i log loss są lepsze.
+
+## Ograniczenia
+
+- To diagnostyka historyczna; sezony były wcześniej używane podczas rozwoju. Nie jest to nietknięty test.
+- Kopie danych mogą zawierać późniejsze korekty. Bufor 3 h jest założeniem.
+- 3. Liga 2022/23 ma tylko 140 zakończonych meczów w źródle.
+- Brak kursów i ROI. Nie oceniono zyskowności.
+- Bootstrap tygodniowy daje orientacyjną ocenę niepewności.
+
+## Odtworzenie
+
+Uruchom `python compare.py` w rozpakowanym folderze. Python 3.12; bez dodatkowych bibliotek i bez pobierania danych.
+Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry kalibracji i hashe źródeł są w results.json.
+</pre><button type="button" class="watch-button" id="research-download">↓ Pobierz oryginalne wyniki JSON</button></details>
+    </div>
   </section>
   <section hidden id="ranking" class="ranking-section" aria-labelledby="ranking-title">
     <div class="rank-shell">
@@ -451,7 +528,7 @@
     </div>
   </section>
 
-  <section hidden id="raport" class="audit-section" aria-labelledby="audit-title">
+  <section hidden id="raport" class="audit-section" aria-labelledby="audit-title"><p><a class="secondary" href="#lab">🧪 Wyniki testów 2.1 / 2.2 LAB →</a></p>
     <div class="audit-panel">
       <div class="audit-head">
         <div><div class="kicker">🔎 ARCHIWUM PRZED MECZEM · RAPORT 1.9</div><h2 id="audit-title">Raport skuteczności AI</h2></div>
@@ -520,7 +597,7 @@
 <p id="sport-count" class="watch-note" role="status" aria-live="polite"></p><div id="sport-list" class="competition-grid"></div>
 <p class="real-note">Planowane rozgrywki nie mają jeszcze terminarzy ani prognoz. Każda nowa dyscyplina wymaga własnych danych i osobnego sprawdzenia modelu.</p></section>
 <section hidden id="wiecej" aria-labelledby="more-title"><h2 id="more-title">Więcej narzędzi</h2><p class="section-sub">Wybierz ekran, którego potrzebujesz.</p>
-<div class="more-grid"><a href="#lab">🧪 Test LAB i test historyczny →</a><a href="#jakosc">📊 Jakość modelu →</a><a href="#jak-to-dziala">Jak działa RZOTKIEWKA →</a><a href="#premium">Premium · plan rozwoju →</a><a href="#typy">Przykłady DEMO →</a></div></section></main>
+<div class="more-grid"><a href="#lab">🧪 Badania i wyniki silnika →</a><a href="#jakosc">📊 Jakość modelu →</a><a href="#jak-to-dziala">Jak działa RZOTKIEWKA →</a><a href="#premium">Premium · plan rozwoju →</a><a href="#typy">Przykłady DEMO →</a></div></section></main>
 <footer class="footer"><div class="shell"><strong>🫜 RZOTKIEWKA</strong><span>Serwis informacyjny dla osób pełnoletnich (18+). Zakłady bukmacherskie wiążą się z ryzykiem straty pieniędzy. Nie ma gwarantowanych wygranych. Nie graj za pieniądze, na których stratę nie możesz sobie pozwolić.</span><span id="footer-year"></span></div></footer>
 <script>
 (() => {
@@ -1344,6 +1421,307 @@
 })();
 </script>
 <nav class="mobile-nav" aria-label="Główne zakładki"><a data-page-link href="#mecze"><span aria-hidden="true">⚽</span> Mecze</a><a data-page-link href="#ranking"><span aria-hidden="true">☆</span> Prognozy</a><a data-page-link href="#sporty"><span aria-hidden="true">◈</span> Sporty</a><a data-page-link href="#raport"><span aria-hidden="true">▤</span> Raport</a><a data-page-link href="#wiecej"><span aria-hidden="true">☰</span> Więcej</a></nav>
+<script type="application/json" id="research-original-json">{
+  "protocol": "expanding-seasons-v1; T-168h; result buffer 3h",
+  "candidate": "Original LAB 2.2 algorithm on v2.0, refitted annually on earlier seasons only",
+  "status": "DIAGNOSTIC ONLY; NOT DEPLOYED",
+  "source_n": 5705,
+  "reproduced_v21": {
+    "n": 4435,
+    "accuracy": 0.46313416009019165,
+    "brier": 0.6360613296306399,
+    "log_loss": 1.0553421019445164
+  },
+  "calibration": {
+    "2022": {
+      "training_seasons": [
+        2021
+      ],
+      "training_n": 923,
+      "last_result_available": "2022-05-15T16:30:00+00:00",
+      "first_forecast": "2022-07-09T11:00:00+00:00",
+      "parameters": [
+        -0.0866919146,
+        0.0382681481,
+        -0.0262218891
+      ]
+    },
+    "2023": {
+      "training_seasons": [
+        2021,
+        2022
+      ],
+      "training_n": 1613,
+      "last_result_available": "2023-05-28T16:30:00+00:00",
+      "first_forecast": "2023-07-22T11:00:00+00:00",
+      "parameters": [
+        -0.082915229,
+        0.0056326561,
+        -0.0644384034
+      ]
+    },
+    "2024": {
+      "training_seasons": [
+        2021,
+        2022,
+        2023
+      ],
+      "training_n": 2545,
+      "last_result_available": "2024-05-19T16:30:00+00:00",
+      "first_forecast": "2024-07-26T17:00:00+00:00",
+      "parameters": [
+        -0.0712098698,
+        0.0134030994,
+        -0.0449951827
+      ]
+    },
+    "2025": {
+      "training_seasons": [
+        2021,
+        2022,
+        2023,
+        2024
+      ],
+      "training_n": 3485,
+      "last_result_available": "2025-05-18T16:30:00+00:00",
+      "first_forecast": "2025-07-25T17:00:00+00:00",
+      "parameters": [
+        -0.0846904189,
+        0.0200303672,
+        -0.0318997465
+      ]
+    }
+  },
+  "test": {
+    "v20": {
+      "n": 3512,
+      "accuracy": 0.4689635535307517,
+      "brier": 0.634216130678557,
+      "log_loss": 1.0527611367910177
+    },
+    "v21": {
+      "n": 3512,
+      "accuracy": 0.4689635535307517,
+      "brier": 0.6342280708894191,
+      "log_loss": 1.0527839697048111
+    },
+    "v22_lab": {
+      "n": 3512,
+      "accuracy": 0.46981776765375854,
+      "brier": 0.6333692539862716,
+      "log_loss": 1.0514435983048458
+    },
+    "frequency": {
+      "n": 3512,
+      "accuracy": 0.44817767653758545,
+      "brier": 0.647534595256076,
+      "log_loss": 1.070784587925672
+    }
+  },
+  "by_league": {
+    "bl1": {
+      "v20": {
+        "n": 1187,
+        "accuracy": 0.5037910699241785,
+        "brier": 0.6210207627697574,
+        "log_loss": 1.034611657965996
+      },
+      "v21": {
+        "n": 1187,
+        "accuracy": 0.5037910699241785,
+        "brier": 0.620908533464032,
+        "log_loss": 1.0342875170621766
+      },
+      "v22_lab": {
+        "n": 1187,
+        "accuracy": 0.4987363100252738,
+        "brier": 0.6208959707326325,
+        "log_loss": 1.0339627889351388
+      },
+      "frequency": {
+        "n": 1187,
+        "accuracy": 0.43555181128896375,
+        "brier": 0.6502308036359719,
+        "log_loss": 1.074438901226988
+      }
+    },
+    "bl2": {
+      "v20": {
+        "n": 1148,
+        "accuracy": 0.4381533101045296,
+        "brier": 0.6457965546576829,
+        "log_loss": 1.0685014200764709
+      },
+      "v21": {
+        "n": 1148,
+        "accuracy": 0.4381533101045296,
+        "brier": 0.6457858800309844,
+        "log_loss": 1.06858231921897
+      },
+      "v22_lab": {
+        "n": 1148,
+        "accuracy": 0.4442508710801394,
+        "brier": 0.644234378687665,
+        "log_loss": 1.0663421015058607
+      },
+      "frequency": {
+        "n": 1148,
+        "accuracy": 0.44773519163763065,
+        "brier": 0.6488569419505466,
+        "log_loss": 1.0727288871737373
+      }
+    },
+    "bl3": {
+      "v20": {
+        "n": 1177,
+        "accuracy": 0.4638912489379779,
+        "brier": 0.636228513838887,
+        "log_loss": 1.0557123569724964
+      },
+      "v21": {
+        "n": 1177,
+        "accuracy": 0.4638912489379779,
+        "brier": 0.6363877361650501,
+        "log_loss": 1.0560284761147967
+      },
+      "v22_lab": {
+        "n": 1177,
+        "accuracy": 0.46559048428207306,
+        "brier": 0.6353510926140284,
+        "log_loss": 1.0545415074357527
+      },
+      "frequency": {
+        "n": 1177,
+        "accuracy": 0.4613423959218352,
+        "brier": 0.6435257139033246,
+        "log_loss": 1.0652028331037176
+      }
+    }
+  },
+  "by_season": {
+    "2022": {
+      "v20": {
+        "n": 690,
+        "accuracy": 0.4811594202898551,
+        "brier": 0.629660093671374,
+        "log_loss": 1.046295461575962
+      },
+      "v21": {
+        "n": 690,
+        "accuracy": 0.4811594202898551,
+        "brier": 0.6299107534455073,
+        "log_loss": 1.0468090338717562
+      },
+      "v22_lab": {
+        "n": 690,
+        "accuracy": 0.4811594202898551,
+        "brier": 0.6286566326837076,
+        "log_loss": 1.0449530903227413
+      },
+      "frequency": {
+        "n": 690,
+        "accuracy": 0.48405797101449277,
+        "brier": 0.6381666678199891,
+        "log_loss": 1.0574476451150745
+      }
+    },
+    "2023": {
+      "v20": {
+        "n": 932,
+        "accuracy": 0.48175965665236054,
+        "brier": 0.630164724211382,
+        "log_loss": 1.0471824728852808
+      },
+      "v21": {
+        "n": 932,
+        "accuracy": 0.48175965665236054,
+        "brier": 0.6300207361303605,
+        "log_loss": 1.0468375703691002
+      },
+      "v22_lab": {
+        "n": 932,
+        "accuracy": 0.48390557939914164,
+        "brier": 0.6295897097202809,
+        "log_loss": 1.0461215050527415
+      },
+      "frequency": {
+        "n": 932,
+        "accuracy": 0.44635193133047213,
+        "brier": 0.6478399246892498,
+        "log_loss": 1.0712526893774226
+      }
+    },
+    "2024": {
+      "v20": {
+        "n": 940,
+        "accuracy": 0.451063829787234,
+        "brier": 0.6515179191707766,
+        "log_loss": 1.0770889388594975
+      },
+      "v21": {
+        "n": 940,
+        "accuracy": 0.451063829787234,
+        "brier": 0.6513579119770043,
+        "log_loss": 1.076849902207681
+      },
+      "v22_lab": {
+        "n": 940,
+        "accuracy": 0.44893617021276594,
+        "brier": 0.6499998384042702,
+        "log_loss": 1.074765562774077
+      },
+      "frequency": {
+        "n": 940,
+        "accuracy": 0.41808510638297874,
+        "brier": 0.6560327909843642,
+        "log_loss": 1.0830322675864108
+      }
+    },
+    "2025": {
+      "v20": {
+        "n": 950,
+        "accuracy": 0.4652631578947368,
+        "brier": 0.6243802308676906,
+        "log_loss": 1.0388585017532959
+      },
+      "v21": {
+        "n": 950,
+        "accuracy": 0.4652631578947368,
+        "brier": 0.6245418965835369,
+        "log_loss": 1.0391447837605932
+      },
+      "v22_lab": {
+        "n": 950,
+        "accuracy": 0.46842105263157896,
+        "brier": 0.6240445114618017,
+        "log_loss": 1.0383025402180417
+      },
+      "frequency": {
+        "n": 950,
+        "accuracy": 0.4536842105263158,
+        "brier": 0.6456303835872249,
+        "log_loss": 1.06789343119429
+      }
+    }
+  },
+  "brier_delta_v22_minus_v21_week_bootstrap_95pct": [
+    -0.0015076633205503179,
+    -0.0002591560616054725
+  ],
+  "hashes": {
+    "snapshot.json": "5eb59663ece5ebbc09e9b3c40a2bdfa118efdd4b1540c400085ca3ef62d6df7d",
+    "engine_v20.py": "ed9fbe4a3c0472b5f0c31df1b67cab0746b79ef12445b6346caa773cfc5e02d2",
+    "engine_v21.py": "04eb95eb8ca724140c4a8665c3f9988a3aef15f404b075683afe1989b6490a54",
+    "candidate_v22.py": "a1ef90ddeb6a44bbc62963141bab8b6a818616c727f1b6f2fdfa6287b2ff0acf"
+  },
+  "limitations": [
+    "Historical diagnostic, not untouched holdout: seasons used in earlier development.",
+    "Current corrected source snapshots; no archived publication timestamps.",
+    "bl3/2022 source contains only 140 completed matches.",
+    "No odds or ROI. Weekly bootstrap is approximate and does not capture all dependencies."
+  ]
+}
+</script>
 <script>
 // Raport LAB jest osobnym źródłem od archiwum produkcyjnego.
 (()=>{
@@ -1351,13 +1729,40 @@
   const $=id=>document.getElementById(id);
   function parseLabReport(text){
     const pairs=text.match(/Zapisane pary prognoz:\s*(\d+)/);
-    const settled=text.match(/\|\s*Razem\s*\|\s*v21\s*\|\s*(\d+)\s*\|/);
     const time=text.match(/Ostatnia obserwacja UTC:\s*(\S+)/);
     const errors=text.match(/## Błędy pobierania[ \t]*\r?\n([\s\S]*?)(?=\r?\n##|$)/);
-    if(!pairs||!settled||!time||!errors||!Number.isFinite(Date.parse(time[1])))throw new Error('Nieznany format raportu');
-    const p=Number(pairs[1]),n=Number(settled[1]);
-    if(n>p)throw new Error('Niespójne liczniki');
-    return {pairs:p,settled:n,time:time[1],errors:errors[1].trim().split('\n').filter(line=>line.trim()).length};
+    if(!pairs||!time||!errors||!Number.isFinite(Date.parse(time[1])))throw new Error('Nieznany format raportu');
+    const p=Number(pairs[1]);
+    if(!Number.isSafeInteger(p)||Date.parse(time[1])>Date.now()+5*60*1000)throw new Error('Niespójny raport');
+    const rows={};
+    for(const line of text.split(/\r?\n/)){
+      const cols=line.split('|').map(c=>c.trim());
+      if(cols[1]!=='Razem'||!['v21','v22_lab'].includes(cols[2]))continue;
+      if(cols.length!==8||rows[cols[2]]||!/^\d+$/.test(cols[3]))throw new Error('Niespójna tabela');
+      const n=Number(cols[3]);
+      if(!Number.isSafeInteger(n)||n>p)throw new Error('Niespójne liczniki');
+      const values=cols.slice(4,7);
+      if(n===0){if(values.some(v=>v!=='—'))throw new Error('Wyniki bez próby');}
+      else{
+        if(!/^\d+(?:\.\d+)?%$/.test(values[0])||!values.slice(1).every(v=>/^\d+(?:\.\d+)?$/.test(v)))throw new Error('Niepoprawne metryki');
+        const accuracy=Number(values[0].slice(0,-1)),brier=Number(values[1]),loss=Number(values[2]);
+        if(![accuracy,brier,loss].every(Number.isFinite)||accuracy>100||brier>2)throw new Error('Niepoprawny zakres metryk');
+      }
+      rows[cols[2]]={n,values};
+    }
+    if(!rows.v21||!rows.v22_lab||rows.v21.n!==rows.v22_lab.n)throw new Error('Brak wspólnej próby');
+    return {pairs:p,settled:rows.v21.n,time:time[1],rows,errors:errors[1].trim().split('\n').filter(line=>line.trim()).length};
+  }
+  function renderLabComparison(data){
+    const body=$('lab-comparison-body');body.replaceChildren();
+    for(const [key,label] of [['v21','2.1 produkcyjny'],['v22_lab','2.2 LAB']]){
+      const row=document.createElement('tr'),metric=data.rows[key];
+      for(const value of [label,String(metric.n),...metric.values.map(v=>v.replace('.',','))]){
+        const cell=document.createElement('td');cell.textContent=value;row.append(cell);
+      }
+      body.append(row);
+    }
+    $('lab-comparison').hidden=false;
   }
   async function loadLab(){
     $('lab-refresh').disabled=true;
@@ -1367,10 +1772,11 @@
       const res=await fetch('./lab_forward/RAPORT.md',{cache:'no-store',signal:controller.signal});
       if(!res.ok)throw new Error('Raport niedostępny');
       const data=parseLabReport(await res.text());
+      renderLabComparison(data);
       $('lab-pairs').textContent=String(data.pairs);$('lab-settled').textContent=String(data.settled);$('lab-errors').textContent=String(data.errors);
       const age=Date.now()-Date.parse(data.time);
       const stale=age>8*60*60*1000;
-      $('lab-status').textContent=(data.errors?'Raport zgłasza problemy z pobieraniem danych. Sprawdź pełny raport poniżej.':data.pairs===0?'Brak zapisanych par prognoz. Raport nie zgłasza błędów pobierania; nie ma jeszcze wyników do porównania.':data.settled===0?'Prognozy zostały zapisane. Czekamy na zakończenie meczów i ich rozliczenie.':'Są już rozliczone pary prognoz. Wyniki obu wersji znajdziesz w pełnym raporcie.')+(stale?' Uwaga: ostatnia obserwacja ma ponad 8 godzin. Sprawdź uruchomienia testów.':'');
+      $('lab-status').textContent=(data.errors?'Raport zgłasza problemy z pobieraniem danych. Sprawdź pełny raport poniżej.':data.pairs===0?'Brak zapisanych par prognoz w tym raporcie. Okno zapisu wynosi 162–168 h; sam raport nie podaje przyczyny braku zapisów.':data.settled===0?'Prognozy zostały zapisane. Czekamy na zakończenie meczów i ich rozliczenie.':'Są już rozliczone pary prognoz. Wyniki obu wersji znajdziesz w pełnym raporcie.')+(stale?' Uwaga: ostatnia obserwacja ma ponad 8 godzin. Sprawdź uruchomienia testów.':'');
       $('lab-updated').textContent='Ostatnia obserwacja: '+new Date(data.time).toLocaleString('pl-PL',{timeZone:'Europe/Warsaw'})+' (czas polski).';
       $('lab-progress').hidden=true;
       $('lab-progress-note').textContent='Raport LAB dotyczy osobnego eksperymentu. Nie jest wynikiem skuteczności rankingu na tej stronie.';
@@ -1385,6 +1791,8 @@
         }
       }catch{/* Metryki z raportu pozostają widoczne bez konfiguracji progu. */}
     }catch{
+      $('lab-comparison').hidden=true;
+      $('lab-comparison-body').replaceChildren();
       for(const id of ['lab-pairs','lab-settled','lab-errors'])$(id).textContent='—';
       $('lab-progress').hidden=true;
       $('lab-updated').textContent='Ostatnia obserwacja: nie udało się odczytać.';
@@ -1392,6 +1800,12 @@
       $('lab-progress-note').textContent='Pozostałe widoki strony działają niezależnie od raportu LAB.';
     }finally{clearTimeout(timer);$('lab-refresh').disabled=false;}
   }
+  $('research-download').addEventListener('click',()=>{
+    const data=document.getElementById('research-original-json').textContent;
+    const url=URL.createObjectURL(new Blob([data],{type:'application/json'}));
+    const a=document.createElement('a');a.href=url;a.download='RZOTKIEWKA_wyniki_5_sezonow.json';a.click();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+  });
   $('lab-refresh').addEventListener('click',loadLab);
   loadLab();
 })();
