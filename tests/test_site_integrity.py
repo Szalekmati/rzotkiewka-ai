@@ -83,8 +83,10 @@ class SiteIntegrity(unittest.TestCase):
             "await navigator.clipboard.writeText(link);",
             "window.prompt('Skopiuj link do tej prognozy:',link);",
             "rows.unshift(sharedRecord);",
+            "if(sharedRecord&&r.id===sharedForecastId)",
+            "if(focusSharedForecast&&sharedRecord)",
             "card.classList.add('shared-target');",
-            "target.scrollIntoView({behavior:'instant',block:'start'});",
+            "target.scrollIntoView({behavior:'auto',block:'start'});",
             "if(focusSharedForecast&&sharedRecord)",
         ):
             self.assertIn(code, js)

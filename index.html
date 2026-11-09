@@ -1203,7 +1203,7 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
       sharedStatus.hidden=false;
       sharedStatus.textContent=state.archiveFailed?'Nie można zweryfikować udostępnionej prognozy. Spróbuj ponownie później.'
         :!ready?'Weryfikujemy udostępnioną prognozę…'
-        :sharedRecord?'Udostępniona prognoza jest wyróżniona na początku listy. Sprawdź datę zapisu i wynik poniżej.'
+        :sharedRecord?'Udostępniona prognoza jest przypięta na początku listy niezależnie od filtrów. Sprawdź datę zapisu i wynik poniżej.'
         :'Nie znaleziono tej prognozy w zweryfikowanym archiwum. Pełna historia jest nadal dostępna poniżej.';
     }
     const league=$('rank-league').value, status=$('rank-state').value, order=$('rank-order').value, now=Date.now();
@@ -1223,14 +1223,14 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
       if(order==='kickoff')return dt||a.id.localeCompare(b.id);
       return leaderOf(b).confidence-leaderOf(a).confidence||dt||a.id.localeCompare(b.id);
     });
-    if(focusSharedForecast&&sharedRecord){
-      // Bring the linked entry into the first 16, regardless of its position.
+    if(sharedRecord){
+      // Keep the shared public record visible at the top after every refresh.
       // All statistics still use the complete verified archive, not this view.
       rows=rows.filter(r=>r.id!==sharedForecastId);
       rows.unshift(sharedRecord);
     }
     $('rank-filter-note').textContent=state.archiveReady
-      ?`Filtr: ${minimum?`lider ≥ ${formattedPercent(minimum)}`:'całe archiwum'} · ${rows.length} pasujących meczów, pokazujemy maksymalnie 16. Progi nie oznaczają sprawdzonej skuteczności; wszystkie prognozy są nadal w Raporcie.`
+      ?`Filtr: ${minimum?`lider ≥ ${formattedPercent(minimum)}`:'całe archiwum'} · ${rows.length} widocznych rekordów${sharedRecord?' (w tym udostępniona prognoza poza filtrami)':''}, pokazujemy maksymalnie 16. Progi nie oznaczają sprawdzonej skuteczności; wszystkie prognozy są nadal w Raporcie.`
       :'Najpierw weryfikujemy archiwum. Próg nie oznacza sprawdzonej skuteczności.';
     const root=$('rank-list');root.replaceChildren();
     if(!state.archiveReady){root.append(make('p','rank-empty',state.archiveFailed?'Błąd pobierania lub sprawdzania danych. Nie wyświetlamy niezweryfikowanych prognoz.':'Weryfikowanie danych…'));}
@@ -1238,7 +1238,7 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
     for(const [i,r] of rows.slice(0,16).entries()){
       const s=r.snapshot, p=s.probabilities, lead=leaderOf(r), isGraded=scored(r), phase=archivePhase(r,now);
       const card=make('article','rank-card');
-      if(focusSharedForecast&&sharedRecord&&r.id===sharedForecastId){
+      if(sharedRecord&&r.id===sharedForecastId){
         card.id='shared-forecast';
         card.tabIndex=-1;
         card.classList.add('shared-target');
@@ -1276,7 +1276,7 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
       requestAnimationFrame(()=>{
         const target=$('shared-forecast');
         if(target&&!$('ranking').hidden){
-          target.scrollIntoView({behavior:'instant',block:'start'});
+          target.scrollIntoView({behavior:'auto',block:'start'});
           target.focus({preventScroll:true});
         }
       });
