@@ -193,6 +193,11 @@
     .rank-controls .field-select{min-width:min(100%,160px)}
     .rank-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
     .rank-card{border:1px solid #315043;background:#111b21;border-radius:15px;padding:17px;min-width:0}
+    .rank-card.shared-target{border-color:#c5ff7f;box-shadow:0 0 0 2px #b6ff7040,0 15px 48px #0004;scroll-margin-top:110px}
+    .forecast-card-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
+    .share-forecast-button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;border:1px solid #94c974;background:#25432e;color:#e8ffcb;border-radius:10px;padding:9px 13px;font:inherit;font-size:13px;font-weight:800}
+    .share-forecast-button:hover{border-color:#d3ff9d;background:#305536}
+    .shared-forecast-status{background:#203629;border:1px solid #517f58;color:#dcfbd2;border-radius:12px;padding:11px 14px;font-size:13px;line-height:1.5;margin:9px 0 16px}
     .rank-top{display:flex;justify-content:space-between;gap:9px;align-items:start;flex-wrap:wrap}
     .rank-index{font-size:11px;color:#afc8b4;font-weight:800;letter-spacing:.02em}
     .rank-tag{border:1px solid #456853;border-radius:20px;padding:3px 8px;font-size:10px;color:#d9f4dc;font-weight:850}
@@ -603,6 +608,7 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
         <div class="rank-metric"><strong id="rank-brier">—</strong><span>Brier · niżej = lepiej</span></div>
       </div>
       <p id="rank-status" class="rank-status" role="status" aria-live="polite">Weryfikowanie archiwum prognoz…</p>
+      <p id="shared-forecast-status" class="shared-forecast-status" role="status" aria-live="polite" hidden></p>
       <div class="rank-controls" aria-label="Filtry rankingu">
         <label class="field-select" for="rank-league">Liga
           <select id="rank-league"><option value="all">Wszystkie ligi</option><option value="bl1">Bundesliga</option><option value="bl2">2. Bundesliga</option><option value="bl3">3. Liga</option></select>
@@ -845,6 +851,10 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
   const maxAgeMs = 10*60*1000;
   const state = {league:'bl1',season:2026,tab:'next',matches:[],loadedAt:null,archive:[],archiveAt:null,archiveReady:false,archiveFailed:false};
   const watchKey='rzotkiewka:watched:v1';
+  // Deep links name a public archived record only; never bypass verification.
+  const rawSharedId=new URLSearchParams(location.search).get('forecast');
+  const sharedForecastId=rawSharedId&&/^[a-zA-Z0-9_-]{1,100}$/.test(rawSharedId)?rawSharedId:null;
+  let focusSharedForecast=Boolean(sharedForecastId);
   let watched=new Set(), onlyWatched=false, liveLimit=16;
   try{const saved=JSON.parse(localStorage.getItem(watchKey)||'[]');if(Array.isArray(saved))watched=new Set(saved.filter(x=>typeof x==='string').slice(0,2000));}catch{}
   const searchText=value=>String(value).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ł/g,'l').replace(/Ł/g,'L').toLowerCase().trim();
@@ -854,6 +864,31 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
     try{localStorage.setItem(watchKey,JSON.stringify([...watched]));$('watch-storage-note').textContent='Obserwowane prognozy zapisują się w tej przeglądarce na tym urządzeniu.';}
     catch{$('watch-storage-note').textContent='Przeglądarka blokuje zapis. Obserwowane pozostaną dostępne tylko podczas tej wizyty.';}
     renderRanking();
+  }
+  async function shareForecast(record,button){
+    // Only called on cards built from the cryptographically checked archive.
+    const url=new URL(location.pathname,location.origin);
+    url.searchParams.set('forecast',record.id);
+    url.hash='ranking';
+    const link=url.toString(),s=record.snapshot;
+    const title='RZOTKIEWKA 2.0 · '+s.home+' – '+s.away;
+    const text='Publiczna prognoza 1/X/2 zapisana przed meczem. Sprawdź wyniki i pomyłki; brak gwarancji wygranej.';
+    try{
+      if(typeof navigator.share==='function'){
+        await navigator.share({title,text,url:link});
+        return;
+      }
+    }catch(error){
+      if(error?.name==='AbortError')return; // User cancelled the share sheet.
+    }
+    try{
+      if(navigator.clipboard?.writeText){
+        await navigator.clipboard.writeText(link);
+        button.textContent='✓ Link skopiowany';
+        return;
+      }
+    }catch{/* Use an explicit copy dialog below. */}
+    window.prompt('Skopiuj link do tej prognozy:',link);
   }
   $('rank-search').addEventListener('input',renderRanking);
   $('live-search').addEventListener('input',()=>{liveLimit=16;render();});
@@ -1162,9 +1197,18 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
       ?'Nie udało się zweryfikować archiwum. Poniższy ranking jest niedostępny.'
       :!state.archiveReady?'Weryfikowanie archiwum prognoz…'
       :`Zweryfikowanych zapisów: ${data.length} · rozliczonych: ${stats.graded}. ${stats.graded?`Trafionych liderów: ${stats.hits}/${stats.graded}.`:'Za mało rozliczonych spotkań do obliczenia skuteczności.'} ${state.archiveAt?'Ostatnia zmiana archiwum: '+new Date(state.archiveAt).toLocaleString('pl-PL')+'.':''}`;
+    const sharedRecord=ready&&sharedForecastId?data.find(r=>r.id===sharedForecastId):null;
+    const sharedStatus=$('shared-forecast-status');
+    if(rawSharedId!==null){
+      sharedStatus.hidden=false;
+      sharedStatus.textContent=state.archiveFailed?'Nie można zweryfikować udostępnionej prognozy. Spróbuj ponownie później.'
+        :!ready?'Weryfikujemy udostępnioną prognozę…'
+        :sharedRecord?'Udostępniona prognoza jest wyróżniona na początku listy. Sprawdź datę zapisu i wynik poniżej.'
+        :'Nie znaleziono tej prognozy w zweryfikowanym archiwum. Pełna historia jest nadal dostępna poniżej.';
+    }
     const league=$('rank-league').value, status=$('rank-state').value, order=$('rank-order').value, now=Date.now();
     const minimum=Number($('rank-minprob').value)||0;
-    const rows=data.filter(r=>{
+    let rows=data.filter(r=>{
       if(onlyWatched&&!watched.has(r.id))return false;
       if(!matchesQuery(r.snapshot.home,r.snapshot.away,$('rank-search').value))return false;
       if(leaderOf(r).confidence+1e-10<minimum)return false;
@@ -1179,6 +1223,12 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
       if(order==='kickoff')return dt||a.id.localeCompare(b.id);
       return leaderOf(b).confidence-leaderOf(a).confidence||dt||a.id.localeCompare(b.id);
     });
+    if(focusSharedForecast&&sharedRecord){
+      // Bring the linked entry into the first 16, regardless of its position.
+      // All statistics still use the complete verified archive, not this view.
+      rows=rows.filter(r=>r.id!==sharedForecastId);
+      rows.unshift(sharedRecord);
+    }
     $('rank-filter-note').textContent=state.archiveReady
       ?`Filtr: ${minimum?`lider ≥ ${formattedPercent(minimum)}`:'całe archiwum'} · ${rows.length} pasujących meczów, pokazujemy maksymalnie 16. Progi nie oznaczają sprawdzonej skuteczności; wszystkie prognozy są nadal w Raporcie.`
       :'Najpierw weryfikujemy archiwum. Próg nie oznacza sprawdzonej skuteczności.';
@@ -1188,6 +1238,11 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
     for(const [i,r] of rows.slice(0,16).entries()){
       const s=r.snapshot, p=s.probabilities, lead=leaderOf(r), isGraded=scored(r), phase=archivePhase(r,now);
       const card=make('article','rank-card');
+      if(focusSharedForecast&&sharedRecord&&r.id===sharedForecastId){
+        card.id='shared-forecast';
+        card.tabIndex=-1;
+        card.classList.add('shared-target');
+      }
       const head=make('div','rank-top');
       head.append(make('span','rank-index',`#${i+1} · ${allowedLeagues[s.league]||s.league} · ${s.season}/${s.season+1}`));
       head.append(make('span','rank-tag'+(isGraded?' graded':''),phase.label));
@@ -1206,8 +1261,25 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
       const watch=make('button','watch-button',watched.has(r.id)?'★ Obserwujesz':'☆ Obserwuj prognozę');
       watch.type='button';watch.setAttribute('aria-pressed',String(watched.has(r.id)));
       watch.setAttribute('aria-label',`${watched.has(r.id)?'Przestań obserwować':'Obserwuj'}: ${s.home} – ${s.away}`);
-      watch.addEventListener('click',()=>toggleWatch(r.id));card.append(watch,buildPassport(null,r));
+      watch.addEventListener('click',()=>toggleWatch(r.id));
+      const share=make('button','share-forecast-button','↗ Udostępnij analizę');
+      share.type='button';
+      share.setAttribute('aria-label','Udostępnij prognozę: '+s.home+' – '+s.away);
+      share.addEventListener('click',()=>shareForecast(r,share));
+      const actions=make('div','forecast-card-actions');
+      actions.append(watch,share);
+      card.append(actions,buildPassport(null,r));
       root.append(card);
+    }
+    if(focusSharedForecast&&sharedRecord){
+      focusSharedForecast=false;
+      requestAnimationFrame(()=>{
+        const target=$('shared-forecast');
+        if(target&&!$('ranking').hidden){
+          target.scrollIntoView({behavior:'instant',block:'start'});
+          target.focus({preventScroll:true});
+        }
+      });
     }
     const leaguesRoot=$('rank-leagues');leaguesRoot.replaceChildren();
     if(!state.archiveReady){leaguesRoot.append(make('p','','Archiwum niedostępne.'));return;}
@@ -1982,7 +2054,7 @@ const hero=document.querySelector('.hero');hero.classList.add('compact-hero');
 const pages=new Set(['mecze','ranking','sporty','raport','wiecej','lab','jakosc','premium','jak-to-dziala','typy']);
 let current='',positions=new Map();
 function route(){
- let hash='mecze';try{hash=decodeURIComponent(location.hash.slice(1)||'mecze');}catch{}
+ let hash='mecze';try{hash=decodeURIComponent(location.hash.slice(1)||(new URLSearchParams(location.search).has('forecast')?'ranking':'mecze'));}catch{}
  const target=$(hash),parent=target?.closest('main > section');
  const next=pages.has(hash)?hash:parent?.id&&pages.has(parent.id)?parent.id:'mecze';
  if(current)positions.set(current,window.scrollY);

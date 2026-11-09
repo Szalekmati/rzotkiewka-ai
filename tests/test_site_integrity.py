@@ -70,6 +70,28 @@ class SiteIntegrity(unittest.TestCase):
         self.assertIn("const hitPercent=ready&&stats.graded", js)
         self.assertNotIn("RZOTKIEWKA 1.14", self.html)
 
+    def test_forecast_sharing_uses_only_verified_archive_and_deep_link(self):
+        self.assertIn("shared-forecast-status", self.page.ids)
+        js = "\n".join(self.page.js)
+        for code in (
+            "const sharedForecastId=rawSharedId&&/^[a-zA-Z0-9_-]{1,100}$/.test(rawSharedId)",
+            "const sharedRecord=ready&&sharedForecastId?data.find(r=>r.id===sharedForecastId):null;",
+            "const url=new URL(location.pathname,location.origin);",
+            "url.searchParams.set('forecast',record.id);",
+            "url.hash='ranking';",
+            "if(typeof navigator.share==='function')",
+            "await navigator.clipboard.writeText(link);",
+            "window.prompt('Skopiuj link do tej prognozy:',link);",
+            "rows.unshift(sharedRecord);",
+            "card.classList.add('shared-target');",
+            "target.scrollIntoView({behavior:'instant',block:'start'});",
+            "if(focusSharedForecast&&sharedRecord)",
+        ):
+            self.assertIn(code, js)
+        self.assertIn("forecast-card-actions", self.html)
+        self.assertIn("share-forecast-button", self.html)
+        self.assertIn("Nie znaleziono tej prognozy w zweryfikowanym archiwum", js)
+
     def test_no_default_cherry_picking(self):
         self.assertRegex(self.html, r'<select id="rank-state">\s*<option value="all" selected>')
         self.assertRegex(self.html, r'<select id="rank-minprob">\s*<option value="0" selected>')
