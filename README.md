@@ -32,6 +32,10 @@ Zakładka **Test LAB** w interfejsie strony 2.0 pokazuje teraz ostatnie *zapisan
 
 Automatyczne testy na GitHubie sprawdzają unikalne identyfikatory HTML, domyślne filtry darmowych prognoz bez pomijania porażek, etykiety DEMO/Premium, integralność archiwum i składnię JavaScript (Node.js). Kontrola uruchamia się po zmianach strony lub danych, nie pobiera kursów ani nie wykonuje transakcji. Wymaga Node.js tylko do testu JavaScript; bez Node ten test lokalnie jest pomijany. Zielony test nie zastępuje sprawdzenia strony w przeglądarce i nie blokuje automatycznie publikacji GitHub Pages.
 
+## Ochrona eksperymentu LAB 2.1/2.2
+
+Test `tests/test_lab_schedule.py` pilnuje konfiguracji harmonogramu (37. minuta godziny, także ręczny fallback), zamrożonej paczki modeli po SHA-256, sztywnego okna 162–168 h przed meczem oraz zapisu statusu uruchomienia. Jest wykonywany przez istniejącą kontrolę jakości po zmianach konfiguracji, bez pobierania danych i bez generowania prognoz. **Zielony test oznacza zgodność kodu, nie dostarczenie zdarzenia `schedule` przez GitHub**. Problemy z działaniem samego harmonogramu śledzimy w [zadaniu #1](https://github.com/Szalekmati/rzotkiewka-ai/issues/1).
+
 ## Czego jeszcze nie ma
 
 - Prawdziwych płatności, kont ani bezpiecznej blokady Premium.
