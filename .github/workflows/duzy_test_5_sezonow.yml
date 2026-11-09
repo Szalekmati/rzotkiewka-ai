@@ -1,0 +1,35 @@
+name: "RZOTKIEWKA - duzy test 5 sezonow"
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  history:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Przygotuj osobny test
+        shell: python
+        run: |
+          import os, base64, zlib, hashlib
+          from pathlib import Path
+          blob = zlib.decompress(base64.b64decode('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'))
+          assert hashlib.sha256(blob).hexdigest() == '57bd4e7f0cafccfb446808a0524ff7ec1630621f84b2f8c154db44b3f46c8884'
+          (Path(os.environ["RUNNER_TEMP"]) / "expanded_backtest.py").write_bytes(blob)
+      - name: Pobierz historie i ocen silnik repo
+        run: |
+          python "$RUNNER_TEMP/expanded_backtest.py" --engine "$GITHUB_WORKSPACE/forecast_engine.py" --out "$RUNNER_TEMP/duzy_test"
+          cat "$RUNNER_TEMP/duzy_test/RAPORT.md" >> "$GITHUB_STEP_SUMMARY"
+          git rev-parse HEAD > "$RUNNER_TEMP/duzy_test/repo_commit.txt"
+      - name: Raport i dane do pobrania
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: RZOTKIEWKA_DUZY_TEST_5_SEZONOW
+          path: ${{ runner.temp }}/duzy_test/
+          if-no-files-found: warn
+          retention-days: 30
