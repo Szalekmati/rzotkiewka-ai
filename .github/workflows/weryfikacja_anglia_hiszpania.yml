@@ -1,0 +1,223 @@
+name: RZOTKIEWKA - weryfikacja Anglii i Hiszpanii
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audyt:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Przygotuj Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Sprawdz historie i porownaj z OpenLigaDB
+        shell: bash
+        run: |
+          python - <<'PYTHON'
+          import csv, hashlib, io, json, re, unicodedata
+          from collections import Counter
+          from datetime import datetime, timezone, date
+          from pathlib import Path
+          from urllib.request import Request, urlopen
+          
+          OUT = Path('raport_anglia_hiszpania')
+          NOW = datetime.now(timezone.utc)
+          
+          def norm(s):
+              s = ''.join(c for c in unicodedata.normalize('NFKD', s.lower()) if not unicodedata.combining(c))
+              return re.sub(r'[^a-z0-9]', '', s)
+          
+          # Only explicit aliases; never guess team identities using fuzzy matching.
+          GROUPS = [
+           ['Arsenal','FC Arsenal'], ['Liverpool','FC Liverpool'],
+           ['Bournemouth','AFC Bournemouth'], ['Brentford','Brentford F.C.'],
+           ['Chelsea','Chelsea FC'], ['Coventry','Coventry City'],
+           ['Crystal Palace','Crystal Palace FC'], ['Everton','Everton FC'],
+           ['Fulham','Fulham FC'], ['Hull','Hull City'], ['Ipswich','Ipswich Town'],
+           ['Man United','Manchester United','Manchester United FC'],
+           ['Newcastle','Newcastle United','Newcastle United FC'],
+           ['Tottenham','Tottenham Hotspur','Tottenham Hotspur FC'],
+           ['Espanol','Espanyol','RCD Espanyol','Espanyol Barcelona'],
+           ['Getafe','Getafe CF','FC Getafe'], ['La Coruna','Deportivo A Coruña'],
+           ['Malaga','FC Malaga'], ['Santander','Racing Santander'],
+           ['Sevilla','Sevilla FC','FC Sevilla'], ['Valencia','Valencia CF','FC Valencia'],
+           ['Villarreal','Villarreal CF','FC Villareal'],
+           ['Man City','Manchester City'], ['Man United','Manchester United'],
+           ['Nott\'m Forest','Nottingham Forest'], ['Newcastle','Newcastle United'],
+           ['Tottenham','Tottenham Hotspur'], ['West Ham','West Ham United'],
+           ['Wolves','Wolverhampton Wanderers'], ['Brighton','Brighton & Hove Albion'],
+           ['Leeds','Leeds United'], ['Leicester','Leicester City'],
+           ['Ath Bilbao','Athletic Bilbao','Athletic Club'],
+           ['Ath Madrid','Atletico Madrid','Atlético de Madrid'],
+           ['Betis','Real Betis','Real Betis Balompie'], ['Sociedad','Real Sociedad'],
+           ['Espanol','Espanyol','RCD Espanyol'], ['Vallecano','Rayo Vallecano'],
+           ['Celta','Celta Vigo','RC Celta de Vigo'], ['Alaves','Deportivo Alaves'],
+           ['Barcelona','FC Barcelona'], ['Sevilla','Sevilla FC'], ['Valencia','Valencia CF'],
+           ['Villarreal','Villarreal CF'], ['Osasuna','CA Osasuna'],
+           ['Mallorca','RCD Mallorca'], ['Getafe','Getafe CF'], ['Girona','Girona FC'],
+           ['Elche','Elche CF'], ['Levante','Levante UD'], ['Oviedo','Real Oviedo'],
+          ]
+          ALIASES = {}
+          for g in GROUPS:
+              canonical = next((ALIASES[norm(x)] for x in g if norm(x) in ALIASES), norm(g[0]))
+              ALIASES.update({norm(x):canonical for x in g})
+          def team(s):
+              return ALIASES.get(norm(s), norm(s))
+          
+          def get(url, name):
+              with urlopen(Request(url, headers={'User-Agent':'RZOTKIEWKA-data-audit/1.0'}), timeout=30) as r:
+                  data = r.read(15_000_001)
+              if len(data)>15_000_000:
+                  raise ValueError('Response too large')
+              (OUT/'sources'/name).write_bytes(data)
+              return data, {'url':url, 'observed_at':NOW.isoformat(), 'sha256':hashlib.sha256(data).hexdigest()}
+          
+          def parse_fd(data, div, year):
+              text = data.decode('utf-8-sig', errors='strict')
+              reader = csv.DictReader(io.StringIO(text))
+              required = {'Div','Date','HomeTeam','AwayTeam','FTHG','FTAG','FTR'}
+              if not required.issubset(reader.fieldnames or []):
+                  raise ValueError('Missing CSV columns; possibly HTML instead of CSV')
+              rows, errors = [], []
+              for i, r in enumerate(reader, 2):
+                  if not any(v for v in r.values()):
+                      continue
+                  try:
+                      day = None
+                      for fmt in ('%d/%m/%Y','%d/%m/%y'):
+                          try:
+                              day = datetime.strptime(r['Date'],fmt).date()
+                              break
+                          except ValueError:
+                              pass
+                      if day is None or not date(year,7,1)<=day<=date(year+1,6,30) or day>NOW.date():
+                          raise ValueError('Invalid season/date or future result')
+                      h,a = r['HomeTeam'].strip(),r['AwayTeam'].strip()
+                      if r['Div']!=div or not h or not a or team(h)==team(a):
+                          raise ValueError('Invalid league/team')
+                      if not re.fullmatch(r'\d+',r['FTHG']) or not re.fullmatch(r'\d+',r['FTAG']):
+                          raise ValueError('Missing/invalid score')
+                      hg,ag = int(r['FTHG']),int(r['FTAG'])
+                      result = 'H' if hg>ag else 'A' if hg<ag else 'D'
+                      if r['FTR']!=result:
+                          raise ValueError('Score/result mismatch')
+                      rows.append(dict(league=div,season=year,date=day.isoformat(),home=h,away=a,home_goals=hg,away_goals=ag,result=result))
+                  except (ValueError,TypeError,KeyError) as e:
+                      errors.append({'line':i,'error':str(e)})
+              return rows, errors
+          
+          def quality(rows, errors, completed):
+              pairs = Counter((team(r['home']),team(r['away'])) for r in rows)
+              teams = sorted({x for p in pairs for x in p})
+              dup = sum(n-1 for n in pairs.values())
+              full = len(teams)==20 and len(pairs)==380 and dup==0
+              ok = bool(rows) and not errors and not dup and len(teams)==20 and (full or not completed)
+              return dict(matches=len(rows),teams=len(teams),duplicates=dup,complete_structure=full,invalid=len(errors),status='CANDIDATE' if ok else 'REVIEW',errors=errors)
+          
+          def compare(rows, matches):
+              fd = {(team(r['home']),team(r['away'])):r for r in rows}
+              roster_fd={x for p in fd for x in p}
+              roster_ol=set()
+              problems=[]
+              seen=Counter()
+              matched=same=missing=conflict=0
+              for m in matches:
+                  try:
+                      pair=(team(m['team1']['teamName']),team(m['team2']['teamName']))
+                      roster_ol.update(pair)
+                      seen[pair]+=1
+                      row=fd.get(pair)
+                      if not row:
+                          continue
+                      matched+=1
+                      results=[r for r in m.get('matchResults',[]) if r.get('resultTypeID')==2]
+                      if not m.get('matchIsFinished') or len(results)!=1:
+                          missing+=1
+                          problems.append(dict(kind='FD_RESULT_OL_UNSETTLED',pair=pair,fd=row,ol_id=m.get('matchID')))
+                          continue
+                      score=(results[0].get('pointsTeam1'),results[0].get('pointsTeam2'))
+                      if score==(row['home_goals'],row['away_goals']):
+                          same+=1
+                      else:
+                          conflict+=1
+                          problems.append(dict(kind='SCORE_CONFLICT',pair=pair,fd=row,ol_score=score))
+                  except (KeyError,TypeError,ValueError) as e:
+                      problems.append(dict(kind='INVALID_OL',error=str(e)))
+              identity = len(roster_fd)==20 and roster_fd==roster_ol
+              return dict(identity_status='ROSTER_MATCH_CANDIDATE' if identity else 'UNRESOLVED',
+                  fd_only_teams=sorted(roster_fd-roster_ol),ol_only_teams=sorted(roster_ol-roster_fd),
+                  matched_pairs=matched,agreeing_scores=same,fd_results_ol_unsettled=missing,
+                  score_conflicts=conflict,ol_duplicate_pairs=sum(n-1 for n in seen.values()),details=problems)
+          
+          def main():
+              (OUT/'sources').mkdir(parents=True,exist_ok=True)
+              current = NOW.year if NOW.month>=7 else NOW.year-1
+              report={'observed_at':NOW.isoformat(),'mode':'DATA AUDIT ONLY','seasons':[],'comparison':[]}
+              all_rows=[]
+              current_rows={}
+              for div, ol in [('E0','pl'),('SP1','la1')]:
+                  for year in range(current-5,current+1):
+                      code=f'{year%100:02d}{(year+1)%100:02d}'
+                      entry=dict(league=div,season=year)
+                      try:
+                          data,meta=get(f'https://www.football-data.co.uk/mmz4281/{code}/{div}.csv',f'{div}_{year}.csv')
+                          rows,errors=parse_fd(data,div,year)
+                          entry.update(meta)
+                          entry.update(quality(rows,errors,year<current))
+                          if entry['status']=='CANDIDATE':
+                              all_rows.extend(rows)
+                          if year==current:
+                              current_rows[div]=rows if entry['status']=='CANDIDATE' else []
+                      except Exception as e:
+                          entry.update(status='ERROR',error=str(e))
+                      report['seasons'].append(entry)
+                      print(div,year,entry['status'],flush=True)
+                  try:
+                      data,meta=get(f'https://api.openligadb.de/getmatchdata/{ol}/{current}',f'{ol}_{current}.json')
+                      matches=json.loads(data)
+                      if not isinstance(matches,list):
+                          raise ValueError('OpenLigaDB response is not a list')
+                      report['comparison'].append(dict(league=div,**meta,**compare(current_rows.get(div,[]),matches)))
+                  except Exception as e:
+                      report['comparison'].append(dict(league=div,status='ERROR',error=str(e)))
+              (OUT/'wyniki.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
+              with (OUT/'kandydaci_historia.csv').open('w',newline='',encoding='utf-8') as f:
+                  fields=['league','season','date','home','away','home_goals','away_goals','result']
+                  w=csv.DictWriter(f,fieldnames=fields)
+                  w.writeheader()
+                  w.writerows(all_rows)
+              lines=['# RZOTKIEWKA — Anglia i Hiszpania',f'Obserwacja UTC: {NOW.isoformat()}',
+                  'Dane kandydackie do testu. Nie uruchomiono silnika ani treningu. Nie zmieniono produkcji.',
+                  '| Liga | Sezon | Mecze | Drużyny | Błędne | Status |', '|---|---|---:|---:|---:|---|']
+              for e in report['seasons']:
+                  lines.append(f"| {e['league']} | {e['season']}/{e['season']+1} | {e.get('matches','—')} | {e.get('teams','—')} | {e.get('invalid','—')} | {e['status']} |")
+              for e in report['comparison']:
+                  lines.extend([f"\n## Porównanie {e['league']}",'```json',json.dumps(e,ensure_ascii=False,indent=2),'```'])
+              lines.extend(['\n## Interpretacja',
+                  '- CANDIDATE oznacza przejście kontroli struktury, a nie niezależne potwierdzenie wszystkich wyników.',
+                  '- Pięć zakończonych sezonów: wymagane 380 par, 20 drużyn i brak błędów. Bieżący sezon może być częściowy.',
+                  '- Roster match jest kandydackim potwierdzeniem tożsamości na podstawie 20 nazw drużyn, po jawnych aliasach.',
+                  '- Nierozpoznane nazwy i konflikty wymagają sprawdzenia. Niczego nie dopasowujemy na podobieństwo tekstu.',
+                  '- Wyniki Football-Data i OpenLigaDB porównujemy po gospodarzu i gościu w tym samym sezonie; daty mogą się zmieniać.',
+                  '- Brak wyniku OpenLigaDB może oznaczać opóźnienie, błędny status lub inną usterkę źródła; raport nie nadpisuje danych.',
+                  '- CSV zawiera tylko sezony CANDIDATE i same wyniki. Nie jest gotowym formatem wejściowym obecnego silnika.',
+                  '- Przed testem T−168h trzeba przygotować adapter i regułę dostępności wyników. Brak archiwalnych czasów publikacji.',
+                  '- Przed szerszą dystrybucją danych sprawdzić warunki dostawcy.',
+                  '- Następny krok: wyjaśnić statusy REVIEW/ERROR i aliasy, a następnie osobno przetestować obecny silnik na poprawnej historii.'])
+              (OUT/'RAPORT.md').write_text('\n'.join(lines),encoding='utf-8')
+              if any(e['status']!='CANDIDATE' for e in report['seasons']) or any(e.get('identity_status')!='ROSTER_MATCH_CANDIDATE' or e.get('score_conflicts',0) or e.get('ol_duplicate_pairs',0) for e in report['comparison']):
+                  raise SystemExit('Raport zapisany. Wymagana kontrola danych — zobacz artefakt.')
+          
+          if __name__=='__main__':
+              main()
+          PYTHON
+      - name: Pobierz raport i dane kandydackie
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: RZOTKIEWKA_ANGLIA_HISZPANIA
+          path: raport_anglia_hiszpania/
+          if-no-files-found: error
+          retention-days: 14
