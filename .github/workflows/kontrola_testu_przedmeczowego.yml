@@ -1,0 +1,122 @@
+name: RZOTKIEWKA - kontrola testu przedmeczowego
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  kontrola:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Pobierz aktualny stan
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+      - name: Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Sprawdz zapisane prognozy
+        shell: python
+        run: |
+          import hashlib
+          import json
+          import os
+          from collections import Counter
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          def digest(obj):
+              return hashlib.sha256(json.dumps(obj, ensure_ascii=False, sort_keys=True,
+                  separators=(',', ':'), allow_nan=False).encode()).hexdigest()
+
+          def dt(text):
+              value = datetime.fromisoformat(text.replace('Z', '+00:00'))
+              if value.tzinfo is None:
+                  raise ValueError('Data bez strefy czasowej')
+              return value
+
+          root = Path('lab_forward')
+          ledger = root / 'ledger.json'
+          lines = ['# RZOTKIEWKA — stan testu przedmeczowego', '',
+                   'Kontrola zapisow na domyslnej galezi repozytorium.',
+                   'Nie tworzy nowych prognoz i nie zmienia trwajacego eksperymentu.', '']
+          problems = []
+          if not ledger.exists():
+              lines += ['**BRAK ARCHIWUM lab_forward/ledger.json.**', '',
+                        'Otworz Actions → RZOTKIEWKA - test przedmeczowy 2.1 i 2.2 LAB.',
+                        'Jesli workflow istnieje, sprawdz ostatnie uruchomienie i krok zapisu do repozytorium.',
+                        'Jesli go nie ma, potrzebna jest instalacja test_przedmeczowy.yml.',
+                        'Nie oznacza to zerowej skutecznosci — brak zapisow do oceny.']
+          else:
+              state = json.loads(ledger.read_text())
+              experiment = json.loads((root / 'experiment.json').read_text())
+              if state.get('schema') != 1 or state.get('experiment') != digest(experiment):
+                  problems.append('Niezgodny identyfikator eksperymentu lub schemat archiwum.')
+              rows = state['forecasts']
+              events = state['settlements']
+              seen, checked = set(), set()
+              counts = Counter()
+              league_counts = Counter()
+              created, observations, pending = [], [], []
+              for record in rows:
+                  key, snapshot = record['id'], record['snapshot']
+                  if key in seen or digest(snapshot) != record['sha256']:
+                      problems.append('Duplikat lub zmieniona prognoza: ' + key)
+                  seen.add(key)
+                  made, kickoff = dt(snapshot['created_at']), dt(snapshot['fixture']['kickoff'])
+                  created.append(made)
+                  if made >= kickoff:
+                      problems.append('Zapis po rozpoczeciu: ' + key)
+                  cfg = experiment['config']
+                  lead = (kickoff - made).total_seconds() / 3600
+                  if not cfg['min_lead_hours'] <= lead <= cfg['max_lead_hours']:
+                      problems.append('Prognoza poza oknem czasowym: ' + key)
+                  h = snapshot['input_sha256']
+                  if h not in checked:
+                      if len(h) != 64 or any(c not in '0123456789abcdef' for c in h):
+                          raise ValueError('Nieprawidlowy skrot wejscia')
+                      source = root / 'inputs' / (h + '.json')
+                      if not source.exists() or digest(json.loads(source.read_text())) != h:
+                          problems.append('Brak lub zmiana wejscia: ' + h)
+                      checked.add(h)
+                  history = events.get(key, [])
+                  observations.extend(dt(e['observed_at']) for e in history)
+                  status = history[-1]['result']['state'] if history else 'pending'
+                  counts[status] += 1
+                  league_counts[snapshot['league']] += 1
+                  if status == 'pending':
+                      pending.append(kickoff)
+              now = datetime.now(timezone.utc)
+              lines += [f'Zapisane pary prognoz: **{len(rows)}**.',
+                        f'Rozliczone pary: **{counts["settled"]}**.',
+                        f'Oczekujace: **{counts["pending"]}**.',
+                        f'Wylaczone po zmianie meczu: **{counts["excluded_fixture_changed"]}**.', '',
+                        '| Liga | Pary prognoz |', '|---|---:|']
+              lines += [f'| {league} | {count} |' for league, count in sorted(league_counts.items())]
+              lines += ['', 'Ostatnia zapisana prognoza UTC: ' + (max(created).isoformat() if created else 'brak'),
+                        'Ostatnia zmiana rozliczenia UTC: ' + (max(observations).isoformat() if observations else 'brak'),
+                        'Te daty nie sa czasem ostatniego uruchomienia. Sprawdz rowniez Actions.']
+              future = [t for t in pending if t > now]
+              overdue = sum(t <= now for t in pending)
+              if future:
+                  lines += ['', 'Najblizszy start oczekujacego meczu UTC: ' + min(future).isoformat()]
+              if overdue:
+                  lines += ['', f'Oczekujace mecze, ktorych czas startu minal: {overdue}.',
+                            'Sprawdz raport obserwatora; mecz moze jeszcze trwac lub oczekiwac na wynik.']
+              if not rows:
+                  lines += ['', 'Archiwum istnieje, ale nie ma jeszcze prognoz.',
+                            'Sprawdz bledy API i mecze w oknie 162–168 godzin w raporcie ponizej.']
+              report = root / 'RAPORT.md'
+              if report.exists():
+                  lines += ['', '## Ostatni zapisany raport obserwatora', '', report.read_text()]
+              lines += ['', '## Kontrola spojnosci', '',
+                        *(problems or ['Skroty prognoz i wejsc oraz czasy zapisu: OK.']),
+                        '', 'Skroty wykrywaja zmiany; nie sa niezaleznym poswiadczeniem czasu publikacji.',
+                        'Ta kontrola nie potwierdza dzialania harmonogramu ani autentycznosci danych dostawcy.']
+          result = '\n'.join(lines) + '\n'
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a', encoding='utf-8') as handle:
+              handle.write(result)
+          print(result)
+          if problems:
+              raise SystemExit('Wykryto problemy spojnosci — zobacz podsumowanie.')
