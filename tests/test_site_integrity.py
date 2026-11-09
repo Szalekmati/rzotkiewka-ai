@@ -58,6 +58,18 @@ class SiteIntegrity(unittest.TestCase):
                       "rank-minprob", "rank-hit", "rank-brier", "premium", "lab"):
             self.assertIn(ident, self.page.ids)
 
+    def test_version_two_showcase_has_real_archive_bindings(self):
+        self.assertIn("RZOTKIEWKA 2.0", self.html)
+        for ident in ("hero-archive-total", "hero-archive-graded",
+                      "hero-archive-hits", "hero-archive-misses",
+                      "hero-archive-ratio", "hero-bar-hits",
+                      "hero-bar-misses", "hero-archive-note"):
+            self.assertIn(ident, self.page.ids)
+        js = "\n".join(self.page.js)
+        self.assertIn("const ready=state.archiveReady&&!state.archiveFailed;", js)
+        self.assertIn("const hitPercent=ready&&stats.graded", js)
+        self.assertNotIn("RZOTKIEWKA 1.14", self.html)
+
     def test_no_default_cherry_picking(self):
         self.assertRegex(self.html, r'<select id="rank-state">\s*<option value="all" selected>')
         self.assertRegex(self.html, r'<select id="rank-minprob">\s*<option value="0" selected>')

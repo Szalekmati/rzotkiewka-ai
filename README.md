@@ -1,4 +1,6 @@
-# 🫜 RZOTKIEWKA AI 1.4
+# 🫜 RZOTKIEWKA AI — strona 2.0
+
+Wersja **2.0** oznacza **nowy interfejs**, nie nową wersję silnika prognoz. Panel startowy liczy statystyki z tych samych danych `predictions.json`, które zostały zweryfikowane w aplikacji; niczego nie dopisuje do archiwum. Jeśli plik nie przejdzie weryfikacji, panel nie pokazuje trafień.
 
 Publiczny, eksperymentalny serwis z terminarzem piłkarskim, modelem prawdopodobieństw **1/X/2** i audytowalnym archiwum prognoz. Projekt korzysta z OpenLigaDB i publikuje statyczną stronę na GitHub Pages. **Nie gwarantuje wyników.**
 

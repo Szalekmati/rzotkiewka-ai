@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#0a0e13">
-  <meta name="description" content="🫜 RZOTKIEWKA 1.14 — publiczny ranking prognoz 1X2, zweryfikowane archiwum, wyniki i analiza. Brak gwarancji wygranej.">
-  <title>🫜 RZOTKIEWKA 1.14 — Ranking prognoz i wyniki 1X2</title>
+  <meta name="theme-color" content="#071119">
+  <meta name="description" content="🫜 RZOTKIEWKA 2.0 — publiczny ranking prognoz 1X2, zweryfikowane archiwum, wyniki i analiza. Brak gwarancji wygranej.">
+  <title>🫜 RZOTKIEWKA 2.0 — Futbol, prognozy i wyniki 1X2</title>
   <style>
     :root{color-scheme:dark;--bg:#0a0e13;--surface:#131a22;--surface2:#19232d;--line:#293743;--ink:#f4f8f8;--muted:#a2b1bc;--accent:#a6f475;--accent2:#dfffc8;--red:#ff858b;--gold:#f4c77f;--radius:18px}
     *{box-sizing:border-box}
@@ -171,7 +171,7 @@
     .archive-chip.waiting{border-color:#987a4a;color:#ffdfad}
     @media(max-width:420px){.archive-panel{padding:14px}.archive-metric{padding:10px}.archive-metric strong{font-size:21px}}
 
-    /* RZOTKIEWKA 1.14 — publiczny ranking, wyłącznie zatwierdzone snapshoty */
+    /* RZOTKIEWKA 2.0 — publiczny ranking, wyłącznie zatwierdzone snapshoty */
     .ranking-section{margin:4px 0 58px}
     /* Free-to-premium path: real archived forecasts, never demo betting tips. */
     .free-showcase{margin:17px 0 21px;padding:clamp(17px,3vw,24px);background:linear-gradient(125deg,#213c27,#182b30);border:1px solid #6c965e;border-radius:17px}
@@ -243,7 +243,7 @@
     .audit-empty{color:var(--muted);font-size:13px;padding:15px}
     @media(max-width:600px){.audit-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.audit-head h2{font-size:25px}.audit-download{width:100%}}
 
-    /* RZOTKIEWKA 1.14 — kontrola jakości publicznych prognoz. */
+    /* RZOTKIEWKA 2.0 — kontrola jakości publicznych prognoz. */
     .quality-section{margin:0 0 58px;scroll-margin-top:95px}
     .quality-panel{border:1px solid #59734c;border-radius:24px;padding:clamp(17px,3vw,26px);background:linear-gradient(145deg,#1a2a1e,#131d24 68%)}
     .quality-top{display:flex;gap:15px;align-items:start;justify-content:space-between;flex-wrap:wrap}
@@ -302,7 +302,7 @@
 .passport-body p,.passport-body li{font-size:13px;line-height:1.7;color:var(--muted)}
 .passport-body ol,.passport-body ul{padding-left:20px}
 
-/* 1.14: oddzielne widoki i czytelna nawigacja. */
+/* 2.0: oddzielne widoki i czytelna nawigacja. */
 [hidden]{display:none!important}
 .app-nav{display:flex;gap:8px;padding:16px 0;overflow-x:auto;scrollbar-width:thin}
 .app-nav a{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;min-height:48px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--muted);font-size:13px;font-weight:750;white-space:nowrap}
@@ -336,25 +336,101 @@
 button:disabled{opacity:.55;cursor:wait}
 @media(max-width:720px){.nav{display:none}.app-nav{gap:5px;padding:12px 0}.app-nav a{padding:9px 6px;flex-direction:column;gap:2px;font-size:11px;min-width:55px}.window-cards,.competition-grid,.more-grid{grid-template-columns:1fr}.compact-hero{padding:12px 0 20px}.compact-hero .kicker{font-size:10px}.quick-lab{padding:14px}.lab-window{padding:14px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}}
+
+    /* RZOTKIEWKA 2.0: editorial sports dashboard; preserves original data engine. */
+    :root{--bg:#071119;--surface:#121f27;--surface2:#182b30;--line:#2b4148;--ink:#f4faf5;--muted:#a6b7b9;--accent:#c4ff69;--accent2:#e3ffb5;--gold:#ffdc91}
+    body{background:radial-gradient(ellipse 75% 36% at 10% 0%,#17392c 0%,transparent 78%),radial-gradient(ellipse 60% 24% at 98% 28%,#163035 0%,transparent 80%),#071119;background-attachment:fixed}
+    .header{background:rgba(6,16,21,.93);border-bottom-color:#314847}
+    .brand-emoji{background:linear-gradient(155deg,#d0ff80,#70b84d);border:1px solid #d2ff98;color:#09150b;box-shadow:0 0 28px #bdff6934}
+    .brand-name{font-weight:950;letter-spacing:.085em}
+    .brand-caption{color:#a9c7ad}
+    .banner{background:linear-gradient(90deg,#193729,#223b2b,#102d32);border-bottom-color:#425c43;color:#e0fcb7;font-weight:800;letter-spacing:.07em}
+    .app-nav{gap:11px;padding:18px 0}
+    .app-nav a{border-radius:15px;border:1px solid #324b4c;background:rgba(16,32,38,.95);min-height:51px;box-shadow:inset 0 1px #ffffff0b;transition:background .16s,border-color .16s,transform .16s}
+    .app-nav a:hover{background:#1e3639;border-color:#709a71;transform:translateY(-1px)}
+    .app-nav a[aria-current="page"],.nav a[aria-current="page"]{background:linear-gradient(125deg,#caef92,#b9fb6a);border-color:#d1ff8f;color:#122218;box-shadow:0 6px 26px #9dff6326}
+    .compact-hero{padding:20px 0 35px;grid-template-columns:minmax(0,1.04fr) minmax(330px,.96fr);gap:18px;align-items:stretch}
+    .hero-story{padding:clamp(25px,4.5vw,48px);background:linear-gradient(150deg,#1c3830 0%,#13282a 44%,#0e1e29 100%);border:1px solid #3b5c49;border-radius:27px;position:relative;overflow:hidden;min-width:0;box-shadow:0 24px 80px #00000029}
+    .hero-story:after{content:"";position:absolute;width:330px;height:330px;right:-170px;top:-180px;border-radius:50%;border:45px solid #bfff6610;pointer-events:none}
+    .hero-story>*{position:relative;z-index:1}
+    .hero-topline{display:flex;align-items:center;flex-wrap:wrap;gap:9px;font-size:10px;font-weight:900;letter-spacing:.11em;color:#e4f8d0;margin-bottom:28px}
+    .hero-led{width:9px;height:9px;border-radius:50%;background:#bbff72;box-shadow:0 0 0 5px #baff721b}
+    .hero-topline-divider{width:1px;height:12px;background:#89a39370}
+    .hero-story .kicker{background:#193e31;border-color:#618e62;color:#d5ffa5;font-size:10px;max-width:100%}
+    .compact-hero h1{font-size:clamp(40px,5vw,69px);line-height:1.01;letter-spacing:-.063em;margin:22px 0 21px;max-width:650px}
+    .compact-hero h1 span{color:#c8ff78;background:linear-gradient(110deg,#f1ffb9,#b7ff6c);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+    .compact-hero .lead{font-size:clamp(14px,1.3vw,16px);line-height:1.75;max-width:570px;color:#c3d7d0;margin-bottom:22px}
+    .hero-story .lead strong{color:#eefde6}
+    .hero-story .actions{display:flex;gap:9px;margin-top:25px}
+    .hero-story .primary,.hero-story .secondary{font-size:13px;border-radius:12px;min-height:48px;padding:11px 16px}
+    .hero-story .primary{background:#c6ff76;color:#16260e;box-shadow:0 12px 38px #b4ff462e}
+    .hero-story .secondary{background:#172d2c;border-color:#537160}
+    .hero-trust{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:33px;padding-top:18px;border-top:1px solid #5372607a}
+    .hero-trust span{display:flex;align-items:center;gap:7px;font-size:11px;color:#b4c9c3}
+    .hero-trust b{font-size:10px;color:#d5fa97}
+    .compact-hero .hero-board{display:flex;flex-direction:column;align-items:stretch;justify-content:space-between;min-height:435px;background:linear-gradient(153deg,#1c2834 0%,#112026 57%,#102a24 100%);border:1px solid #3b5551;border-radius:27px;padding:clamp(20px,3.2vw,30px);text-align:left;box-shadow:0 24px 80px #00000029;overflow:hidden}
+    .compact-hero .hero-board:after{content:"";position:absolute;width:285px;height:285px;right:-150px;top:-110px;border-radius:50%;border:1px solid #95ba6a45;opacity:.9;pointer-events:none}
+    .hero-board-top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:18px;border-bottom:1px solid #38514d}
+    .hero-board-brand{display:flex;align-items:center;gap:9px;color:#d8e9d8;font-size:11px;font-weight:850;letter-spacing:.07em}
+    .hero-board-brand span{font-size:25px}
+    .hero-board-version{padding:5px 10px;border-radius:8px;border:1px solid #5b8069;color:#d2ffaf;background:#214130;font-size:11px;font-weight:900}
+    .hero-board-heading{padding:24px 0 16px}
+    .hero-board-eyebrow{font-size:11px;color:#afca9d;font-weight:850;letter-spacing:.1em}
+    .hero-board-heading h2{font-size:clamp(27px,2.8vw,39px);line-height:1.08;letter-spacing:-.04em;margin:11px 0 11px}
+    .hero-board-heading h2 em{font-style:normal;color:#caff86}
+    .hero-board-heading p{font-size:12px;color:#adbfbc;line-height:1.6;margin:0}
+    .hero-board-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding:12px 0}
+    .hero-board-metrics>div{min-width:0;padding:13px 8px;background:#071b1c9e;border:1px solid #315046;border-radius:12px;text-align:center}
+    .hero-board-metrics strong{display:block;color:#e8ffcf;font-size:clamp(22px,2.6vw,34px);line-height:1.1;letter-spacing:-.045em;font-variant-numeric:tabular-nums}
+    .hero-board-metrics span{display:block;font-size:10px;color:#aac0b7;margin-top:7px}
+    .hero-board-chart{padding-top:11px}
+    .hero-board-chart-heading{display:flex;justify-content:space-between;gap:8px;color:#d2e6db;font-size:11px;font-weight:750}
+    .hero-board-chart-heading span:last-child{color:#caff8b;font-variant-numeric:tabular-nums}
+    .hero-board-bar{height:9px;display:flex;margin:10px 0 7px;border-radius:999px;background:#34454d;overflow:hidden}
+    #hero-bar-hits{background:linear-gradient(90deg,#73c673,#cfff7a);width:0;transition:width .45s}
+    #hero-bar-misses{background:linear-gradient(90deg,#dc9b86,#f07b83);width:0;transition:width .45s}
+    #hero-archive-note{font-size:11px;color:#aec6bb;min-height:18px;margin:0}
+    .hero-board-bottom{display:flex;gap:7px;align-items:center;padding-top:15px;margin-top:16px;border-top:1px solid #38514d;font-size:10px;color:#aec3b5;flex-wrap:wrap}
+    .hero-board-pulse{height:7px;width:7px;border-radius:50%;background:#beff6b;flex-shrink:0}
+    .hero-board-bottom a{color:#d3ff9f;text-decoration:underline;text-underline-offset:3px;margin-left:auto}
+    .quick-lab{background:#14292c;border-color:#3d6153}
+    .real-card,.rank-card,.archive-panel,.rank-shell{box-shadow:0 16px 60px #00000024}
+    @media(max-width:950px){.compact-hero{grid-template-columns:1fr}.compact-hero .hero-board{min-height:0}.hero-board-metrics strong{font-size:clamp(23px,4vw,36px)}}
+    @media(max-width:600px){.compact-hero{padding:8px 0 20px;gap:13px}.hero-story{padding:24px 18px;border-radius:20px}.compact-hero h1{font-size:clamp(40px,11vw,58px)}.hero-topline{margin-bottom:17px;font-size:9px}.hero-story .actions{flex-direction:column}.hero-story .actions a{width:100%}.hero-trust{gap:9px}.hero-trust span{font-size:10px}.compact-hero .hero-board{padding:20px 16px;border-radius:20px}.hero-board-heading h2{font-size:29px}.hero-board-metrics{gap:4px}.hero-board-metrics>div{padding:12px 3px}.hero-board-metrics span{font-size:9px}.app-nav{gap:5px;padding:12px 0}.app-nav a{border-radius:10px;padding:9px 3px;min-width:54px}}
+    @media(prefers-reduced-motion:reduce){#hero-bar-hits,#hero-bar-misses{transition:none!important}}
+
 </style>
 </head>
 <body>
 <header class="header">
   <div class="shell head-inner">
-    <a class="brand" href="#start" aria-label="RZOTKIEWKA — strona główna"><span class="brand-emoji" aria-hidden="true">🫜</span><span><span class="brand-name">RZOTKIEWKA</span><span class="brand-caption">SPORTS LAB · 1.14</span></span></a>
+    <a class="brand" href="#start" aria-label="RZOTKIEWKA — strona główna"><span class="brand-emoji" aria-hidden="true">🫜</span><span><span class="brand-name">RZOTKIEWKA</span><span class="brand-caption">SPORTS LAB · 2.0</span></span></a>
     <nav class="nav" aria-label="Nawigacja"><a data-page-link href="#mecze"><span aria-hidden="true">⚽</span> Mecze</a><a data-page-link href="#ranking"><span aria-hidden="true">🔓</span> Darmowe</a><a data-page-link href="#sporty"><span aria-hidden="true">◈</span> Sporty</a><a data-page-link href="#raport"><span aria-hidden="true">▤</span> Raport</a><a data-page-link href="#wiecej"><span aria-hidden="true">☰</span> Więcej</a></nav>
   </div>
 </header>
-<div id="demo-banner" class="banner" role="status">WERSJA 1.14 · Mecze, prognozy i przejrzysty status LAB</div>
+<div id="demo-banner" class="banner" role="status">WERSJA 2.0 · Mecze, prognozy i przejrzysty status LAB</div>
 <main class="shell" id="start"><nav class="app-nav" aria-label="Zakładki aplikacji"><a data-page-link href="#mecze"><span aria-hidden="true">⚽</span> Mecze</a><a data-page-link href="#ranking"><span aria-hidden="true">🔓</span> Darmowe</a><a data-page-link href="#sporty"><span aria-hidden="true">◈</span> Sporty</a><a data-page-link href="#raport"><span aria-hidden="true">▤</span> Raport</a><a data-page-link href="#wiecej"><span aria-hidden="true">☰</span> Więcej</a></nav>
   <section class="hero" aria-labelledby="hero-title">
-    <div>
-      <div class="kicker">⚽ PRAWDZIWE MECZE · PUBLICZNE ARCHIWUM PROGNOZ</div>
-      <h1 id="hero-title">Mecze pod <span>lupą.</span></h1>
-      <p class="lead">Prawdziwe mecze i prawdopodobieństwa 1–X–2. Oddzielamy szacunki na żywo od prognoz zapisanych przed pierwszym gwizdkiem.</p>
-      <div class="actions"><a class="primary" href="#ranking">🔓 Darmowe prognozy i wyniki →</a><a class="secondary" href="#mecze">Przeglądaj mecze</a></div>
+    <div class="hero-story">
+      <div class="hero-topline"><span class="hero-led" aria-hidden="true"></span><span>RZOTKIEWKA 2.0</span><span class="hero-topline-divider" aria-hidden="true"></span><span>FOOTBALL INTELLIGENCE</span></div>
+      <div class="kicker">⚽ MECZE · DANE · TRANSPARENTNE PROGNOZY</div>
+      <h1 id="hero-title">Nie zgaduj.<br><span>Analizuj grę.</span></h1>
+      <p class="lead">Prawdziwe terminarze, prawdopodobieństwa 1/X/2 i historia prognoz zapisana <strong>przed pierwszym gwizdkiem</strong>. Pokazujemy trafienia i pomyłki — bez obietnic pewnych wygranych.</p>
+      <div class="actions"><a class="primary" href="#ranking">Odkryj darmowe prognozy <span aria-hidden="true">↗</span></a><a class="secondary" href="#raport">Sprawdź wyniki <span aria-hidden="true">→</span></a></div>
+      <div class="hero-trust" aria-label="Zasady RZOTKIEWKI"><span><b>01</b> Zapis przed meczem</span><span><b>02</b> Jawne rezultaty</span><span><b>03</b> Weryfikacja SHA-256</span></div>
     </div>
-    <div class="visual" aria-hidden="true"><div class="mascot">🫜</div><h3>Zapisz. Sprawdź. Ucz się.</h3><p>Prosty interfejs · jasne zasady</p></div>
+    <div class="visual hero-board" aria-label="Wyniki z publicznego archiwum prognoz">
+      <div class="hero-board-top"><span class="hero-board-brand"><span aria-hidden="true">🫜</span> RZOTKIEWKA / DATA HUB</span><span class="hero-board-version">2.0</span></div>
+      <div class="hero-board-heading"><span class="hero-board-eyebrow">PUBLICZNE ARCHIWUM / 1-X-2</span><h2>Każda prognoza.<br><em>Cała historia.</em></h2><p>Wyniki z istniejącego, zweryfikowanego archiwum. Bez ukrywania nietrafionych.</p></div>
+      <div class="hero-board-metrics" aria-label="Statystyki archiwum">
+        <div><strong id="hero-archive-total">—</strong><span>opublikowane</span></div>
+        <div><strong id="hero-archive-graded">—</strong><span>rozliczone</span></div>
+        <div><strong id="hero-archive-hits">—</strong><span>trafione 1X2</span></div>
+        <div><strong id="hero-archive-misses">—</strong><span>nietrafione</span></div>
+      </div>
+      <div class="hero-board-chart"><div class="hero-board-chart-heading"><span>Podział rozliczonych prognoz</span><span id="hero-archive-ratio">—</span></div><div class="hero-board-bar" aria-hidden="true"><span id="hero-bar-hits"></span><span id="hero-bar-misses"></span></div><p id="hero-archive-note" role="status" aria-live="polite">Sprawdzanie archiwum i podpisów danych…</p></div>
+      <div class="hero-board-bottom"><span class="hero-board-pulse" aria-hidden="true"></span><span>Źródło: publiczne zapisy przedmeczowe</span><a href="#ranking">Otwórz archiwum ↗</a></div>
+    </div>
   </section>
   <section id="mecze" class="real-section" aria-labelledby="live-title">
     <aside class="quick-lab" aria-label="Przejdź do testu przedmeczowego"><div><strong>🧪 Test przedmeczowy LAB</strong><p>Sprawdź zapisane prognozy i najbliższe okna zapisu.</p></div><a class="secondary" href="#lab">Otwórz LAB →</a></aside>
@@ -748,7 +824,7 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
     render();
   }));
   $('reload').addEventListener('click',loadTips);
-  $('footer-year').textContent = '© ' + new Date().getFullYear() + ' RZOTKIEWKA · wersja 1.14';
+  $('footer-year').textContent = '© ' + new Date().getFullYear() + ' RZOTKIEWKA · wersja 2.0';
   loadTips();
 })();
 </script>
@@ -1058,6 +1134,26 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
   }
   function renderRanking(){
     const data=state.archive,stats=rankGroup(data);
+    // The hero only presents SHA-verified archive entries already accepted by
+    // the archive loader. Missing/invalid data never turns into a success claim.
+    const ready=state.archiveReady&&!state.archiveFailed;
+    const heroNumbers=[
+      ['hero-archive-total',stats.total],
+      ['hero-archive-graded',stats.graded],
+      ['hero-archive-hits',stats.hits],
+      ['hero-archive-misses',stats.graded-stats.hits]
+    ];
+    for(const [id,value] of heroNumbers)$(id).textContent=ready?String(value):'—';
+    $('hero-archive-ratio').textContent=ready&&stats.graded
+      ? `${stats.hits} trafionych / ${stats.graded} rozliczonych` : '—';
+    const hitPercent=ready&&stats.graded?100*stats.hits/stats.graded:0;
+    $('hero-bar-hits').style.width=hitPercent+'%';
+    $('hero-bar-misses').style.width=(ready&&stats.graded?100-hitPercent:0)+'%';
+    $('hero-archive-note').textContent=state.archiveFailed
+      ?'Archiwum niedostępne. Nie pokazujemy niezweryfikowanych wyników.'
+      :!ready?'Sprawdzanie archiwum i podpisów danych…'
+      :stats.graded?'Próba jest mała. Wyniki 1X2 nie oznaczają zysku z zakładów.'
+      :'Prognozy czekają na rozliczenie — nie ma jeszcze wyników.';
     $('rank-total').textContent=state.archiveReady?String(stats.total):'—';
     $('rank-graded').textContent=state.archiveReady?String(stats.graded):'—';
     $('rank-hit').textContent=stats.hitrate===null?'—':formattedPercent(stats.hitrate);
@@ -1897,7 +1993,7 @@ function route(){
  if(selected)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');
  });
  const changed=current!==next;current=next;
- if(changed){document.title='🫜 RZOTKIEWKA 1.14 · '+({mecze:'Mecze',ranking:'Prognozy',sporty:'Sporty',raport:'Raport',lab:'Test LAB',wiecej:'Więcej',jakosc:'Jakość modelu',premium:'Premium','jak-to-dziala':'Jak to działa',typy:'Przykłady DEMO'}[next]||'Sport');window.scrollTo({top:positions.get(next)||0,behavior:'instant'});const title=$(next)?.querySelector('h2');if(title){title.tabIndex=-1;title.focus({preventScroll:true});}}
+ if(changed){document.title='🫜 RZOTKIEWKA 2.0 · '+({mecze:'Mecze',ranking:'Prognozy',sporty:'Sporty',raport:'Raport',lab:'Test LAB',wiecej:'Więcej',jakosc:'Jakość modelu',premium:'Premium','jak-to-dziala':'Jak to działa',typy:'Przykłady DEMO'}[next]||'Sport');window.scrollTo({top:positions.get(next)||0,behavior:'instant'});const title=$(next)?.querySelector('h2');if(title){title.tabIndex=-1;title.focus({preventScroll:true});}}
 }
 window.addEventListener('hashchange',route);
 document.querySelectorAll('[data-page-link]').forEach(a=>a.addEventListener('click',()=>{if(location.hash===a.hash)window.scrollTo({top:0,behavior:'smooth'});}));
