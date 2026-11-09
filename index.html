@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0a0e13">
-  <meta name="description" content="🫜 RZOTKIEWKA 1.10 — publiczny ranking prognoz 1X2, zweryfikowane archiwum, wyniki i analiza. Brak gwarancji wygranej.">
-  <title>🫜 RZOTKIEWKA 1.10 — Ranking prognoz i wyniki 1X2</title>
+  <meta name="description" content="🫜 RZOTKIEWKA 1.11 — publiczny ranking prognoz 1X2, zweryfikowane archiwum, wyniki i analiza. Brak gwarancji wygranej.">
+  <title>🫜 RZOTKIEWKA 1.11 — Ranking prognoz i wyniki 1X2</title>
   <style>
     :root{color-scheme:dark;--bg:#0a0e13;--surface:#131a22;--surface2:#19232d;--line:#293743;--ink:#f4f8f8;--muted:#a2b1bc;--accent:#a6f475;--accent2:#dfffc8;--red:#ff858b;--gold:#f4c77f;--radius:18px}
     *{box-sizing:border-box}
@@ -171,7 +171,7 @@
     .archive-chip.waiting{border-color:#987a4a;color:#ffdfad}
     @media(max-width:420px){.archive-panel{padding:14px}.archive-metric{padding:10px}.archive-metric strong{font-size:21px}}
 
-    /* RZOTKIEWKA 1.10 — publiczny ranking, wyłącznie zatwierdzone snapshoty */
+    /* RZOTKIEWKA 1.11 — publiczny ranking, wyłącznie zatwierdzone snapshoty */
     .ranking-section{margin:4px 0 58px}
     .rank-shell{border:1px solid #345a43;background:linear-gradient(145deg,#14231c,#131c24 70%);border-radius:24px;padding:clamp(16px,4vw,26px)}
     .rank-shell h2{margin:0 0 9px}
@@ -235,7 +235,7 @@
     .audit-empty{color:var(--muted);font-size:13px;padding:15px}
     @media(max-width:600px){.audit-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.audit-head h2{font-size:25px}.audit-download{width:100%}}
 
-    /* RZOTKIEWKA 1.10 — kontrola jakości publicznych prognoz. */
+    /* RZOTKIEWKA 1.11 — kontrola jakości publicznych prognoz. */
     .quality-section{margin:0 0 58px;scroll-margin-top:95px}
     .quality-panel{border:1px solid #59734c;border-radius:24px;padding:clamp(17px,3vw,26px);background:linear-gradient(145deg,#1a2a1e,#131d24 68%)}
     .quality-top{display:flex;gap:15px;align-items:start;justify-content:space-between;flex-wrap:wrap}
@@ -264,7 +264,7 @@
     .rank-filter-note{color:#b8d3c2;font-size:12px;margin:-4px 0 13px}
     @media(max-width:720px){.quality-grid{grid-template-columns:1fr}.quality-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.quality-box{padding:15px}}
 
-    /* 1.10: nawigacja mobilna, wyszukiwanie i obserwowane prognozy. */
+    /* 1.11: nawigacja mobilna, wyszukiwanie i obserwowane prognozy. */
     section[id]{scroll-margin-top:100px}
     .match-search{display:flex;gap:12px;flex-wrap:wrap;align-items:end;margin:16px 0}
     .match-search label{flex:1;min-width:180px;display:grid;gap:6px;color:var(--muted);font-size:13px}
@@ -285,16 +285,24 @@
     .lab-panel progress{width:100%;height:10px;accent-color:var(--accent)}
     .mobile-nav{display:none}
     @media(max-width:720px){body{padding-bottom:85px}.hero{padding:28px 0 24px}.hero .visual{display:none}.head-inner{min-height:64px}.nav{max-width:55%;overflow:auto;flex-wrap:nowrap}.nav a{white-space:nowrap}.lab-panel{padding:17px}.lab-metrics{gap:7px}.lab-metrics div{padding:10px}.lab-metrics strong{font-size:22px}.lab-metrics span{font-size:11px}.mobile-nav{position:fixed;display:flex;justify-content:space-around;bottom:0;left:0;right:0;z-index:30;padding:8px 8px calc(8px + env(safe-area-inset-bottom));background:#111c19f5;border-top:1px solid #395540;backdrop-filter:blur(15px)}.mobile-nav a{display:grid;place-items:center;gap:2px;min-height:46px;min-width:64px;font-size:12px;color:#c2cec6}.mobile-nav span{font-size:18px;color:var(--accent)}section[id]{scroll-margin-top:82px}}
-  </style>
+
+.passport{margin-top:16px;border:1px solid #395540;border-radius:12px;background:#0e1918;overflow:hidden;min-width:0}
+.passport summary{padding:14px;min-height:48px;cursor:pointer;font-weight:750;color:var(--accent)}
+.passport summary:focus-visible{outline:3px solid var(--accent)}
+.passport-body{padding:0 14px 16px;overflow-wrap:anywhere}
+.passport-body h4{font-size:14px;margin:16px 0 6px}
+.passport-body p,.passport-body li{font-size:13px;line-height:1.7;color:var(--muted)}
+.passport-body ol,.passport-body ul{padding-left:20px}
+</style>
 </head>
 <body>
 <header class="header">
   <div class="shell head-inner">
-    <a class="brand" href="#start" aria-label="RZOTKIEWKA — strona główna"><span class="brand-emoji" aria-hidden="true">🫜</span><span><span class="brand-name">RZOTKIEWKA</span><span class="brand-caption">FOOTBALL LAB · 1.10</span></span></a>
+    <a class="brand" href="#start" aria-label="RZOTKIEWKA — strona główna"><span class="brand-emoji" aria-hidden="true">🫜</span><span><span class="brand-name">RZOTKIEWKA</span><span class="brand-caption">FOOTBALL LAB · 1.11</span></span></a>
     <nav class="nav" aria-label="Nawigacja"><a href="#mecze">Mecze</a><a href="#ranking">Ranking</a><a href="#jakosc">Jakość modelu</a><a href="#raport">Raport</a><a href="#lab">Test LAB</a><a href="#jak-to-dziala">Zasady</a><a class="nav-premium" href="#premium">Premium ✦</a></nav>
   </div>
 </header>
-<div id="demo-banner" class="banner" role="status">WERSJA 1.10 · Prognozy eksperymentalne. Test LAB i jego aktualny stan znajdziesz poniżej.</div>
+<div id="demo-banner" class="banner" role="status">WERSJA 1.11 · Paszport analizy przy każdym meczu: dane, ograniczenia i historia zapisów.</div>
 <main class="shell" id="start">
   <section class="hero" aria-labelledby="hero-title">
     <div>
@@ -739,8 +747,70 @@
     return result;
   }
   function formattedPercent(p){return probFormatter.format(p*100)+'%';}
+
+  function passportRecords(league,season,id){
+    return state.archive.filter(r=>r.snapshot.league===league&&r.snapshot.season===season&&r.snapshot.match_id===id)
+      .slice().sort((a,b)=>Date.parse(a.snapshot.created_at)-Date.parse(b.snapshot.created_at));
+  }
+  function passportDate(value){
+    const d=new Date(value);
+    return Number.isFinite(d.getTime())?d.toLocaleString('pl-PL',{timeZone:'Europe/Warsaw'})+' (Warszawa)':'Brak informacji';
+  }
+  function buildPassport(match=null,record=null){
+    const league=record?record.snapshot.league:state.league,season=record?record.snapshot.season:state.season,id=record?record.snapshot.match_id:match.id;
+    const records=passportRecords(league,season,id),latest=records[records.length-1]||record;
+    const f=latest?null:estimate1x2(match),p=latest?latest.snapshot.probabilities:f?.p;
+    const root=make('details','passport'),body=make('div','passport-body');
+    root.append(make('summary','','🫜 Paszport analizy · dane i historia'),body);
+    const section=(title,text)=>body.append(make('h4','',title),make('p','',text));
+    section('Źródło prognozy',latest?'Publiczny zapis przed meczem · spójność SHA-256 sprawdzona.':f?((match.score||match.time<=Date.now())?'Rekonstrukcja historyczna z obecnej bazy wyników.':'Bieżący szacunek, bez publicznego zapisu.'):'Za mało danych do wyliczenia szans.');
+    if(p)section('Szanse 1 / X / 2',`1 ${formattedPercent(p['1'])} · X ${formattedPercent(p.X)} · 2 ${formattedPercent(p['2'])}`);
+    section('Metryka',`${allowedLeagues[league]||league} · ${season}/${season+1} · model ${latest?latest.snapshot.model_version:'1.3 (przeglądarkowy)'}`);
+    section('Zapis i aktualność',latest?'Zapis prognozy: '+passportDate(latest.snapshot.created_at):'Brak publicznego zapisu prognozy.');
+    if(match&&state.loadedAt)body.append(make('p','','Pobranie bazy wyników: '+passportDate(state.loadedAt)+'. Czas pobrania nie potwierdza aktualności każdego wyniku.'));
+    body.append(make('h4','','Co wiemy o tej analizie'));
+    const list=make('ul');
+    const facts=f?[
+      `Próba: ${f.history} wcześniejszych wyników ligi; ${f.homeCount} spotkań gospodarzy i ${f.awayCount} gości.`,
+      'Model uwzględnia gole strzelone i stracone, ostatnie spotkania oraz grę u siebie i na wyjeździe.',
+      `Prognozowana liczba goli: ${probFormatter.format(f.expectedHome)} – ${probFormatter.format(f.expectedAway)}. To nie pomiar xG ze strzałów.`
+    ]:latest?[
+      'Rozkład 1X2 i wersja modelu pochodzą z zapisanego rekordu.',
+      'Ten widok nie odtwarza wejściowej próby ani wpływu poszczególnych czynników dla archiwalnej prognozy.',
+      'Nie dopisujemy starej prognozie uzasadnienia na podstawie dzisiejszej formy.'
+    ]:[`Minimum modelu: ${modelConfig.minLeague} wcześniejsze wyniki ligi i ${modelConfig.minTeam} mecze każdej drużyny.`];
+    for(const text of facts)list.append(make('li','',text));body.append(list);
+    section('Ograniczenia danych','Brak potwierdzonych składów, kontuzji, pogody i bieżących kursów w tym widoku. Nie oceniamy opłacalności zakładu. Wielkość próby i SHA-256 nie potwierdzają skuteczności modelu.');
+    body.append(make('h4','','Historia zapisanych wersji'));
+    if(records.length){
+      const timeline=make('ol');
+      for(const [i,r] of records.entries()){
+        const s=r.snapshot,q=s.probabilities,item=make('li','',`${passportDate(s.created_at)} · model ${s.model_version} · 1 ${formattedPercent(q['1'])} / X ${formattedPercent(q.X)} / 2 ${formattedPercent(q['2'])}`);
+        if(i){const prev=records[i-1].snapshot.probabilities;item.append(make('p','','Zmiana: '+['1','X','2'].map(k=>{const delta=(q[k]-prev[k])*100;return k+' '+(delta>0?'+':'')+probFormatter.format(delta)+' pp';}).join(' · ')+'. Przyczyna nie została zapisana.'));}
+        timeline.append(item);
+      }
+      body.append(timeline,make('p','',records.length===1?'Dostępna jest jedna zapisana wersja. Nie znamy wcześniejszych zmian prognozy.':'Pokazujemy wersje obecne w pobranym archiwum, nie pełną historię commitów.'));
+    }else body.append(make('p','',state.archiveFailed?'Archiwum niedostępne — nie można sprawdzić historii.':!state.archiveReady?'Trwa sprawdzanie archiwum.':'Brak zapisanej wersji dla tego meczu. Bieżący szacunek nie trafia automatycznie do historii.'));
+    if(latest){
+      section('Rozliczenie ostatniego zapisu',scored(latest)?`Wynik ${latest.settlement.score.join(':')} · ${bestOutcome(latest.snapshot.probabilities)===latest.settlement.outcome?'trafiony':'nietrafiony'} lider 1X2.`:'Brak rozliczonego wyniku w archiwum.');
+      body.append(make('p','','SHA-256: '+latest.snapshot_sha256));
+    }
+    const link=make('a','archive-link','Otwórz publiczne archiwum ↗');link.href='./predictions.json';link.target='_blank';link.rel='noopener noreferrer';body.append(link);
+    const download=make('button','watch-button','Pobierz paszport JSON');download.type='button';download.style.marginTop='12px';
+    download.addEventListener('click',()=>{
+      const payload={schema:1,exported_at:new Date().toISOString(),league,season,match_id:id,
+        home:latest?latest.snapshot.home:match.home,away:latest?latest.snapshot.away:match.away,
+        source:latest?'verified_archive':f?'browser_estimate':'insufficient_data',probabilities:p||null,
+        browser_estimate:f||null,archive_records:records,archive_available:state.archiveReady,
+        limitations:['Brak potwierdzonych składów, kontuzji, pogody i kursów.','Eksport nie jest niezależnym potwierdzeniem publikacji.']};
+      const url=URL.createObjectURL(new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}));
+      const a=make('a');a.href=url;a.download=`rzotkiewka-paszport-${id}.json`;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+    });body.append(make('p','','Eksport zawiera dane pokazane w paszporcie.'),download);return root;
+  }
+
   function renderForecast(match){
-    const archived=state.archive.find(r=>r.snapshot?.league===state.league&&r.snapshot?.season===state.season&&r.snapshot?.match_id===match.id);
+    const versions=passportRecords(state.league,state.season,match.id);
+    const archived=versions[versions.length-1];
     if(archived){
       const snapshot=archived.snapshot,p=snapshot.probabilities;
       const block=make('div','model-mini');
@@ -895,7 +965,7 @@
       const watch=make('button','watch-button',watched.has(r.id)?'★ Obserwujesz':'☆ Obserwuj prognozę');
       watch.type='button';watch.setAttribute('aria-pressed',String(watched.has(r.id)));
       watch.setAttribute('aria-label',`${watched.has(r.id)?'Przestań obserwować':'Obserwuj'}: ${s.home} – ${s.away}`);
-      watch.addEventListener('click',()=>toggleWatch(r.id));card.append(watch);
+      watch.addEventListener('click',()=>toggleWatch(r.id));card.append(watch,buildPassport(null,r));
       root.append(card);
     }
     const leaguesRoot=$('rank-leagues');leaguesRoot.replaceChildren();
@@ -954,6 +1024,7 @@
       entry.append(make('div','archive-probs',`1: ${formattedPercent(p['1'])} · X: ${formattedPercent(p.X)} · 2: ${formattedPercent(p['2'])}`));
       if(finished)entry.append(make('div','archive-meta','Wynik: '+r.settlement.score.join(':')+' · '+(bestOutcome(p)===r.settlement.outcome?'trafienie 1X2':'nietrafione 1X2')));
       entry.append(make('div','archive-meta','SHA256: '+r.snapshot_sha256.slice(0,16)+'…'));
+      entry.append(buildPassport(null,r));
       root.append(entry);
     }
   }
@@ -973,7 +1044,7 @@
     if(!p||!['1','X','2'].every(k=>Number.isFinite(p[k])&&p[k]>=0&&p[k]<=1)||
         Math.abs(p['1']+p.X+p['2']-1)>.00001||
         typeof s.league!=='string'||!Number.isInteger(s.season)||!Number.isInteger(s.match_id))return false;
-    if(!s.kickoff||!s.created_at||new Date(s.created_at)>=new Date(s.kickoff))return false;
+    if(!Number.isFinite(Date.parse(s.kickoff))||!Number.isFinite(Date.parse(s.created_at))||Date.parse(s.created_at)>=Date.parse(s.kickoff))return false;
     if(rec.settlement.state==='graded'){
       const score=rec.settlement.score;
       if(!Array.isArray(score)||score.length!==2||score.some(n=>!Number.isInteger(n)||n<0)||
@@ -1023,7 +1094,7 @@
     card.append(head,make('h3','',`${m.home} – ${m.away}`));
     if(complete)card.append(make('div','real-score',`${m.score[0]} : ${m.score[1]}`));
     else card.append(make('p','rationale',m.time<Date.now()?'Brak potwierdzonego wyniku w źródle.':'Spotkanie zaplanowane — wynik nie jest jeszcze znany.'));
-    card.append(renderForecast(m));
+    card.append(renderForecast(m),buildPassport(m));
     const grid=make('div','form-grid');
     renderForm(grid,m.home,recentForm(m.homeId,m.time));
     renderForm(grid,m.away,recentForm(m.awayId,m.time));
@@ -1259,7 +1330,7 @@
   }));
   load();
   $('quality-refresh').addEventListener('click',loadArchive);
-  setInterval(()=>{if(!document.hidden && state.archiveReady){renderArchive();renderRanking();renderAudit();}},60*1000);
+  setInterval(()=>{if(!document.hidden && state.archiveReady && !document.querySelector('.passport[open]')){renderArchive();renderRanking();renderAudit();}},60*1000);
   setInterval(()=>{if(!document.hidden)loadArchive();},10*60*1000);
   loadArchive();
 })();
