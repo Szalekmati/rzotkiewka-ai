@@ -192,6 +192,13 @@
     .rank-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin:20px 0 17px}
     .rank-controls .field-select{min-width:min(100%,160px)}
     .rank-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .rank-export{display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;border-radius:16px;padding:17px 19px;border:1px solid #486b4e;background:linear-gradient(118deg,#1b3428,#14232b);margin:18px 0 8px}
+    .rank-export strong{display:block;font-size:14px;color:#e8ffdb}
+    .rank-export p{max-width:650px;font-size:12px;color:#c4d4ce;margin:7px 0 0;line-height:1.6}
+    .rank-export button{min-height:44px;flex-shrink:0;font-size:13px}
+    .rank-export button:disabled{opacity:.5;cursor:not-allowed}
+    .rank-export-status{color:#c2d2c9;font-size:11px;min-height:17px;margin:6px 0 17px}
+    @media(max-width:600px){.rank-export button{width:100%}}
     .rank-card{border:1px solid #315043;background:#111b21;border-radius:15px;padding:17px;min-width:0}
     .rank-card.shared-target{border-color:#c5ff7f;box-shadow:0 0 0 2px #b6ff7040,0 15px 48px #0004;scroll-margin-top:110px}
     .forecast-card-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}
@@ -624,6 +631,11 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
         <div class="rank-metric"><strong id="rank-hit">—</strong><span>Trafność 1X2 · tylko rozliczone</span></div>
         <div class="rank-metric"><strong id="rank-brier">—</strong><span>Brier · niżej = lepiej</span></div>
       </div>
+      <div class="rank-export">
+        <div><strong>📂 Weryfikowalna historia prognoz</strong><p>Cała próba — trafienia, pomyłki i nierozliczone mecze. Eksport niezależny od filtrów wybranych na stronie.</p></div>
+        <button id="rank-export-csv" type="button" class="secondary" disabled>Pobierz pełną historię CSV ↓</button>
+      </div>
+      <p id="rank-export-status" role="status" aria-live="polite" class="rank-export-status">Pobranie będzie dostępne po weryfikacji archiwum SHA-256.</p>
       <p id="rank-status" class="rank-status" role="status" aria-live="polite">Weryfikowanie archiwum prognoz…</p>
       <p id="shared-forecast-status" class="shared-forecast-status" role="status" aria-live="polite" hidden></p>
       <div class="rank-controls" aria-label="Filtry rankingu">
@@ -1184,11 +1196,54 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
     const brier=graded.length?graded.reduce((n,r)=>n+brierOf(r),0)/graded.length:null;
     return {total:records.length,graded:graded.length,hits,hitrate:graded.length?hits/graded.length:null,brier};
   }
+  function csvCell(value){
+    // Spreadsheet cells beginning with operators must not execute formulas.
+    let val=String(value??'');
+    if(/^\s*[=+\-@]/u.test(val))val="'"+val;
+    return '"'+val.replace(/"/g,'""')+'"';
+  }
+  function downloadVerifiedArchiveCsv(){
+    if(!state.archiveReady||state.archiveFailed)return;
+    // IMPORTANT: export the whole SHA-verified archive, never the filtered cards.
+    const records=state.archive.slice().sort((a,b)=>a.snapshot.kickoff.localeCompare(b.snapshot.kickoff));
+    const columns=[
+      'id','liga','sezon','gospodarze','goscie','start_utc','zapis_utc',
+      'p_1','p_X','p_2','lider_1X2','status','wynik','wynik_1X2',
+      'trafienie_lidera','brier','snapshot_sha256'
+    ];
+    const rows=records.map(r=>{
+      const s=r.snapshot,settled=scored(r),lead=leaderOf(r);
+      return [
+        r.id,s.league,s.season,s.home,s.away,s.kickoff,s.created_at,
+        s.probabilities['1'],s.probabilities.X,s.probabilities['2'],lead.outcome,
+        settled?'rozliczony':'oczekuje',settled?r.settlement.score.join(':'):'',
+        settled?r.settlement.outcome:'',settled?(lead.outcome===r.settlement.outcome?'TAK':'NIE'):'',
+        settled?brierOf(r).toFixed(6):'',r.snapshot_sha256
+      ];
+    });
+    const csv='\uFEFF'+[columns,...rows].map(r=>r.map(csvCell).join(';')).join('\r\n')+'\r\n';
+    const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));
+    const anchor=document.createElement('a');
+    anchor.href=url;
+    anchor.download='RZOTKIEWKA_pelne_archiwum_1X2.csv';
+    anchor.hidden=true;
+    document.body.append(anchor);
+    anchor.click();
+    anchor.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1500);
+    $('rank-export-status').textContent='Wygenerowano CSV: '+records.length+' zweryfikowanych prognoz (bez ukrywania wyników).';
+  }
+  $('rank-export-csv').addEventListener('click',downloadVerifiedArchiveCsv);
   function renderRanking(){
     const data=state.archive,stats=rankGroup(data);
     // The hero only presents SHA-verified archive entries already accepted by
     // the archive loader. Missing/invalid data never turns into a success claim.
     const ready=state.archiveReady&&!state.archiveFailed;
+    $('rank-export-csv').disabled=!ready;
+    $('rank-export-status').textContent=state.archiveFailed
+      ?'Nie udało się zweryfikować archiwum — eksport zablokowany.'
+      :!ready?'Weryfikujemy archiwum SHA-256 przed udostępnieniem danych.'
+      :'Dostępne wszystkie '+stats.total+' zweryfikowane rekordy; bez względu na filtry i trafność.';
     const heroNumbers=[
       ['hero-archive-total',stats.total],
       ['hero-archive-graded',stats.graded],

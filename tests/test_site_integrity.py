@@ -108,6 +108,26 @@ class SiteIntegrity(unittest.TestCase):
         self.assertIn("void loadLabAutomation(controller.signal);", js)
         self.assertIn("Brak prognoz może także oznaczać", self.html)
 
+    def test_full_verified_archive_can_be_downloaded_safely(self):
+        self.assertIn("rank-export-csv", self.page.ids)
+        self.assertIn("rank-export-status", self.page.ids)
+        self.assertIn('id="rank-export-csv" type="button" class="secondary" disabled', self.html)
+        js = "\n".join(self.page.js)
+        for required in (
+            "if(!state.archiveReady||state.archiveFailed)return;",
+            "const records=state.archive.slice().sort(",
+            "const rows=records.map(r=>",
+            "r.snapshot_sha256",
+            "settled?(lead.outcome===r.settlement.outcome?'TAK':'NIE')",
+            "const csv='",
+            "const url=URL.createObjectURL(new Blob([csv]",
+            "if(/^\\s*[=+\\-@]/u.test(val))val=\"'\"+val;",
+            "$('rank-export-csv').disabled=!ready;",
+            "$('rank-export-csv').addEventListener('click',downloadVerifiedArchiveCsv);",
+        ):
+            self.assertIn(required, js)
+        self.assertIn("bez ukrywania wyników", js)
+
     def test_no_default_cherry_picking(self):
         self.assertRegex(self.html, r'<select id="rank-state">\s*<option value="all" selected>')
         self.assertRegex(self.html, r'<select id="rank-minprob">\s*<option value="0" selected>')

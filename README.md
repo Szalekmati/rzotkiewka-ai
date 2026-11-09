@@ -20,6 +20,10 @@ Zakładka **🔓 Darmowe** pokazuje realnie zapisane przed meczem prognozy 1/X/2
 
 Pomysł produktowy: bezpłatna, możliwa do zweryfikowania próbka może pomagać użytkownikom ocenić usługę. Nie zakładamy wzrostu konwersji bez pomiaru. Statystyki trafień 1/X/2 nie są zwrotem z kuponów ani dowodem przewagi nad kursami. Przed uruchomieniem płatności i marketingu trzeba sprawdzić wymagania prawne i ograniczenia wiekowe.
 
+## Pobieranie całego archiwum CSV
+
+Zakładka **Darmowe** udostępnia przycisk **Pobierz pełną historię CSV**. Przycisk jest aktywny dopiero po udanym pobraniu i weryfikacji SHA-256 wszystkich dopuszczonych rekordów. Eksport zawsze obejmuje **całe zweryfikowane archiwum, niezależnie od filtrów**, zarówno trafione, nietrafione, jak i oczekujące prognozy. Pola: data publikacji i startu, liga, drużyny, 1/X/2, wskazany lider, wynik meczu, rozliczenie, trafienie, Brier i pełny skrót SHA-256. Plik używa UTF-8, średników oraz zabezpieczenia przed wstrzyknięciem formuły do arkusza. Nie udostępnia kursów bukmacherskich, ROI ani gwarancji zysku.
+
 ## Udostępnianie zweryfikowanych prognoz
 
 W zakładce **Darmowe** każda karta z publicznego, zweryfikowanego archiwum oferuje **Udostępnij analizę**. Na Androidzie otwiera systemowe udostępnianie, a w innych przeglądarkach próbuje skopiować link lub pokazuje okno ręcznego kopiowania. Link ma postać `?forecast=<identyfikator>#ranking`; odbiorca zobaczy wyróżniony, konkretny rekord tylko wtedy, gdy nadal znajduje się w archiwum po weryfikacji SHA-256. Dane nie są generowane ponownie ani ukrywane według wyniku. Brak kont, śledzenia kliknięć, kursów i obietnic zysku.
