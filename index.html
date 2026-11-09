@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0a0e13">
-  <meta name="description" content="🫜 RZOTKIEWKA 1.13 — publiczny ranking prognoz 1X2, zweryfikowane archiwum, wyniki i analiza. Brak gwarancji wygranej.">
-  <title>🫜 RZOTKIEWKA 1.13 — Ranking prognoz i wyniki 1X2</title>
+  <meta name="description" content="🫜 RZOTKIEWKA 1.14 — publiczny ranking prognoz 1X2, zweryfikowane archiwum, wyniki i analiza. Brak gwarancji wygranej.">
+  <title>🫜 RZOTKIEWKA 1.14 — Ranking prognoz i wyniki 1X2</title>
   <style>
     :root{color-scheme:dark;--bg:#0a0e13;--surface:#131a22;--surface2:#19232d;--line:#293743;--ink:#f4f8f8;--muted:#a2b1bc;--accent:#a6f475;--accent2:#dfffc8;--red:#ff858b;--gold:#f4c77f;--radius:18px}
     *{box-sizing:border-box}
@@ -171,7 +171,7 @@
     .archive-chip.waiting{border-color:#987a4a;color:#ffdfad}
     @media(max-width:420px){.archive-panel{padding:14px}.archive-metric{padding:10px}.archive-metric strong{font-size:21px}}
 
-    /* RZOTKIEWKA 1.13 — publiczny ranking, wyłącznie zatwierdzone snapshoty */
+    /* RZOTKIEWKA 1.14 — publiczny ranking, wyłącznie zatwierdzone snapshoty */
     .ranking-section{margin:4px 0 58px}
     .rank-shell{border:1px solid #345a43;background:linear-gradient(145deg,#14231c,#131c24 70%);border-radius:24px;padding:clamp(16px,4vw,26px)}
     .rank-shell h2{margin:0 0 9px}
@@ -235,7 +235,7 @@
     .audit-empty{color:var(--muted);font-size:13px;padding:15px}
     @media(max-width:600px){.audit-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.audit-head h2{font-size:25px}.audit-download{width:100%}}
 
-    /* RZOTKIEWKA 1.13 — kontrola jakości publicznych prognoz. */
+    /* RZOTKIEWKA 1.14 — kontrola jakości publicznych prognoz. */
     .quality-section{margin:0 0 58px;scroll-margin-top:95px}
     .quality-panel{border:1px solid #59734c;border-radius:24px;padding:clamp(17px,3vw,26px);background:linear-gradient(145deg,#1a2a1e,#131d24 68%)}
     .quality-top{display:flex;gap:15px;align-items:start;justify-content:space-between;flex-wrap:wrap}
@@ -293,16 +293,51 @@
 .passport-body h4{font-size:14px;margin:16px 0 6px}
 .passport-body p,.passport-body li{font-size:13px;line-height:1.7;color:var(--muted)}
 .passport-body ol,.passport-body ul{padding-left:20px}
+
+/* 1.14: oddzielne widoki i czytelna nawigacja. */
+[hidden]{display:none!important}
+.app-nav{display:flex;gap:8px;padding:16px 0;overflow-x:auto;scrollbar-width:thin}
+.app-nav a{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;min-height:48px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--muted);font-size:13px;font-weight:750;white-space:nowrap}
+.app-nav a[aria-current="page"],.nav a[aria-current="page"]{background:#263d27;border-color:#6ca45a;color:var(--accent)}
+.mobile-nav a[aria-current="page"]{color:var(--accent);background:#263d27;border-radius:10px}
+.compact-hero{padding:18px 0 25px;grid-template-columns:1fr}
+.compact-hero .visual{display:none}
+.compact-hero h1{font-size:clamp(30px,5vw,46px);margin:9px 0}
+.compact-hero .lead{font-size:14px;margin-bottom:16px;max-width:720px}
+.quick-lab{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin:0 0 24px;padding:15px 18px;border:1px solid #3e6247;border-radius:15px;background:#15251b}
+.quick-lab strong{display:block;font-size:14px;color:var(--accent)}
+.quick-lab p{margin:4px 0 0;font-size:12px;color:var(--muted)}
+.lab-window{margin:18px 0;padding:18px;border:1px solid #436047;border-radius:15px;background:#101d18}
+.lab-window h3{margin:0 0 8px;font-size:18px}
+.window-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
+.window-card{min-width:0;border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--surface)}
+.window-card h4{margin:0 0 9px;color:var(--accent);font-size:14px}
+.window-card p{margin:5px 0;overflow-wrap:anywhere}
+.window-card time{font-weight:750;color:var(--ink)}
+.window-chip{display:inline-block;border:1px solid #526047;border-radius:20px;padding:3px 9px;color:#d8e6cf;font-size:11px;font-weight:750;margin-bottom:9px}
+.window-chip.open{background:#25452b;color:var(--accent);border-color:#6ca45a}
+.more-grid,.competition-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0}
+.more-grid a,.competition-card{min-width:0;padding:18px;border:1px solid var(--line);border-radius:15px;background:var(--surface)}
+.more-grid a:hover{border-color:var(--accent)}
+.competition-card h3{margin:8px 0;font-size:18px}
+.competition-card p{font-size:13px;color:var(--muted)}
+.competition-card .secondary{font-size:13px;margin-top:12px}
+.competition-status{display:inline-block;font-size:11px;border:1px solid var(--line);border-radius:20px;padding:4px 9px;color:var(--muted)}
+.competition-status.active{color:var(--accent);border-color:#6ca45a}
+.show-more{display:block;margin:18px auto;min-height:46px}
+button:disabled{opacity:.55;cursor:wait}
+@media(max-width:720px){.nav{display:none}.app-nav{gap:5px;padding:12px 0}.app-nav a{padding:9px 6px;flex-direction:column;gap:2px;font-size:11px;min-width:55px}.window-cards,.competition-grid,.more-grid{grid-template-columns:1fr}.compact-hero{padding:12px 0 20px}.compact-hero .kicker{font-size:10px}.quick-lab{padding:14px}.lab-window{padding:14px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 <header class="header">
   <div class="shell head-inner">
-    <a class="brand" href="#start" aria-label="RZOTKIEWKA — strona główna"><span class="brand-emoji" aria-hidden="true">🫜</span><span><span class="brand-name">RZOTKIEWKA</span><span class="brand-caption">SPORTS LAB · 1.13</span></span></a>
+    <a class="brand" href="#start" aria-label="RZOTKIEWKA — strona główna"><span class="brand-emoji" aria-hidden="true">🫜</span><span><span class="brand-name">RZOTKIEWKA</span><span class="brand-caption">SPORTS LAB · 1.14</span></span></a>
     <nav class="nav" aria-label="Nawigacja"><a data-page-link href="#mecze"><span aria-hidden="true">⚽</span> Mecze</a><a data-page-link href="#ranking"><span aria-hidden="true">☆</span> Prognozy</a><a data-page-link href="#sporty"><span aria-hidden="true">◈</span> Sporty</a><a data-page-link href="#raport"><span aria-hidden="true">▤</span> Raport</a><a data-page-link href="#wiecej"><span aria-hidden="true">☰</span> Więcej</a></nav>
   </div>
 </header>
-<div id="demo-banner" class="banner" role="status">WERSJA 1.13 · Wyniki badań i status testu przedmeczowego</div>
+<div id="demo-banner" class="banner" role="status">WERSJA 1.14 · Mecze, prognozy i przejrzysty status LAB</div>
 <main class="shell" id="start"><nav class="app-nav" aria-label="Zakładki aplikacji"><a data-page-link href="#mecze"><span aria-hidden="true">⚽</span> Mecze</a><a data-page-link href="#ranking"><span aria-hidden="true">☆</span> Prognozy</a><a data-page-link href="#sporty"><span aria-hidden="true">◈</span> Sporty</a><a data-page-link href="#raport"><span aria-hidden="true">▤</span> Raport</a><a data-page-link href="#wiecej"><span aria-hidden="true">☰</span> Więcej</a></nav>
   <section class="hero" aria-labelledby="hero-title">
     <div>
@@ -314,6 +349,7 @@
     <div class="visual" aria-hidden="true"><div class="mascot">🫜</div><h3>Zapisz. Sprawdź. Ucz się.</h3><p>Prosty interfejs · jasne zasady</p></div>
   </section>
   <section id="mecze" class="real-section" aria-labelledby="live-title">
+    <aside class="quick-lab" aria-label="Przejdź do testu przedmeczowego"><div><strong>🧪 Test przedmeczowy LAB</strong><p>Sprawdź zapisane prognozy i najbliższe okna zapisu.</p></div><a class="secondary" href="#lab">Otwórz LAB →</a></aside>
     <div class="section-top"><div><h2 id="live-title">Mecze, prognozy i wyniki 1X2</h2><p class="section-sub">Terminarze, wyniki i forma drużyn z niezależnej bazy danych.</p></div></div>
     <p class="real-intro">Niemiecka 1., 2. i 3. liga. Wyniki pochodzą z OpenLigaDB. Model 1.3 uwzględnia formę z 8 ostatnich spotkań, osobno mecze u siebie i na wyjeździe oraz średnią bramek gospodarzy i gości w lidze. Jest eksperymentalny, niekalibrowany i nie jest kursem ani rekomendacją zakładu.</p>
     <div class="live-toolbar">
@@ -338,6 +374,7 @@
     <div class="match-search"><label for="live-search">Znajdź drużynę<input id="live-search" type="search" placeholder="Wpisz nazwę drużyny…" maxlength="90" autocomplete="off"></label></div>
     <p id="live-filter-count" class="watch-note" role="status"></p>
     <div id="live-list" class="real-grid" aria-live="polite"><div class="empty">Pobieranie terminarza…</div></div>
+    <button type="button" id="live-more" class="filter show-more" hidden>Pokaż kolejne mecze</button>
     <div id="archive-panel" class="archive-panel" aria-labelledby="archive-title">
       <h3 id="archive-title">📌 Prognozy zapisane przed meczami</h3>
       <p>To publiczne archiwum pochodzi z automatycznego zapisu w repozytorium GitHub. Raz zapisany szacunek nie jest ponownie obliczany po wyniku meczu. Historia zmian jest widoczna w commitach. Właściciel repozytorium technicznie może jednak zmienić historię Git — nie jest to niezależny audyt.</p>
@@ -379,6 +416,7 @@
     <progress id="lab-progress" max="300" value="0" hidden aria-label="Rozliczone pary do przeglądu wyników"></progress>
     <p id="lab-progress-note">Próg przeglądu wyników będzie odczytany z konfiguracji eksperymentu.</p>
     <p id="lab-updated">Ostatnia obserwacja: —</p>
+    <div class="lab-window" aria-labelledby="window-heading"><h3 id="window-heading">Kiedy pojawią się kolejne prognozy?</h3><p id="window-status" role="status" aria-live="polite">Terminarz zostanie sprawdzony po otwarciu LAB.</p><div id="window-cards" class="window-cards"></div><p id="window-updated"></p><p>Bieżący terminarz z OpenLigaDB. Otwarcie okna nie gwarantuje zapisu: potrzebna jest historia obu modeli i wykonanie obserwatora. Dane mogą ulec zmianie. Godziny pokazujemy dla Polski.</p><button type="button" class="watch-button" id="window-refresh">↻ Sprawdź terminarz</button></div>
     <div class="audit-table-wrap" id="lab-comparison" hidden tabindex="0" role="region" aria-label="Bieżące wyniki testu przedmeczowego">
       <table class="audit-table"><caption>Test przedmeczowy · ten sam zestaw rozliczonych par</caption><thead><tr><th scope="col">Model</th><th scope="col">Pary</th><th scope="col">Trafność</th><th scope="col">Brier ↓ (suma)</th><th scope="col">Log loss ↓</th></tr></thead><tbody id="lab-comparison-body"></tbody></table>
     </div>
@@ -690,7 +728,7 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
     render();
   }));
   $('reload').addEventListener('click',loadTips);
-  $('footer-year').textContent = '© ' + new Date().getFullYear() + ' RZOTKIEWKA · wersja 1.5';
+  $('footer-year').textContent = '© ' + new Date().getFullYear() + ' RZOTKIEWKA · wersja 1.14';
   loadTips();
 })();
 </script>
@@ -711,7 +749,7 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
   const maxAgeMs = 10*60*1000;
   const state = {league:'bl1',season:2026,tab:'next',matches:[],loadedAt:null,archive:[],archiveAt:null,archiveReady:false,archiveFailed:false};
   const watchKey='rzotkiewka:watched:v1';
-  let watched=new Set(), onlyWatched=false;
+  let watched=new Set(), onlyWatched=false, liveLimit=16;
   try{const saved=JSON.parse(localStorage.getItem(watchKey)||'[]');if(Array.isArray(saved))watched=new Set(saved.filter(x=>typeof x==='string').slice(0,2000));}catch{}
   const searchText=value=>String(value).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ł/g,'l').replace(/Ł/g,'L').toLowerCase().trim();
   function matchesQuery(home,away,query){return searchText(home+' '+away).includes(searchText(query));}
@@ -722,7 +760,7 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
     renderRanking();
   }
   $('rank-search').addEventListener('input',renderRanking);
-  $('live-search').addEventListener('input',render);
+  $('live-search').addEventListener('input',()=>{liveLimit=16;render();});
   $('rank-watched').addEventListener('click',()=>{onlyWatched=!onlyWatched;$('rank-watched').setAttribute('aria-pressed',String(onlyWatched));renderRanking();});
   const now = new Date();
   const currentSeason = now.getMonth() >= 6 ? now.getFullYear() : now.getFullYear()-1;
@@ -1350,7 +1388,8 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
       ?completed.sort((a,b)=>b.time-a.time)
       :state.matches.filter(m=>!m.score && m.time>Date.now()-3*60*60*1000).sort((a,b)=>a.time-b.time))
       .filter(m=>matchesQuery(m.home,m.away,query));
-    const games=candidates.slice(0,16);
+    const games=candidates.slice(0,liveLimit);
+    $('live-more').hidden=games.length>=candidates.length;
     $('live-filter-count').textContent=`Pasujących meczów: ${candidates.length} · wyświetlono ${games.length}. Wyszukiwanie obejmuje wybraną ligę, sezon i widok.`;
     if(!games.length){
       target.append(make('div','empty',state.matches.length
@@ -1359,6 +1398,7 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
     } else for(const game of games) target.append(renderCard(game));
   }
   async function load(force=false) {
+    liveLimit=16;
     const league=$('live-league').value;
     const season=Number($('live-season').value);
     if(!Object.hasOwn(allowedLeagues,league)||!Number.isInteger(season)||season<2000||season>2100)return;
@@ -1405,11 +1445,12 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
       }
     }finally {clearTimeout(timeout);$('refresh-live').disabled=false;}
   }
+  $('live-more').addEventListener('click',()=>{liveLimit+=16;render();});
   $('live-league').addEventListener('change',()=>load());
   $('live-season').addEventListener('change',()=>load());
   $('refresh-live').addEventListener('click',()=>load(true));
   document.querySelectorAll('[data-live-tab]').forEach(btn=>btn.addEventListener('click',()=>{
-    state.tab=btn.dataset.liveTab;
+    state.tab=btn.dataset.liveTab;liveLimit=16;
     document.querySelectorAll('[data-live-tab]').forEach(other=>other.setAttribute('aria-pressed',String(other===btn)));
     render();
   }));
@@ -1823,7 +1864,7 @@ const hero=document.querySelector('.hero');hero.classList.add('compact-hero');
 const pages=new Set(['mecze','ranking','sporty','raport','wiecej','lab','jakosc','premium','jak-to-dziala','typy']);
 let current='',positions=new Map();
 function route(){
- const hash=decodeURIComponent(location.hash.slice(1)||'mecze');
+ let hash='mecze';try{hash=decodeURIComponent(location.hash.slice(1)||'mecze');}catch{}
  const target=$(hash),parent=target?.closest('main > section');
  const next=pages.has(hash)?hash:parent?.id&&pages.has(parent.id)?parent.id:'mecze';
  if(current)positions.set(current,window.scrollY);
@@ -1834,7 +1875,7 @@ function route(){
  if(selected)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');
  });
  const changed=current!==next;current=next;
- if(changed){window.scrollTo({top:positions.get(next)||0,behavior:'instant'});const title=$(next)?.querySelector('h2');if(title){title.tabIndex=-1;title.focus({preventScroll:true});}}
+ if(changed){document.title='🫜 RZOTKIEWKA 1.14 · '+({mecze:'Mecze',ranking:'Prognozy',sporty:'Sporty',raport:'Raport',lab:'Test LAB',wiecej:'Więcej',jakosc:'Jakość modelu',premium:'Premium','jak-to-dziala':'Jak to działa',typy:'Przykłady DEMO'}[next]||'Sport');window.scrollTo({top:positions.get(next)||0,behavior:'instant'});const title=$(next)?.querySelector('h2');if(title){title.tabIndex=-1;title.focus({preventScroll:true});}}
 }
 window.addEventListener('hashchange',route);
 document.querySelectorAll('[data-page-link]').forEach(a=>a.addEventListener('click',()=>{if(location.hash===a.hash)window.scrollTo({top:0,behavior:'smooth'});}));
@@ -1870,6 +1911,60 @@ route();
 })();
 
 
+</script>
+<script>
+(()=>{
+ 'use strict';
+ const $=id=>document.getElementById(id),leagues={bl1:'Bundesliga',bl2:'2. Bundesliga',bl3:'3. Liga'},hour=3600000;
+ const format=t=>new Intl.DateTimeFormat('pl-PL',{timeZone:'Europe/Warsaw',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date(t));
+ const node=(tag,text,cls='')=>{const n=document.createElement(tag);n.textContent=text;n.className=cls;return n;};
+ let busy=false,last=0;
+ async function loadWindows(){
+  if(busy)return;busy=true;$('window-refresh').disabled=true;
+  $('window-status').textContent='Sprawdzanie terminarzy trzech lig…';$('window-cards').replaceChildren();$('window-updated').textContent='';
+  const clock=new Date(),now=clock.getTime(),season=clock.getUTCMonth()>=6?clock.getUTCFullYear():clock.getUTCFullYear()-1;
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),16000);
+  try{
+   const configRes=await fetch('./lab_forward/experiment.json',{signal:controller.signal,cache:'no-store'});
+   if(!configRes.ok)throw new Error('Brak konfiguracji');
+   const experiment=await configRes.json(),config=experiment?.config;
+   if(config?.min_lead_hours!==162||config?.max_lead_hours!==168)throw new Error('Nieznane okno eksperymentu');
+   let total=0,open=0,failed=0;const futureOpen=[];
+   const result=await Promise.allSettled(Object.keys(leagues).map(async league=>{
+    const response=await fetch(`https://api.openligadb.de/getmatchdata/${league}/${season}`,{signal:controller.signal,cache:'no-store'});
+    if(!response.ok)throw new Error('Niedostępne API');
+    const raw=await response.json();if(!Array.isArray(raw)||!raw.length)throw new Error('Pusty terminarz');
+    // Wyłącznie jawne daty UTC; bez zgadywania strefy dla lokalnych dat dostawcy.
+    const upcoming=raw.filter(m=>m&&m.matchIsFinished===false&&typeof m.matchDateTimeUTC==='string'&&/Z$|[+]00:00$/.test(m.matchDateTimeUTC)&&Number.isInteger(m.matchID)&&m.matchID>0&&typeof m.team1?.teamName==='string'&&typeof m.team2?.teamName==='string')
+     .map(m=>({time:Date.parse(m.matchDateTimeUTC),home:m.team1.teamName.slice(0,90),away:m.team2.teamName.slice(0,90)})).filter(m=>Number.isFinite(m.time)&&m.time>now).sort((a,b)=>a.time-b.time);
+    const inWindow=upcoming.filter(m=>m.time-now>=162*hour&&m.time-now<=168*hour);
+    return {upcoming,inWindow};
+   }));
+   result.forEach((res,i)=>{
+    const league=Object.keys(leagues)[i],card=node('article','','window-card');card.append(node('h4',leagues[league]));
+    if(res.status==='rejected'){failed++;card.append(node('p','Nie udało się odczytać terminarza. Spróbuj ponownie.'));}
+    else{
+     const {upcoming,inWindow}=res.value;total+=upcoming.length;open+=inWindow.length;
+     const next=upcoming.find(m=>m.time-now>168*hour),current=inWindow[0];
+     card.append(node('span',inWindow.length?`${inWindow.length} w oknie zapisu`:'Brak meczów w oknie','window-chip'+(inWindow.length?' open':'')));
+     const match=current||next;
+     if(match){card.append(node('p',match.home+' — '+match.away));const line=node('p',current?'Okno otwarte do: ':'Otwarcie okna: '),t=node('time',format(current?match.time-162*hour:match.time-168*hour));t.dateTime=new Date(current?match.time-162*hour:match.time-168*hour).toISOString();line.append(t);card.append(line,node('p','Mecz: '+format(match.time)));}
+     else card.append(node('p',upcoming.length?'Najbliższe mecze są już poza oknem 162–168 h.':'Brak przyszłych meczów z potwierdzoną datą UTC w odpowiedzi źródła.'));
+     if(next)futureOpen.push(next.time-168*hour);
+    }
+    $('window-cards').append(card);
+   });
+   $('window-status').textContent=failed?`Niepełne dane: ${failed} z 3 lig nie udało się sprawdzić. Poprawnie odczytane ligi pokazujemy poniżej.`:open?`W oknie zapisu: ${open} meczów. Sprawdź raport obserwatora, aby potwierdzić zapis prognoz.`:total?`Sprawdzono trzy ligi. Żaden z ${total} przyszłych meczów nie jest teraz w oknie 162–168 h.`:'Brak przyszłych meczów z poprawną datą UTC w bieżącym terminarzu.';
+   $('window-updated').textContent='Odczyt terminarza: '+format(now)+' (czas polski).'+(!failed&&futureOpen.length?' Najbliższe przyszłe otwarcie: '+format(Math.min(...futureOpen))+'.':'');
+   last=Date.now();
+  }catch{
+   $('window-status').textContent='Nie udało się sprawdzić okien zapisu. To brak danych, a nie potwierdzenie braku meczów. Spróbuj ponownie.';
+  }finally{clearTimeout(timer);busy=false;$('window-refresh').disabled=false;}
+ }
+ function onRoute(){if(!document.getElementById('lab').hidden&&Date.now()-last>5*60000)loadWindows();}
+ $('window-refresh').addEventListener('click',loadWindows);
+ window.addEventListener('hashchange',onRoute);onRoute();
+})();
 </script>
 </body>
 </html>
