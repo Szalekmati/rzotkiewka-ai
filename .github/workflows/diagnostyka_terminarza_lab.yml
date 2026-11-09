@@ -1,0 +1,186 @@
+name: RZOTKIEWKA - diagnostyka terminarza LAB
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  diagnostyka:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Pobierz repozytorium
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+      - name: Python 3.11
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Sprawdz terminarz i gotowosc modeli
+        shell: python
+        run: |
+          """Read-only inspection of the existing frozen forward experiment."""
+          import base64
+          import hashlib
+          import io
+          import json
+          import os
+          from pathlib import Path
+          import re
+          import sys
+          import tempfile
+          import zipfile
+          from datetime import datetime, timedelta, timezone
+          from zoneinfo import ZoneInfo
+          
+          
+          def local(dt):
+              return dt.astimezone(ZoneInfo('Europe/Warsaw')).strftime('%d.%m.%Y %H:%M %Z')
+          
+          
+          def window_status(kickoff, now, minimum, maximum):
+              lead = (kickoff - now).total_seconds() / 3600
+              if minimum <= lead <= maximum:
+                  return 'W OKNIE'
+              return 'ZA WCZEŚNIE' if lead > maximum else 'OKNO MINĘŁO'
+          
+          
+          def inspect(root, engine, observer, config, now):
+              season = now.year if now.month >= 7 else now.year - 1
+              lines = ['# RZOTKIEWKA — diagnostyka terminarza LAB', '',
+                       'Kontrola: ' + local(now), '',
+                       'Odczyt API i próbne obliczenia bez zapisu prognoz lub zmiany eksperymentu.', '',
+                       'Okno zapisu: 162–168 h przed meczem, granice włącznie.',
+                       'Terminy pochodzą z bieżącego API i mogą ulec zmianie.', '']
+              failures, earliest = [], []
+              ledger_path = root / 'lab_forward/ledger.json'
+              existing = set()
+              if ledger_path.exists():
+                  state = json.loads(ledger_path.read_text())
+                  frozen = json.loads((root / 'lab_forward/experiment.json').read_text())
+                  observer.validate_state(state, observer.digest(frozen))
+                  hashes = {name: hashlib.sha256((observer.HERE / name).read_bytes()).hexdigest()
+                            for name in frozen['code_hashes']}
+                  if frozen != {'config': config, 'code_hashes': hashes}:
+                      raise ValueError('Kod lub konfiguracja różni się od zamrożonego eksperymentu')
+                  existing = {r['id'] for r in state['forecasts']}
+                  lines += [f'Zapisane pary prognoz: **{len(existing)}**.', '']
+              else:
+                  lines += ['Brak archiwum prognoz w repozytorium.', '']
+              totals = {'matches': 0, 'future': 0, 'window': 0, 'ready': 0}
+              for league in config['calibration']:
+                  lines += ['## ' + engine.LEAGUES.get(league, league), '']
+                  try:
+                      pool = []
+                      for year in (season - 1, season):
+                          matches = engine.fetch_matches(league, year)
+                          if not matches:
+                              raise ValueError(f'Pusty sezon {year}')
+                          pool.extend({**m, 'season': year} for m in matches)
+                      current = [m for m in pool if m['season'] == season]
+                      future = sorted([m for m in current if m['score'] is None and m['kickoff'] > now],
+                                      key=lambda m: (m['kickoff'], m['id']))
+                      candidates = [m for m in future if window_status(m['kickoff'], now,
+                                    config['min_lead_hours'], config['max_lead_hours']) == 'W OKNIE']
+                      totals['matches'] += len(current)
+                      totals['future'] += len(future)
+                      totals['window'] += len(candidates)
+                      lines += [f'Bieżący sezon: {season}/{season+1}. Pobrane mecze: **{len(current)}**. '
+                                f'Przyszłe bez wyniku: **{len(future)}**. W oknie: **{len(candidates)}**.', '']
+                      if future:
+                          lines += ['| Mecz | Start w Polsce | Otwarcie okna | Zamknięcie okna | Status |',
+                                    '|---|---|---|---|---|']
+                      else:
+                          lines += ['**API nie zwróciło przyszłych meczów bez wyniku. Sprawdź terminarz dostawcy.**']
+                      for m in future[:5]:
+                          opens = m['kickoff'] - timedelta(hours=config['max_lead_hours'])
+                          closes = m['kickoff'] - timedelta(hours=config['min_lead_hours'])
+                          match_name = (m['home'] + ' — ' + m['away']).replace('|', '/')
+                          lines.append(f'| {match_name} | {local(m["kickoff"])} | {local(opens)} | '
+                                       f'{local(closes)} | {window_status(m["kickoff"], now, 162, 168)} |')
+                      for m in future:
+                          opens = m['kickoff'] - timedelta(hours=config['max_lead_hours'])
+                          if opens > now:
+                              earliest.append(opens)
+                      history = [m for m in pool if m['score'] is not None and m['kickoff'] <= now-timedelta(hours=3)]
+                      for m in candidates:
+                          key = f'{league}-{season}-{m["id"]}'
+                          if key in existing:
+                              lines += ['', key + ': prognoza już zapisana.']
+                              continue
+                          a = engine.predict(m, history, now)
+                          b = observer.v20.predict(m, history, now)
+                          if a is None or b is None:
+                              lines += ['', key + ': brak wystarczającej historii dla obu modeli.']
+                          else:
+                              observer.calibrated_probs(b['probabilities'], config['calibration'][league]['parameters'])
+                              totals['ready'] += 1
+                              lines += ['', key + ': oba modele obliczyły prognozę; gotowy do zapisu przez obserwatora.']
+                      lines += ['']
+                  except Exception as exc:
+                      failures.append(league + ': ' + str(exc))
+                      lines += ['**BŁĄD:** ' + str(exc), '']
+              lines += ['## Wniosek', '', f'Pobrane mecze bieżącego sezonu: {totals["matches"]}. '
+                        f'Przyszłe: {totals["future"]}. W oknie: {totals["window"]}. '
+                        f'Nowe pary gotowe do zapisu: {totals["ready"]}.', '']
+              if failures:
+                  lines += ['**Diagnostyka niepełna — wystąpiły błędy danych lub obliczeń.**']
+              elif totals['window'] == 0 and totals['future']:
+                  lines += ['**Brak nowych prognoz wynika z braku meczów w oknie zapisu w chwili tej kontroli.**']
+              elif totals['ready']:
+                  lines += ['Uruchom istniejący test przedmeczowy, aby zapisać gotowe prognozy w aktualnym oknie.']
+              if earliest:
+                  lines += ['', 'Najbliższe przyszłe otwarcie okna: **' + local(min(earliest)) + '**.',
+                            'Harmonogram obserwatora: 37. minuta każdej godziny UTC. '
+                            'GitHub może opóźnić lub pominąć uruchomienie.']
+              lines += ['', 'Ta kontrola nie dowodzi, że harmonogram działa, i nie mierzy skuteczności modeli.']
+              return '\n'.join(lines) + '\n', failures
+          
+          
+          def main():
+              root = Path.cwd()
+              workflow = root / '.github/workflows/test_przedmeczowy.yml'
+              source = workflow.read_text()
+              payload = re.search(r'payload\s*=\s*"""(.*?)"""', source, re.S)
+              expected = re.search(r"hashlib\.sha256\(blob\)\.hexdigest\(\)\s*!=\s*'([0-9a-f]{64})'", source)
+              if not payload or not expected:
+                  raise ValueError('Nie znaleziono zamrożonej paczki w test_przedmeczowy.yml')
+              blob = base64.b64decode(payload[1])
+              if hashlib.sha256(blob).hexdigest() != expected[1]:
+                  raise ValueError('Nieprawidłowy skrót paczki')
+              with tempfile.TemporaryDirectory() as directory:
+                  with zipfile.ZipFile(io.BytesIO(blob)) as archive:
+                      for name in archive.namelist():
+                          path = Path(name)
+                          if path.is_absolute() or '..' in path.parts:
+                              raise ValueError('Nieprawidłowa ścieżka w paczce')
+                      archive.extractall(directory)
+                  sys.path.insert(0, directory)
+                  import archived_v21 as engine
+                  import forward as observer
+                  config = json.loads((Path(directory) / 'config.json').read_text())
+                  if (config['min_lead_hours'], config['max_lead_hours']) != (162, 168):
+                      raise ValueError('Nieobsługiwane okno eksperymentu')
+                  for name, expected_hash in config['source_hashes'].items():
+                      if hashlib.sha256((Path(directory)/name).read_bytes()).hexdigest() != expected_hash:
+                          raise ValueError('Niezgodny silnik: ' + name)
+                  report, failures = inspect(root, engine, observer, config, datetime.now(timezone.utc))
+              Path('DIAGNOSTYKA_TERMINARZA_LAB.md').write_text(report, encoding='utf-8')
+              if os.environ.get('GITHUB_STEP_SUMMARY'):
+                  with open(os.environ['GITHUB_STEP_SUMMARY'], 'a', encoding='utf-8') as handle:
+                      handle.write(report)
+              print(report)
+              if failures:
+                  raise SystemExit('Niepełna diagnostyka: ' + '; '.join(failures))
+          
+          
+          if __name__ == '__main__':
+              main()
+      - name: Pobierz czytelny raport
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: RZOTKIEWKA_DIAGNOSTYKA_TERMINARZA_LAB
+          path: DIAGNOSTYKA_TERMINARZA_LAB.md
+          if-no-files-found: warn
+          retention-days: 30
