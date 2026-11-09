@@ -1,0 +1,32 @@
+name: RZOTKIEWKA - kontrola strony i darmowych prognoz
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'predictions.json'
+      - 'tips.json'
+      - 'forecast_engine.py'
+      - 'tests/test_site_integrity.py'
+      - '.github/workflows/quality_site.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Pobierz repozytorium
+        uses: actions/checkout@v4
+      - name: Przygotuj Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Wymagaj Node.js do sprawdzenia JavaScript
+        run: node --version
+      - name: Testy archiwum, darmowych prognoz i JavaScript
+        run: python -m unittest discover -s tests -p 'test_site_integrity.py' -v
