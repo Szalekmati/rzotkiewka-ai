@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0a0e13">
-  <meta name="description" content="🫜 RZOTKIEWKA 1.9 — publiczny ranking prognoz 1X2, zweryfikowane archiwum, wyniki i analiza. Brak gwarancji wygranej.">
-  <title>🫜 RZOTKIEWKA 1.9 — Ranking prognoz i wyniki 1X2</title>
+  <meta name="description" content="🫜 RZOTKIEWKA 1.10 — publiczny ranking prognoz 1X2, zweryfikowane archiwum, wyniki i analiza. Brak gwarancji wygranej.">
+  <title>🫜 RZOTKIEWKA 1.10 — Ranking prognoz i wyniki 1X2</title>
   <style>
     :root{color-scheme:dark;--bg:#0a0e13;--surface:#131a22;--surface2:#19232d;--line:#293743;--ink:#f4f8f8;--muted:#a2b1bc;--accent:#a6f475;--accent2:#dfffc8;--red:#ff858b;--gold:#f4c77f;--radius:18px}
     *{box-sizing:border-box}
@@ -171,7 +171,7 @@
     .archive-chip.waiting{border-color:#987a4a;color:#ffdfad}
     @media(max-width:420px){.archive-panel{padding:14px}.archive-metric{padding:10px}.archive-metric strong{font-size:21px}}
 
-    /* RZOTKIEWKA 1.9 — publiczny ranking, wyłącznie zatwierdzone snapshoty */
+    /* RZOTKIEWKA 1.10 — publiczny ranking, wyłącznie zatwierdzone snapshoty */
     .ranking-section{margin:4px 0 58px}
     .rank-shell{border:1px solid #345a43;background:linear-gradient(145deg,#14231c,#131c24 70%);border-radius:24px;padding:clamp(16px,4vw,26px)}
     .rank-shell h2{margin:0 0 9px}
@@ -235,7 +235,7 @@
     .audit-empty{color:var(--muted);font-size:13px;padding:15px}
     @media(max-width:600px){.audit-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.audit-head h2{font-size:25px}.audit-download{width:100%}}
 
-    /* RZOTKIEWKA 1.9 — kontrola jakości publicznych prognoz. */
+    /* RZOTKIEWKA 1.10 — kontrola jakości publicznych prognoz. */
     .quality-section{margin:0 0 58px;scroll-margin-top:95px}
     .quality-panel{border:1px solid #59734c;border-radius:24px;padding:clamp(17px,3vw,26px);background:linear-gradient(145deg,#1a2a1e,#131d24 68%)}
     .quality-top{display:flex;gap:15px;align-items:start;justify-content:space-between;flex-wrap:wrap}
@@ -263,25 +263,115 @@
     .quality-note{font-size:11px;color:var(--muted);line-height:1.6;margin:14px 0 0}
     .rank-filter-note{color:#b8d3c2;font-size:12px;margin:-4px 0 13px}
     @media(max-width:720px){.quality-grid{grid-template-columns:1fr}.quality-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.quality-box{padding:15px}}
+
+    /* 1.10: nawigacja mobilna, wyszukiwanie i obserwowane prognozy. */
+    section[id]{scroll-margin-top:100px}
+    .match-search{display:flex;gap:12px;flex-wrap:wrap;align-items:end;margin:16px 0}
+    .match-search label{flex:1;min-width:180px;display:grid;gap:6px;color:var(--muted);font-size:13px}
+    .match-search input{width:100%;min-height:46px;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:10px 13px;color:var(--ink);font:inherit;font-size:16px}
+    .match-search input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+    .watch-button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;border:1px solid #45634b;border-radius:10px;background:#17251d;color:var(--accent);padding:8px 12px;font-size:13px}
+    .watch-button[aria-pressed="true"]{background:#314826;color:#e5ffd4}
+    .watch-note{color:var(--muted);font-size:12px;margin:8px 0 16px}
+    .lab-panel{padding:25px;border:1px solid #3e6247;border-radius:20px;background:linear-gradient(120deg,#15251b,#131c26);margin:0 0 30px}
+    .lab-head{display:flex;align-items:start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+    .lab-head h2{margin:10px 0;font-size:clamp(24px,4vw,34px)}
+    .lab-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:18px 0}
+    .lab-metrics div{border:1px solid var(--line);border-radius:12px;background:#0e1918;padding:14px}
+    .lab-metrics strong{display:block;font-size:26px;color:var(--accent)}
+    .lab-metrics span{display:block;font-size:12px;color:var(--muted)}
+    .lab-panel p{color:var(--muted);font-size:13px;line-height:1.7}
+    .lab-panel a{text-decoration:underline;text-underline-offset:3px;color:var(--accent)}
+    .lab-panel progress{width:100%;height:10px;accent-color:var(--accent)}
+    .mobile-nav{display:none}
+    @media(max-width:720px){body{padding-bottom:85px}.hero{padding:28px 0 24px}.hero .visual{display:none}.head-inner{min-height:64px}.nav{max-width:55%;overflow:auto;flex-wrap:nowrap}.nav a{white-space:nowrap}.lab-panel{padding:17px}.lab-metrics{gap:7px}.lab-metrics div{padding:10px}.lab-metrics strong{font-size:22px}.lab-metrics span{font-size:11px}.mobile-nav{position:fixed;display:flex;justify-content:space-around;bottom:0;left:0;right:0;z-index:30;padding:8px 8px calc(8px + env(safe-area-inset-bottom));background:#111c19f5;border-top:1px solid #395540;backdrop-filter:blur(15px)}.mobile-nav a{display:grid;place-items:center;gap:2px;min-height:46px;min-width:64px;font-size:12px;color:#c2cec6}.mobile-nav span{font-size:18px;color:var(--accent)}section[id]{scroll-margin-top:82px}}
   </style>
 </head>
 <body>
 <header class="header">
   <div class="shell head-inner">
-    <a class="brand" href="#start" aria-label="RZOTKIEWKA — strona główna"><span class="brand-emoji" aria-hidden="true">🫜</span><span><span class="brand-name">RZOTKIEWKA</span><span class="brand-caption">FOOTBALL LAB · 1.9</span></span></a>
-    <nav class="nav" aria-label="Nawigacja"><a href="#mecze">Mecze</a><a href="#ranking">Ranking</a><a href="#jakosc">Jakość modelu</a><a href="#raport">Raport</a><a href="#typy">Typy demo</a><a href="#jak-to-dziala">Zasady</a><a class="nav-premium" href="#premium">Premium ✦</a></nav>
+    <a class="brand" href="#start" aria-label="RZOTKIEWKA — strona główna"><span class="brand-emoji" aria-hidden="true">🫜</span><span><span class="brand-name">RZOTKIEWKA</span><span class="brand-caption">FOOTBALL LAB · 1.10</span></span></a>
+    <nav class="nav" aria-label="Nawigacja"><a href="#mecze">Mecze</a><a href="#ranking">Ranking</a><a href="#jakosc">Jakość modelu</a><a href="#raport">Raport</a><a href="#lab">Test LAB</a><a href="#jak-to-dziala">Zasady</a><a class="nav-premium" href="#premium">Premium ✦</a></nav>
   </div>
 </header>
-<div id="demo-banner" class="banner" role="status">WERSJA 1.9 — monitor rozliczeń prognoz, ranking i raport CSV. Typy demonstracyjne są fikcyjne.</div>
+<div id="demo-banner" class="banner" role="status">WERSJA 1.10 · Prognozy eksperymentalne. Test LAB i jego aktualny stan znajdziesz poniżej.</div>
 <main class="shell" id="start">
   <section class="hero" aria-labelledby="hero-title">
     <div>
       <div class="kicker">⚽ PRAWDZIWE MECZE · PUBLICZNE ARCHIWUM PROGNOZ</div>
       <h1 id="hero-title">Mecze pod <span>lupą.</span></h1>
       <p class="lead">Prawdziwe mecze i prawdopodobieństwa 1–X–2. Oddzielamy szacunki na żywo od prognoz zapisanych przed pierwszym gwizdkiem.</p>
-      <div class="actions"><a class="primary" href="#ranking">Zobacz ranking →</a><a class="secondary" href="#mecze">Mecze i wyniki</a></div>
+      <div class="actions"><a class="primary" href="#mecze">Przeglądaj mecze →</a><a class="secondary" href="#lab">Postęp testu LAB</a></div>
     </div>
     <div class="visual" aria-hidden="true"><div class="mascot">🫜</div><h3>Zapisz. Sprawdź. Ucz się.</h3><p>Prosty interfejs · jasne zasady</p></div>
+  </section>
+  <section id="mecze" class="real-section" aria-labelledby="live-title">
+    <div class="section-top"><div><h2 id="live-title">Mecze, prognozy i wyniki 1X2</h2><p class="section-sub">Terminarze, wyniki i forma drużyn z niezależnej bazy danych.</p></div></div>
+    <p class="real-intro">Niemiecka 1., 2. i 3. liga. Wyniki pochodzą z OpenLigaDB. Model 1.3 uwzględnia formę z 8 ostatnich spotkań, osobno mecze u siebie i na wyjeździe oraz średnią bramek gospodarzy i gości w lidze. Jest eksperymentalny, niekalibrowany i nie jest kursem ani rekomendacją zakładu.</p>
+    <div class="live-toolbar">
+      <label class="field-select" for="live-league">Rozgrywki
+        <select id="live-league"><option value="bl1">Bundesliga</option><option value="bl2">2. Bundesliga</option><option value="bl3">3. Liga</option></select>
+      </label>
+      <label class="field-select" for="live-season">Sezon
+        <select id="live-season"></select>
+      </label>
+      <div class="real-tabs" role="group" aria-label="Widok terminarza">
+        <button type="button" class="filter" data-live-tab="next" aria-pressed="true">Nadchodzące</button>
+        <button type="button" class="filter" data-live-tab="done" aria-pressed="false">Wyniki</button>
+      </div>
+      <button type="button" id="refresh-live" class="filter live-refresh">↻ Odśwież dane</button>
+    </div>
+    <div id="live-summary" class="real-summary" aria-label="Statystyki sezonu">
+      <div class="real-metric"><strong id="live-all">—</strong><span>Meczów w bazie</span></div>
+      <div class="real-metric"><strong id="live-finished">—</strong><span>Zakończonych</span></div>
+      <div class="real-metric"><strong id="live-upcoming">—</strong><span>Przyszłych meczów</span></div>
+    </div>
+    <p id="live-status" class="status-real" role="status" aria-live="polite">Łączenie ze źródłem meczów…</p>
+    <div class="match-search"><label for="live-search">Znajdź drużynę<input id="live-search" type="search" placeholder="Wpisz nazwę drużyny…" maxlength="90" autocomplete="off"></label></div>
+    <p id="live-filter-count" class="watch-note" role="status"></p>
+    <div id="live-list" class="real-grid" aria-live="polite"><div class="empty">Pobieranie terminarza…</div></div>
+    <div id="archive-panel" class="archive-panel" aria-labelledby="archive-title">
+      <h3 id="archive-title">📌 Prognozy zapisane przed meczami</h3>
+      <p>To publiczne archiwum pochodzi z automatycznego zapisu w repozytorium GitHub. Raz zapisany szacunek nie jest ponownie obliczany po wyniku meczu. Historia zmian jest widoczna w commitach. Właściciel repozytorium technicznie może jednak zmienić historię Git — nie jest to niezależny audyt.</p>
+      <div class="archive-metrics" aria-label="Statystyki publicznie zapisanych prognoz">
+        <div class="archive-metric"><strong id="archive-total">—</strong><span>Zapisanych</span></div>
+        <div class="archive-metric"><strong id="archive-graded">—</strong><span>Rozliczonych</span></div>
+        <div class="archive-metric"><strong id="archive-hit">—</strong><span>Trafień 1X2</span></div>
+      </div>
+      <p id="archive-status" role="status" aria-live="polite">Ładowanie archiwum prognoz…</p>
+      <div class="archive-monitor" aria-label="Monitor etapów rozliczenia">
+        <strong>⏱ Monitor rozliczeń</strong>
+        <p id="archive-monitor-status" role="status" aria-live="polite">Czekamy na dane archiwum.</p>
+        <p>Prognoza nie zostanie oceniona przed otrzymaniem końcowego wyniku i automatycznym uruchomieniem silnika. <a href="https://github.com/Szalekmati/rzotkiewka-ai/actions" target="_blank" rel="noopener noreferrer">Sprawdź GitHub Actions ↗</a></p>
+      </div>
+      <div id="archive-list" aria-live="polite"></div>
+      <p><a class="archive-link" href="https://github.com/Szalekmati/rzotkiewka-ai/commits/main/predictions.json" target="_blank" rel="noopener noreferrer">Sprawdź historię zapisów na GitHubie ↗</a></p>
+      <p>Oceniana jest wyłącznie prawidłowość wyniku 1/X/2. Małe próbki i opóźnione wyniki nie dowodzą przewagi nad ofertami bukmacherów.</p>
+    </div>
+    <div class="model-panel" aria-labelledby="backtest-title">
+      <h3 id="backtest-title">🧪 Test retrospektywny modelu 1.3</h3>
+      <p>Osobny test historyczny wyliczany na bieżąco z wcześniejszych wyników (z odstępem co najmniej 3 godzin). To NIE są prognozy opublikowane przed meczami; takie prognozy są pokazane wyżej w publicznym archiwum.</p>
+      <div class="model-metrics" aria-label="Wyniki testu historycznego">
+        <div class="model-metric"><strong id="model-count">—</strong><span>Meczów w teście</span></div>
+        <div class="model-metric"><strong id="model-hitrate">—</strong><span>Trafień lidera 1X2</span></div>
+        <div class="model-metric"><strong id="model-brier">—</strong><span>Brier (niżej lepiej)</span></div>
+      </div>
+      <p id="model-description" role="status">Po pobraniu danych sprawdzimy model. Brier: średnia kwadratowych błędów trzech prawdopodobieństw; 0 oznacza wynik idealny, 0,222 to stała prognoza 33/33/33.</p>
+      <details><summary>Przykładowe historyczne prognozy i rezultaty</summary><div id="model-history" style="overflow-x:auto"><p>Jeszcze nie pobrano danych.</p></div></details>
+      <p>Metoda 1.3: uproszczony Poisson, forma ważona ostatnich 8 spotkań, wyniki gospodarzy u siebie i gości na wyjeździe. Dane pochodzą z obecnej bazy i mogą być korygowane. Test retrospektywny nie stanowi dowodu przyszłej skuteczności.</p>
+    </div>
+    <p class="real-note">Źródło: <a href="https://www.openligadb.de/" target="_blank" rel="noopener noreferrer">OpenLigaDB</a> (dane społecznościowe, licencja <a href="https://opendatacommons.org/licenses/odbl/1-0/" target="_blank" rel="noopener noreferrer">ODbL 1.0</a>). Wyniki mogą mieć opóźnienie; brak wyniku nie oznacza trwającego meczu. Przed podjęciem decyzji sprawdzaj źródła oficjalne.</p>
+  </section>
+
+  <section id="lab" class="lab-panel" aria-labelledby="lab-heading">
+    <div class="lab-head"><div><div class="kicker">🧪 TEST PRZEDMECZOWY · 2.1 / 2.2 LAB</div><h2 id="lab-heading">Jak idzie sprawdzanie modelu?</h2></div><button id="lab-refresh" class="watch-button" type="button">↻ Odśwież status</button></div>
+    <p>Porównujemy dwie wersje modelu na prognozach zapisanych 162–168 godzin przed meczem. Rozwój strony trwa równolegle.</p>
+    <div class="lab-metrics"><div><strong id="lab-pairs">—</strong><span>Zapisane pary prognoz</span></div><div><strong id="lab-settled">—</strong><span>Rozliczone pary</span></div><div><strong id="lab-errors">—</strong><span>Zgłoszone błędy pobierania</span></div></div>
+    <p id="lab-status" role="status" aria-live="polite">Pobieranie raportu testu…</p>
+    <progress id="lab-progress" max="300" value="0" hidden aria-label="Rozliczone pary do przeglądu wyników"></progress>
+    <p id="lab-progress-note">Próg przeglądu wyników będzie odczytany z konfiguracji eksperymentu.</p>
+    <p id="lab-updated">Ostatnia obserwacja: —</p>
+    <p><a href="./lab_forward/RAPORT.md" target="_blank" rel="noopener">Pełny raport LAB ↗</a> · <a href="https://github.com/Szalekmati/rzotkiewka-ai/actions" target="_blank" rel="noopener noreferrer">Uruchomienia testów ↗</a></p>
   </section>
   <section id="ranking" class="ranking-section" aria-labelledby="ranking-title">
     <div class="rank-shell">
@@ -309,6 +399,8 @@
           <select id="rank-minprob"><option value="0">Całe archiwum</option><option value="0.45">Od 45%</option><option value="0.50" selected>Od 50%</option><option value="0.55">Od 55%</option><option value="0.60">Od 60%</option></select>
         </label>
       </div>
+      <div class="match-search"><label for="rank-search">Szukaj w prognozach<input id="rank-search" type="search" placeholder="Nazwa gospodarzy lub gości…" maxlength="90" autocomplete="off"></label><button id="rank-watched" class="watch-button" type="button" aria-pressed="false">☆ Tylko obserwowane</button></div>
+      <p id="watch-storage-note" class="watch-note">Obserwowane prognozy zapisują się w tej przeglądarce na tym urządzeniu.</p>
       <p id="rank-filter-note" class="rank-filter-note" role="status">Próg 50% służy filtrowaniu, nie oznacza sprawdzonej skuteczności.</p>
       <div id="rank-list" class="rank-cards" aria-live="polite"><div class="rank-empty">Trwa weryfikacja archiwum…</div></div>
       <details class="rank-by-league"><summary>Skuteczność i Brier w podziale na ligi</summary><div id="rank-leagues"><p>Wczytywanie statystyk ligowych…</p></div></details>
@@ -379,61 +471,6 @@
       <div id="audit-matches" class="audit-table-wrap"><p class="audit-empty">Wczytywanie…</p></div>
       <p class="audit-note">Brier = średnia z trzech kwadratów błędów prawdopodobieństw 1/X/2. Trafność to odsetek rozliczonych spotkań, w których zdarzenie o najwyższej prognozowanej szansie wystąpiło. Przy małej próbie wyniki są niepewne; to nie dowód zysku ani rekomendacja zakładu.</p>
     </div>
-  </section>
-  <section id="mecze" class="real-section" aria-labelledby="live-title">
-    <div class="section-top"><div><h2 id="live-title">Mecze, prognozy i wyniki 1X2</h2><p class="section-sub">Terminarze, wyniki i forma drużyn z niezależnej bazy danych.</p></div></div>
-    <p class="real-intro">Niemiecka 1., 2. i 3. liga. Wyniki pochodzą z OpenLigaDB. Model 1.3 uwzględnia formę z 8 ostatnich spotkań, osobno mecze u siebie i na wyjeździe oraz średnią bramek gospodarzy i gości w lidze. Jest eksperymentalny, niekalibrowany i nie jest kursem ani rekomendacją zakładu.</p>
-    <div class="live-toolbar">
-      <label class="field-select" for="live-league">Rozgrywki
-        <select id="live-league"><option value="bl1">Bundesliga</option><option value="bl2">2. Bundesliga</option><option value="bl3">3. Liga</option></select>
-      </label>
-      <label class="field-select" for="live-season">Sezon
-        <select id="live-season"></select>
-      </label>
-      <div class="real-tabs" role="group" aria-label="Widok terminarza">
-        <button type="button" class="filter" data-live-tab="next" aria-pressed="true">Nadchodzące</button>
-        <button type="button" class="filter" data-live-tab="done" aria-pressed="false">Wyniki</button>
-      </div>
-      <button type="button" id="refresh-live" class="filter live-refresh">↻ Odśwież dane</button>
-    </div>
-    <div id="live-summary" class="real-summary" aria-label="Statystyki sezonu">
-      <div class="real-metric"><strong id="live-all">—</strong><span>Meczów w bazie</span></div>
-      <div class="real-metric"><strong id="live-finished">—</strong><span>Zakończonych</span></div>
-      <div class="real-metric"><strong id="live-upcoming">—</strong><span>Przyszłych meczów</span></div>
-    </div>
-    <p id="live-status" class="status-real" role="status" aria-live="polite">Łączenie ze źródłem meczów…</p>
-    <div id="archive-panel" class="archive-panel" aria-labelledby="archive-title">
-      <h3 id="archive-title">📌 Prognozy zapisane przed meczami</h3>
-      <p>To publiczne archiwum pochodzi z automatycznego zapisu w repozytorium GitHub. Raz zapisany szacunek nie jest ponownie obliczany po wyniku meczu. Historia zmian jest widoczna w commitach. Właściciel repozytorium technicznie może jednak zmienić historię Git — nie jest to niezależny audyt.</p>
-      <div class="archive-metrics" aria-label="Statystyki publicznie zapisanych prognoz">
-        <div class="archive-metric"><strong id="archive-total">—</strong><span>Zapisanych</span></div>
-        <div class="archive-metric"><strong id="archive-graded">—</strong><span>Rozliczonych</span></div>
-        <div class="archive-metric"><strong id="archive-hit">—</strong><span>Trafień 1X2</span></div>
-      </div>
-      <p id="archive-status" role="status" aria-live="polite">Ładowanie archiwum prognoz…</p>
-      <div class="archive-monitor" aria-label="Monitor etapów rozliczenia">
-        <strong>⏱ Monitor rozliczeń</strong>
-        <p id="archive-monitor-status" role="status" aria-live="polite">Czekamy na dane archiwum.</p>
-        <p>Prognoza nie zostanie oceniona przed otrzymaniem końcowego wyniku i automatycznym uruchomieniem silnika. <a href="https://github.com/Szalekmati/rzotkiewka-ai/actions" target="_blank" rel="noopener noreferrer">Sprawdź GitHub Actions ↗</a></p>
-      </div>
-      <div id="archive-list" aria-live="polite"></div>
-      <p><a class="archive-link" href="https://github.com/Szalekmati/rzotkiewka-ai/commits/main/predictions.json" target="_blank" rel="noopener noreferrer">Sprawdź historię zapisów na GitHubie ↗</a></p>
-      <p>Oceniana jest wyłącznie prawidłowość wyniku 1/X/2. Małe próbki i opóźnione wyniki nie dowodzą przewagi nad ofertami bukmacherów.</p>
-    </div>
-    <div class="model-panel" aria-labelledby="backtest-title">
-      <h3 id="backtest-title">🧪 Test retrospektywny modelu 1.3</h3>
-      <p>Osobny test historyczny wyliczany na bieżąco z wcześniejszych wyników (z odstępem co najmniej 3 godzin). To NIE są prognozy opublikowane przed meczami; takie prognozy są pokazane wyżej w publicznym archiwum.</p>
-      <div class="model-metrics" aria-label="Wyniki testu historycznego">
-        <div class="model-metric"><strong id="model-count">—</strong><span>Meczów w teście</span></div>
-        <div class="model-metric"><strong id="model-hitrate">—</strong><span>Trafień lidera 1X2</span></div>
-        <div class="model-metric"><strong id="model-brier">—</strong><span>Brier (niżej lepiej)</span></div>
-      </div>
-      <p id="model-description" role="status">Po pobraniu danych sprawdzimy model. Brier: średnia kwadratowych błędów trzech prawdopodobieństw; 0 oznacza wynik idealny, 0,222 to stała prognoza 33/33/33.</p>
-      <details><summary>Przykładowe historyczne prognozy i rezultaty</summary><div id="model-history" style="overflow-x:auto"><p>Jeszcze nie pobrano danych.</p></div></details>
-      <p>Metoda 1.3: uproszczony Poisson, forma ważona ostatnich 8 spotkań, wyniki gospodarzy u siebie i gości na wyjeździe. Dane pochodzą z obecnej bazy i mogą być korygowane. Test retrospektywny nie stanowi dowodu przyszłej skuteczności.</p>
-    </div>
-    <div id="live-list" class="real-grid" aria-live="polite"><div class="empty">Pobieranie terminarza…</div></div>
-    <p class="real-note">Źródło: <a href="https://www.openligadb.de/" target="_blank" rel="noopener noreferrer">OpenLigaDB</a> (dane społecznościowe, licencja <a href="https://opendatacommons.org/licenses/odbl/1-0/" target="_blank" rel="noopener noreferrer">ODbL 1.0</a>). Wyniki mogą mieć opóźnienie; brak wyniku nie oznacza trwającego meczu. Przed podjęciem decyzji sprawdzaj źródła oficjalne.</p>
   </section>
   <section id="typy" aria-labelledby="tips-title">
     <div class="section-top"><div><h2 id="tips-title">Przykładowe typy — DEMO</h2><p class="section-sub">Ta sekcja pozwala testować wygląd typów i Premium. Nie przedstawia prawdziwych prognoz ani kursów.</p></div>
@@ -580,6 +617,20 @@
   const cache = new Map(); // do 10 minut, tylko w trakcie jednej wizyty
   const maxAgeMs = 10*60*1000;
   const state = {league:'bl1',season:2026,tab:'next',matches:[],loadedAt:null,archive:[],archiveAt:null,archiveReady:false,archiveFailed:false};
+  const watchKey='rzotkiewka:watched:v1';
+  let watched=new Set(), onlyWatched=false;
+  try{const saved=JSON.parse(localStorage.getItem(watchKey)||'[]');if(Array.isArray(saved))watched=new Set(saved.filter(x=>typeof x==='string').slice(0,2000));}catch{}
+  const searchText=value=>String(value).normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/ł/g,'l').replace(/Ł/g,'L').toLowerCase().trim();
+  function matchesQuery(home,away,query){return searchText(home+' '+away).includes(searchText(query));}
+  function toggleWatch(id){
+    if(watched.has(id))watched.delete(id);else watched.add(id);
+    try{localStorage.setItem(watchKey,JSON.stringify([...watched]));$('watch-storage-note').textContent='Obserwowane prognozy zapisują się w tej przeglądarce na tym urządzeniu.';}
+    catch{$('watch-storage-note').textContent='Przeglądarka blokuje zapis. Obserwowane pozostaną dostępne tylko podczas tej wizyty.';}
+    renderRanking();
+  }
+  $('rank-search').addEventListener('input',renderRanking);
+  $('live-search').addEventListener('input',render);
+  $('rank-watched').addEventListener('click',()=>{onlyWatched=!onlyWatched;$('rank-watched').setAttribute('aria-pressed',String(onlyWatched));renderRanking();});
   const now = new Date();
   const currentSeason = now.getMonth() >= 6 ? now.getFullYear() : now.getFullYear()-1;
   state.season=currentSeason;
@@ -805,6 +856,8 @@
     const league=$('rank-league').value, status=$('rank-state').value, order=$('rank-order').value, now=Date.now();
     const minimum=Number($('rank-minprob').value)||0;
     const rows=data.filter(r=>{
+      if(onlyWatched&&!watched.has(r.id))return false;
+      if(!matchesQuery(r.snapshot.home,r.snapshot.away,$('rank-search').value))return false;
       if(leaderOf(r).confidence+1e-10<minimum)return false;
       if(league!=='all'&&r.snapshot.league!==league)return false;
       if(status==='graded')return scored(r);
@@ -839,6 +892,10 @@
         card.append(make('p','rank-result',`Wynik ${r.settlement.score.join(':')} · ${hit?'TRAFIONY':'NIETRAFIONY'} lider 1X2`));
       }
       card.append(make('p','rank-caption',`Zapisano: ${new Date(s.created_at).toLocaleString('pl-PL')} · SHA-256 ${r.snapshot_sha256.slice(0,14)}…`));
+      const watch=make('button','watch-button',watched.has(r.id)?'★ Obserwujesz':'☆ Obserwuj prognozę');
+      watch.type='button';watch.setAttribute('aria-pressed',String(watched.has(r.id)));
+      watch.setAttribute('aria-label',`${watched.has(r.id)?'Przestań obserwować':'Obserwuj'}: ${s.home} – ${s.away}`);
+      watch.addEventListener('click',()=>toggleWatch(r.id));card.append(watch);
       root.append(card);
     }
     const leaguesRoot=$('rank-leagues');leaguesRoot.replaceChildren();
@@ -1117,7 +1174,7 @@
     }
     const blob=new Blob(['\ufeff',lines.join('\r\n')],{type:'text/csv;charset=utf-8'});
     const url=URL.createObjectURL(blob),link=document.createElement('a');
-    link.href=url;link.download='RZOTKIEWKA_raport_1_9.csv';link.hidden=true;
+    link.href=url;link.download='RZOTKIEWKA_raport_1_10.csv';link.hidden=true;
     document.body.append(link);link.click();link.remove();
     setTimeout(()=>URL.revokeObjectURL(url),2000);
   });
@@ -1132,12 +1189,16 @@
     $('live-finished').textContent=String(completed.length);
     $('live-upcoming').textContent=String(state.matches.filter(m=>!m.score && m.time>Date.now()).length);
     const target=$('live-list');target.replaceChildren();
-    const games=state.tab==='done'
-      ?completed.sort((a,b)=>b.time-a.time).slice(0,16)
-      :state.matches.filter(m=>!m.score && m.time>Date.now()-3*60*60*1000).sort((a,b)=>a.time-b.time).slice(0,16);
+    const query=$('live-search').value;
+    const candidates=(state.tab==='done'
+      ?completed.sort((a,b)=>b.time-a.time)
+      :state.matches.filter(m=>!m.score && m.time>Date.now()-3*60*60*1000).sort((a,b)=>a.time-b.time))
+      .filter(m=>matchesQuery(m.home,m.away,query));
+    const games=candidates.slice(0,16);
+    $('live-filter-count').textContent=`Pasujących meczów: ${candidates.length} · wyświetlono ${games.length}. Wyszukiwanie obejmuje wybraną ligę, sezon i widok.`;
     if(!games.length){
       target.append(make('div','empty',state.matches.length
-        ? 'Nie ma meczów w wybranym widoku. Wybierz drugi filtr lub inny sezon.'
+        ? 'Brak pasujących meczów. Zmień wyszukiwanie, widok lub sezon.'
         : 'Źródło nie zwróciło spotkań dla tego sezonu i ligi.'));
     } else for(const game of games) target.append(renderCard(game));
   }
@@ -1202,6 +1263,60 @@
   setInterval(()=>{if(!document.hidden)loadArchive();},10*60*1000);
   loadArchive();
 })();
+</script>
+<nav class="mobile-nav" aria-label="Skróty na telefonie"><a href="#mecze"><span aria-hidden="true">⚽</span>Mecze</a><a href="#ranking"><span aria-hidden="true">☆</span>Prognozy</a><a href="#lab"><span aria-hidden="true">◉</span>Test LAB</a><a href="#raport"><span aria-hidden="true">▤</span>Raport</a></nav>
+<script>
+// Raport LAB jest osobnym źródłem od archiwum produkcyjnego.
+(()=>{
+  'use strict';
+  const $=id=>document.getElementById(id);
+  function parseLabReport(text){
+    const pairs=text.match(/Zapisane pary prognoz:\s*(\d+)/);
+    const settled=text.match(/\|\s*Razem\s*\|\s*v21\s*\|\s*(\d+)\s*\|/);
+    const time=text.match(/Ostatnia obserwacja UTC:\s*(\S+)/);
+    const errors=text.match(/## Błędy pobierania[ \t]*\r?\n([\s\S]*?)(?=\r?\n##|$)/);
+    if(!pairs||!settled||!time||!errors||!Number.isFinite(Date.parse(time[1])))throw new Error('Nieznany format raportu');
+    const p=Number(pairs[1]),n=Number(settled[1]);
+    if(n>p)throw new Error('Niespójne liczniki');
+    return {pairs:p,settled:n,time:time[1],errors:errors[1].trim().split('\n').filter(line=>line.trim()).length};
+  }
+  async function loadLab(){
+    $('lab-refresh').disabled=true;
+    $('lab-status').textContent='Pobieranie aktualnego raportu…';
+    const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);
+    try{
+      const res=await fetch('./lab_forward/RAPORT.md',{cache:'no-store',signal:controller.signal});
+      if(!res.ok)throw new Error('Raport niedostępny');
+      const data=parseLabReport(await res.text());
+      $('lab-pairs').textContent=String(data.pairs);$('lab-settled').textContent=String(data.settled);$('lab-errors').textContent=String(data.errors);
+      const age=Date.now()-Date.parse(data.time);
+      const stale=age>8*60*60*1000;
+      $('lab-status').textContent=(data.errors?'Raport zgłasza problemy z pobieraniem danych. Sprawdź pełny raport poniżej.':data.pairs===0?'Brak zapisanych par prognoz. Raport nie zgłasza błędów pobierania; nie ma jeszcze wyników do porównania.':data.settled===0?'Prognozy zostały zapisane. Czekamy na zakończenie meczów i ich rozliczenie.':'Są już rozliczone pary prognoz. Wyniki obu wersji znajdziesz w pełnym raporcie.')+(stale?' Uwaga: ostatnia obserwacja ma ponad 8 godzin. Sprawdź uruchomienia testów.':'');
+      $('lab-updated').textContent='Ostatnia obserwacja: '+new Date(data.time).toLocaleString('pl-PL',{timeZone:'Europe/Warsaw'})+' (czas polski).';
+      $('lab-progress').hidden=true;
+      $('lab-progress-note').textContent='Raport LAB dotyczy osobnego eksperymentu. Nie jest wynikiem skuteczności rankingu na tej stronie.';
+      try{
+        const configRes=await fetch('./lab_forward/experiment.json',{cache:'no-store',signal:controller.signal});
+        if(configRes.ok){
+          const config=await configRes.json(),goal=config?.config?.review_after_settled_pairs;
+          if(Number.isSafeInteger(goal)&&goal>0){
+            $('lab-progress').max=goal;$('lab-progress').value=Math.min(data.settled,goal);$('lab-progress').hidden=false;
+            $('lab-progress-note').textContent=`Rozliczone pary: ${data.settled} / ${goal} do zaplanowanego przeglądu wyników. Próg nie gwarantuje przewagi modelu.`;
+          }
+        }
+      }catch{/* Metryki z raportu pozostają widoczne bez konfiguracji progu. */}
+    }catch{
+      for(const id of ['lab-pairs','lab-settled','lab-errors'])$(id).textContent='—';
+      $('lab-progress').hidden=true;
+      $('lab-updated').textContent='Ostatnia obserwacja: nie udało się odczytać.';
+      $('lab-status').textContent='Nie udało się odczytać raportu LAB. Brak danych nie oznacza zera prognoz. Otwórz pełny raport lub spróbuj ponownie.';
+      $('lab-progress-note').textContent='Pozostałe widoki strony działają niezależnie od raportu LAB.';
+    }finally{clearTimeout(timer);$('lab-refresh').disabled=false;}
+  }
+  $('lab-refresh').addEventListener('click',loadLab);
+  loadLab();
+})();
+
 </script>
 </body>
 </html>
