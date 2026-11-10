@@ -91,6 +91,30 @@ class SiteIntegrity(unittest.TestCase):
                 self.assertIn(term, js)
         self.assertIn("Filtr działa w wybranej lidze i sezonie.", self.html)
 
+    def test_cross_league_favorites_use_real_fixtures_and_keep_lab_untouched(self):
+        self.assertIn("league-favorites-summary", self.page.ids)
+        js = "\n".join(self.page.js)
+        for phrase in (
+            "const favoriteSchedule=leagueRows.flatMap(item=>item.error?[]:",
+            "item.matches.filter(m=>!m.score&&m.time>Date.now()&&favoriteMatch(m))",
+            ".sort((a,b)=>a.match.time-b.match.time||a.code.localeCompare(b.code));",
+            "if(!favoriteTeams.size){",
+            "favoriteSchedule.slice(0,8)",
+            "details.append(make('strong','',match.home+' – '+match.away));",
+            "$('live-league').value=code;",
+            "$('live-search').value=match.home;",
+            "state.tab='next';",
+            "await load();",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, js)
+        # Overview only reads fixture data and favorites; never alters frozen LAB.
+        overview = js.split("  // Oddzielny przegląd terminarzy;", 1)[1].split(
+            "  $('live-more').addEventListener", 1)[0]
+        self.assertNotIn("lab_forward/", overview)
+        self.assertNotIn("predictions.json", overview)
+        self.assertNotIn("state.archive=", overview)
+
     def test_quick_mobile_league_switcher_keeps_the_model_scoped(self):
         js = "\\n".join(self.page.js)
         for league in ("bl1", "bl2", "bl3"):
