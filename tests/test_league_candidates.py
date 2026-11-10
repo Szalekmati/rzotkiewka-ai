@@ -70,7 +70,7 @@ class LeagueCandidateAuditTests(unittest.TestCase):
             fixture(13, NOW - timedelta(hours=50), finished=True, result=False),
         ]
         counts = audit.assess(rows, NOW)
-        self.assertEqual(counts["overdue_without_result_48h"], 2)
+        self.assertEqual(counts["overdue_without_result_48h"], 3)  # 48 h włącznie
         self.assertEqual(counts["finished_without_accepted_score"], 1)
 
         past, present = audit.assess(history(), NOW), audit.assess(current(), NOW)
