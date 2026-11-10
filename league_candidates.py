@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import json
 import os
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
@@ -93,6 +93,9 @@ def assess(raw_matches, now):
     future = [m for m in valid if m["kickoff"] > now and not m["finished_flag"]]
     settled = [m for m in valid if m["score"] is not None and m["kickoff"] <= now]
     invalid_finished = sum(m["finished_flag"] and m["score"] is None for m in valid)
+    # Pomijamy 48 h na rozpoczęcie i aktualizację wyniku.
+    overdue_without_result = sum(m["kickoff"] <= now - timedelta(hours=48)
+                                 and m["score"] is None for m in valid)
     return {
         "total": len(raw_matches),
         "valid": len(valid),
@@ -100,6 +103,7 @@ def assess(raw_matches, now):
         "duplicate_ids": len(valid) - len(unique_ids),
         "finished_with_score": len(settled),
         "finished_without_accepted_score": invalid_finished,
+        "overdue_without_result_48h": overdue_without_result,
         "future_with_kickoff": len(future),
         "nearest_future_utc": min((m["kickoff"].isoformat() for m in future), default=None),
     }
@@ -119,6 +123,8 @@ def verdict(historical, current):
             reasons.append("Powtórzone identyfikatory (" + season_type + " sezon)")
         if block["finished_without_accepted_score"]:
             reasons.append("Zamknięte mecze bez potwierdzonego wyniku (" + season_type + " sezon)")
+        if block["overdue_without_result_48h"]:
+            reasons.append("Zaległe mecze >48h bez wyniku (" + season_type + " sezon)")
     if not historical.get("error") and historical["finished_with_score"] < MIN_HISTORICAL_RESULTS:
         reasons.append("Za mało historycznych wyników końcowych")
     if not current.get("error"):
