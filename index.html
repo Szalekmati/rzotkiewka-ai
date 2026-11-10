@@ -691,6 +691,7 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
         <div class="quality-box">
           <h3>Weryfikacja po zakończeniu meczu</h3>
           <p id="quality-accuracy" class="quality-info">Pobieranie danych…</p>
+          <p id="quality-home-benchmark" class="quality-info" style="margin-top:12px" role="status" aria-live="polite">Porównanie z typowaniem zawsze na gospodarzy po weryfikacji archiwum.</p>
           <p id="quality-brier-baseline" class="quality-info" style="margin-top:12px" role="status" aria-live="polite">Porównanie Brier z prostą prognozą 1/X/2 będzie dostępne po weryfikacji wyników.</p>
           <p id="quality-calibration" class="quality-info" style="margin-top:12px">Porównanie prognoz z wynikami będzie możliwe po rozliczeniu spotkań.</p>
         </div>
@@ -1511,6 +1512,7 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
       for(const k of ['1','X','2'])means[k]+=p[k];
     }
     const graded=data.filter(scored),hit=graded.filter(r=>leaderOf(r).outcome===r.settlement.outcome).length;
+    const homeHits=graded.filter(r=>r.settlement.outcome==='1').length;
     const percent=(v)=>formattedPercent(v);
     const counts={'quality-total':ready?n:'—','quality-home':ready?`${wins['1']}/${n}`:'—',
       'quality-strong':ready?`${strong}/${n}`:'—','quality-graded':ready?graded.length:'—'};
@@ -1549,7 +1551,12 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
     $('quality-accuracy').textContent=!ready?'Brak zweryfikowanych danych.'
       :graded.length===0?'Brak rozliczonych spotkań. Nie można jeszcze policzyć skuteczności ani błędu Brier.'
       :`Trafienia: ${hit}/${graded.length} (${percent(hit/graded.length)}). Średni Brier: ${showBrier(meanBrier)}. ${graded.length<30?'Mała próba — wartości wstępne.':'Wynik z publicznego archiwum.'}`;
-    $('quality-brier-baseline').textContent=!ready
+    $('quality-home-benchmark').textContent=!ready
+      ?'Brak zweryfikowanego archiwum — porównanie z prostą strategią jest niedostępne.'
+      :!graded.length
+        ?'Brak rozliczonych spotkań — nie ma jeszcze danych do porównania z typowaniem gospodarzy.'
+        :`Model (najwyższe prawdopodobieństwo): ${hit}/${graded.length} (${percent(hit/graded.length)}). Prosta strategia „zawsze gospodarze”: ${homeHits}/${graded.length} (${percent(homeHits/graded.length)}). ${hit===homeHits?'Obie metody mają tu tyle samo trafień.':hit>homeHits?'Model trafił w tej próbie więcej razy.':'Prosta strategia trafiła w tej próbie więcej razy.'} Ta sama próba meczów; ${graded.length<30?'za mało danych, by dowieść przewagi.':'potrzebne dalsze testy na nowych meczach.'} Nie jest to porównanie ROI ani wynik LAB.`;
+        $('quality-brier-baseline').textContent=!ready
       ?'Porównanie Brier jest niedostępne bez zweryfikowanego archiwum.'
       :!graded.length
         ?'Brak rozliczonych prognoz — nie porównujemy modelu z punktem odniesienia.'
