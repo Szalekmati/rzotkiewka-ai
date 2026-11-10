@@ -1,6 +1,12 @@
 name: RZOTKIEWKA - kontrola strony i darmowych prognoz
 
 on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'tests/test_site_integrity.py'
+      - '.github/workflows/quality_site.yml'
   push:
     branches: [main]
     paths:
