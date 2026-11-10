@@ -19,6 +19,35 @@ OUTPUT = Path("league_audit")
 MIN_PREVIOUS_FINISHED = 80
 MIN_CURRENT_FINISHED = 10
 MIN_CURRENT_FUTURE = 1
+# Official UEFA 2024/25 competition figures and final:
+# https://www.uefa.com/uefachampionsleague/history/seasons/2025/statistics/
+# https://www.uefa.com/uefachampionsleague/news/0290-1bbe6365b47a-0668db2bbcb1-1000/
+UEFA_2024_MATCH_COUNT = 189
+UEFA_2024_FINAL_DAY = "2025-05-31"
+UEFA_2024_FINAL_SCORE = [5, 0]
+
+
+def uefa_2024_reference_check(raw_matches):
+    """Two historical spot checks, NOT a full UEFA match-by-match comparison."""
+    finale = []
+    for raw in raw_matches:
+        if not isinstance(raw, dict):
+            continue
+        match = normalize(raw)
+        if match is None or match["kickoff"].date().isoformat() != UEFA_2024_FINAL_DAY:
+            continue
+        home = str(raw.get("team1", {}).get("teamName", "")).casefold()
+        away = str(raw.get("team2", {}).get("teamName", "")).casefold()
+        if ("paris" in home or "psg" in home) and ("inter" in away or "internazionale" in away):
+            if accepted_final_score(raw) == UEFA_2024_FINAL_SCORE:
+                finale.append(match["id"])
+    return {
+        "uefa_reference_matches": UEFA_2024_MATCH_COUNT,
+        "source_matches": len(raw_matches),
+        "count_matches_uefa": len(raw_matches) == UEFA_2024_MATCH_COUNT,
+        "uefa_final_paris_inter_5_0_found": len(finale) == 1,
+        "note": "Weryfikacja 2 punktow kontrolnych, nie wszystkich 189 spotkan",
+    }
 
 
 def inspect_season(payload, year, now):
@@ -86,6 +115,12 @@ def decide(blocks):
     issues = []
     for block in blocks:
         year = block["season"]
+        if year == 2024:
+            ref = block.get("uefa_2024_reference")
+            if not ref or not ref["count_matches_uefa"]:
+                issues.append("2024: liczba spotkań niezgodna z UEFA (189)")
+            if not ref or not ref["uefa_final_paris_inter_5_0_found"]:
+                issues.append("2024: brak potwierdzenia finału Paris 5:0 Inter (31 maja 2025)")
         if block.get("error"):
             issues.append(f"{year}: API / odczyt niedostępny")
             continue
@@ -129,7 +164,16 @@ def run(now=None, output=OUTPUT):
     for year in (season - 2, season - 1, season):
         try:
             data = get_matches("ucl", year)
+            shortcut = "ucl"
+            if year == 2024 and not data:
+                # OpenLigaDB may use a one-off short code for 2024/25.
+                # Do NOT combine records from different shortcuts.
+                shortcut = "ucl24"
+                data = get_matches(shortcut, year)
             block = inspect_season(data, year, now)
+            block["source_shortcut"] = shortcut
+            if year == 2024:
+                block["uefa_2024_reference"] = uefa_2024_reference_check(data)
         except (Exception) as exc:
             # The report must explicitly state unavailable API instead of claiming a pass.
             block = {"season": year, "error": type(exc).__name__ + ": " + str(exc)[:160]}
@@ -139,7 +183,8 @@ def run(now=None, output=OUTPUT):
     report = {
         "type": "RZOTKIEWKA_UCL_SECOND_STAGE_READ_ONLY",
         "observed_at_utc": now.astimezone(timezone.utc).isoformat(),
-        "source": "https://api.openligadb.de/getmatchdata/ucl/{year}",
+        "source": "https://api.openligadb.de/getmatchdata/{shortcut}/{year}",
+        "independent_reference": "https://www.uefa.com/uefachampionsleague/history/seasons/2025/statistics/",
         "status": status, "issues": issues,
         "models_changed": False, "automatic_admission": False,
         "seasons": public_blocks,
@@ -150,18 +195,29 @@ def run(now=None, output=OUTPUT):
         "Stan UTC: " + report["observed_at_utc"],
         "",
         "**" + status + "** — to NIE oznacza dopuszczenia do prognoz 1X2.",
-        "Dane z OpenLigaDB; brak niezależnej weryfikacji meczów z UEFA.",
+        "Dane z OpenLigaDB; wyłącznie dwa punkty kontrolne UEFA dla 2024/25 (189 meczów i finał).",
         "",
-        "| Sezon | Rekordy | Wyniki | Nadchodzące | Zaległe >48 h | Duplikaty ID |",
-        "|---|---:|---:|---:|---:|---:|",
+        "| Sezon | Kod API | Rekordy | Wyniki | Nadchodzące | Zaległe >48 h | Duplikaty ID |",
+        "|---|---|---:|---:|---:|---:|---:|",
     ]
     for block in public_blocks:
         val = lambda k: str(block.get(k, "—"))
         lines.append("| " + str(block["season"]) + "/" + str(block["season"]+1) +
+                     " | " + val("source_shortcut") +
                      " | " + val("raw_matches") + " | " + val("finished_with_score") +
                      " | " + val("future_scheduled") + " | " +
                      val("overdue_48h_missing_score") + " | " +
                      val("duplicate_match_ids") + " |")
+    reference = public_blocks[0].get("uefa_2024_reference")
+    if reference:
+        lines.extend([
+            "",
+            "**Porównanie 2024/25 z UEFA:** liczba spotkań " +
+            str(reference["source_matches"]) + "/" + str(UEFA_2024_MATCH_COUNT) +
+            "; finał Paris 5:0 Inter: " +
+            ("zgodny" if reference["uefa_final_paris_inter_5_0_found"] else "BRAK POTWIERDZENIA") + ".",
+            "To nadal nie jest porównanie 189 spotkań jeden do jednego.",
+        ])
     lines.extend(["", "## Wykryte kwestie"])
     lines.extend(["- " + item for item in issues] if issues else
                  ["- Nie wykryto niezgodności objętych tą kontrolą."])
