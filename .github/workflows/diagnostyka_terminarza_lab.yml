@@ -71,6 +71,34 @@ jobs:
                   lines += [f'Zapisane pary prognoz: **{len(existing)}**.', '']
               else:
                   lines += ['Brak archiwum prognoz w repozytorium.', '']
+              status_path = root / 'lab_forward/run_status.json'
+              lines += ['## Status automatu LAB', '']
+              if not status_path.exists():
+                  lines += ['**UWAGA: Brak pliku run_status.json.** Sprawdz workflow LAB w Actions.', '']
+              else:
+                  try:
+                      status = json.loads(status_path.read_text(encoding='utf-8'))
+                      observed = datetime.fromisoformat(status['observed_at'].replace('Z', '+00:00'))
+                      if observed.tzinfo is None:
+                          raise ValueError('Brak strefy czasowej w statusie')
+                      hours_since = (now - observed).total_seconds() / 3600
+                      outcome = status.get('observation_outcome', 'brak')
+                      lines += ['Ostatni zapis statusu: **' + local(observed) + '**.',
+                                'Wyzwalacz: **' + str(status.get('event', 'brak')) + '**.',
+                                'Wynik kroku: **' + str(outcome) + '**.',
+                                'Zapis statusu nie oznacza zapisania prognozy ani jej trafnosci.', '']
+                      if hours_since > 3:
+                          lines += ['**UWAGA: Ostatni status ma ponad 3 godziny.** '
+                                    'Sprawdz rzeczywiste uruchomienia w GitHub Actions; '
+                                    'GitHub moze opozniac lub pomijac harmonogram.', '']
+                      elif hours_since < -0.05:
+                          lines += ['**UWAGA: Czas statusu wyprzedza czas kontroli.** '
+                                    'Sprawdz synchronizacje zegara i dane.', '']
+                      if outcome != 'success':
+                          lines += ['**UWAGA: Ostatni krok obserwacji nie byl oznaczony success.**', '']
+                  except (ValueError, KeyError, TypeError) as exc:
+                      lines += ['**UWAGA: Nie mozna odczytac ostatniego statusu LAB:** ' + str(exc), '']
+
               totals = {'matches': 0, 'future': 0, 'window': 0, 'ready': 0}
               for league in config['calibration']:
                   lines += ['## ' + engine.LEAGUES.get(league, league), '']
