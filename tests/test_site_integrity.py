@@ -99,6 +99,14 @@ class SiteIntegrity(unittest.TestCase):
                        "a nie kursy ani pewność wyniku"):
             self.assertIn(phrase, self.html)
 
+    def test_audit_metrics_explained_without_claims_of_roi(self):
+        self.assertIn('id="audit-metrics-guide"', self.html)
+        for phrase in ("trafione mecze / wszystkie rozliczone mecze",
+                       "0,222", "tej samej próbie spotkań",
+                       "Bez rozliczonych meczów",
+                       "To nie jest miara zysku z zakładów"):
+            self.assertIn(phrase, self.html)
+
     def test_version_two_showcase_has_real_archive_bindings(self):
         self.assertIn("RZOTKIEWKA 2.0", self.html)
         for ident in ("hero-archive-total", "hero-archive-graded",
