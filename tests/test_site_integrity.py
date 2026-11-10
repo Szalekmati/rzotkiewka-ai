@@ -108,6 +108,17 @@ class SiteIntegrity(unittest.TestCase):
         self.assertIn("void loadLabAutomation(controller.signal);", js)
         self.assertIn("Brak prognoz może także oznaczać", self.html)
 
+    def test_quality_home_benchmark_uses_same_verified_sample(self):
+        js = "\n".join(self.page.js)
+        self.assertIn("quality-home-benchmark", self.page.ids)
+        self.assertIn("const graded=data.filter(scored)", js)
+        self.assertIn("const homeHits=graded.filter(r=>r.settlement.outcome==='1').length;", js)
+        self.assertIn("Model (najwyższe prawdopodobieństwo):", js)
+        self.assertIn("Prosta strategia „zawsze gospodarze”:", js)
+        self.assertIn("Brak zweryfikowanego archiwum", js)
+        self.assertIn("Brak rozliczonych spotkań", js)
+        self.assertIn("Nie jest to porównanie ROI ani wynik LAB.", js)
+
     def test_quality_brier_has_same_sample_uniform_baseline(self):
         import math
         js = "\n".join(self.page.js)
