@@ -130,7 +130,7 @@ class SiteIntegrity(unittest.TestCase):
         from pathlib import Path
         import re
         report = (ROOT / "lab_forward" / "RAPORT.md").read_text(encoding="utf-8")
-        match = re.search(r"Zapisane pary prognoz:\\s*(\\d+)", report)
+        match = re.search(r"Zapisane pary prognoz:\s*(\d+)", report)
         self.assertIsNotNone(match)
         ledger = json.loads((ROOT / "lab_forward" / "ledger.json").read_text(encoding="utf-8"))
         self.assertEqual(ledger.get("schema"), 1)
