@@ -62,6 +62,23 @@ class LeagueCandidateAuditTests(unittest.TestCase):
         summary = audit.assess([fixture(1, NOW - timedelta(days=1), finished=True, result=False)], NOW)
         self.assertEqual(summary["finished_without_accepted_score"], 1)
 
+    def test_overdue_without_result_uses_48_hour_grace_period(self):
+        rows = [
+            fixture(10, NOW - timedelta(hours=49), finished=False),
+            fixture(11, NOW - timedelta(hours=48), finished=False),
+            fixture(12, NOW - timedelta(hours=47), finished=False),
+            fixture(13, NOW - timedelta(hours=50), finished=True),
+        ]
+        counts = audit.assess(rows, NOW)
+        self.assertEqual(counts["overdue_without_result_48h"], 2)
+        self.assertEqual(counts["finished_without_accepted_score"], 1)
+
+        past, present = audit.assess(history(), NOW), audit.assess(current(), NOW)
+        present["overdue_without_result_48h"] = 1
+        decision, reasons = audit.verdict(past, present)
+        self.assertEqual(decision, "DANE NIEWYSTARCZAJĄCE")
+        self.assertTrue(any("Zaległe mecze" in item for item in reasons))
+
     def test_good_coverage_requires_manual_review_not_automatic_promotion(self):
         past, present = audit.assess(history(), NOW), audit.assess(current(), NOW)
         self.assertEqual(past["finished_with_score"], 100)
