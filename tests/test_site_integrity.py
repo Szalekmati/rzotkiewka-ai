@@ -422,6 +422,16 @@ class SiteIntegrity(unittest.TestCase):
                          "renderRanking();"):
             self.assertIn(fragment, self.html)
 
+    def test_live_team_filters_can_be_cleared_without_changing_league(self):
+        self.assertEqual(self.page.ids.count("live-clear-team-filters"), 1)
+        self.assertIn('aria-label="Pokaż wszystkie drużyny w wybranej lidze i sezonie"', self.html)
+        self.assertIn("$('live-clear-team-filters').addEventListener('click'", self.html)
+        for snippet in ("$('live-search').value=''", "onlyFavoriteTeams=false",
+                        "$('live-favorites').setAttribute('aria-pressed','false')",
+                        "$('live-favorites').textContent='☆ Moje drużyny'",
+                        "liveLimit=16"):
+            self.assertIn(snippet, self.html)
+
     def test_inline_javascript_syntax(self):
         node = shutil.which("node")
         if not node:
