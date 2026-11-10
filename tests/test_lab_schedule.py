@@ -65,6 +65,22 @@ class ForwardLabSafetyTests(unittest.TestCase):
             self.assertEqual(config.get("min_lead_hours"), 162)
             self.assertEqual(config.get("max_lead_hours"), 168)
 
+    def test_quality_ci_runs_on_lab_safety_changes_in_pull_requests(self):
+        quality = (ROOT / ".github" / "workflows" / "quality_site.yml").read_text(encoding="utf-8")
+        self.assertIn("  pull_request:\n    branches: [main]\n    paths:\n", quality)
+        pr_paths = quality.split("  pull_request:", 1)[1].split("  push:", 1)[0]
+        for path in (
+            "tests/test_site_integrity.py",
+            "tests/test_mobile_nav.cjs",
+            "tests/test_archive_fail_closed.mjs",
+            "tests/test_lab_schedule.py",
+            "tests/test_lab_diagnostics.py",
+            ".github/workflows/diagnostyka_terminarza_lab.yml",
+            ".github/workflows/test_przedmeczowy.yml",
+            ".github/workflows/quality_site.yml",
+        ):
+            self.assertIn(f"      - '{path}'", pr_paths)
+
     def test_status_output_tracks_trigger_and_attempt(self):
         text = self.workflow
         for term in (
