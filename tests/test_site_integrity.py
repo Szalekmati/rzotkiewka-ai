@@ -413,7 +413,7 @@ class SiteIntegrity(unittest.TestCase):
     def test_rank_filters_have_single_reset_control(self):
         self.assertEqual(self.page.ids.count("rank-reset"), 1)
         self.assertIn('aria-label="Wyczyść wszystkie filtry prognoz"', self.html)
-        self.assertIn("    $('rank-reset').addEventListener('click',()=>{", self.html)
+        self.assertIn("  $('rank-reset').addEventListener('click',()=>{", self.html)
         for fragment in ("['rank-league','all']", "['rank-state','all']",
                          "['rank-order','newest']", "['rank-minprob','0']",
                          "$('rank-search').value=''",
