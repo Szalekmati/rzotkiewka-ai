@@ -432,6 +432,14 @@ class SiteIntegrity(unittest.TestCase):
                         "liveLimit=16"):
             self.assertIn(snippet, self.html)
 
+    def test_fixture_validation_reports_invalid_and_duplicate_source_records(self):
+        self.assertIn("if(!m){invalidCount++;continue;}", self.html)
+        self.assertIn("if(unique.has(matchKey))duplicateCount++;", self.html)
+        self.assertIn("if(payload.length && !unique.size)throw new Error('Brak poprawnych rekordów terminarza')", self.html)
+        self.assertIn("pominięto ${invalidCount} niepoprawnych i ${duplicateCount} powtórzonych", self.html)
+        self.assertIn("state.loadedAt=cached.loadedAt;evaluateModel();render()", self.html)
+        self.assertIn("new Date(cached.loadedAt).toLocaleString('pl-PL')", self.html)
+
     def test_inline_javascript_syntax(self):
         node = shutil.which("node")
         if not node:

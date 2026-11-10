@@ -1839,22 +1839,29 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
       const payload=await res.json();
       if(!Array.isArray(payload))throw new Error('Niepoprawny format danych');
       const unique=new Map();
+      let invalidCount=0, duplicateCount=0;
       for(const item of payload) {
         const m=normalizeMatch(item);
-        if(m)unique.set(m.id || `${m.homeId}:${m.awayId}:${m.time}`,m);
+        if(!m){invalidCount++;continue;}
+        const matchKey=m.id || `${m.homeId}:${m.awayId}:${m.time}`;
+        if(unique.has(matchKey))duplicateCount++;
+        unique.set(matchKey,m);
       }
+      // An invalid response must never masquerade as an empty matchday.
+      if(payload.length && !unique.size)throw new Error('Brak poprawnych rekordów terminarza');
       const matches=Array.from(unique.values()).sort((a,b)=>a.time-b.time);
       // Jesli uzytkownik zmienil lige podczas oczekiwania, odrzucamy stary wynik.
       cache.set(key,{matches,loadedAt:Date.now()});
       if(state.league!==league||state.season!==season)return;
       state.matches=matches;state.loadedAt=Date.now();evaluateModel();render();
-      $('live-status').textContent=`${matches.length} spotkań · pobrano ${new Date().toLocaleString('pl-PL')} · źródło: OpenLigaDB`;
+      $('live-status').textContent=`${matches.length} spotkań · pobrano ${new Date().toLocaleString('pl-PL')} · źródło: OpenLigaDB`+
+        (invalidCount||duplicateCount?` · Uwaga: pominięto ${invalidCount} niepoprawnych i ${duplicateCount} powtórzonych rekordów źródła.`:'');
     } catch(err) {
       console.error('RZOTKIEWKA: problem z terminarzem',err);
       if(state.league!==league||state.season!==season)return;
       if(cached){
-        state.matches=cached.matches;evaluateModel();render();
-        $('live-status').textContent='Nie udało się odświeżyć. Pokazujemy wcześniej pobrane dane; mogą być nieaktualne.';
+        state.matches=cached.matches;state.loadedAt=cached.loadedAt;evaluateModel();render();
+        $('live-status').textContent='Nie udało się odświeżyć. Pokazujemy wcześniej pobrane dane z '+new Date(cached.loadedAt).toLocaleString('pl-PL')+'; mogą być nieaktualne.';
       }else{
         state.matches=[];evaluateModel();render();
         $('live-status').textContent='Nie udało się pobrać aktualnych spotkań. Sprawdź połączenie z internetem i spróbuj ponownie.';
