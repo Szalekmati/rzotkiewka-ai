@@ -91,6 +91,27 @@ class SiteIntegrity(unittest.TestCase):
                 self.assertIn(term, js)
         self.assertIn("Filtr działa w wybranej lidze i sezonie.", self.html)
 
+    def test_quick_mobile_league_switcher_keeps_the_model_scoped(self):
+        js = "\\n".join(self.page.js)
+        for league in ("bl1", "bl2", "bl3"):
+            self.assertIn('data-quick-league="'+league+'"', self.html)
+        for phrase in (
+            'class="league-quick-nav"',
+            'aria-label="Szybki wybór ligi"',
+            'league-quick-button[aria-pressed="true"]',
+            "function syncQuickLeagueButtons(league)",
+            "document.querySelectorAll('[data-quick-league]')",
+            "if(!Object.hasOwn(allowedLeagues,league))return;",
+            "$('live-league').value=league;",
+            "syncQuickLeagueButtons(league);",
+            "state.league=league;state.season=season;",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, self.html if phrase.startswith('class=') or phrase.startswith('aria-') else js if phrase not in ("league-quick-button[aria-pressed=\"true\"]",) else self.html)
+        self.assertIn("rzotkiewka:favorite-teams:v1", js)
+        self.assertIn("favoriteTeams.has(String(match.homeId))", js)
+        self.assertIn("favoriteTeams.has(String(match.awayId))", js)
+
     def test_league_overview_is_read_only_and_keeps_models_separate(self):
         for ident in ("league-overview-toggle", "league-overview",
                       "league-overview-refresh", "league-overview-grid",
