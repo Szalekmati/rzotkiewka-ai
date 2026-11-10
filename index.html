@@ -712,7 +712,7 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
           <select id="rank-minprob"><option value="0" selected>Całe archiwum</option><option value="0.45">Od 45%</option><option value="0.50">Od 50%</option><option value="0.55">Od 55%</option><option value="0.60">Od 60%</option></select>
         </label>
       </div>
-      <div class="match-search"><label for="rank-search">Szukaj w prognozach<input id="rank-search" type="search" placeholder="Nazwa gospodarzy lub gości…" maxlength="90" autocomplete="off"></label><button id="rank-watched" class="watch-button" type="button" aria-pressed="false">☆ Tylko obserwowane</button></div>
+      <div class="match-search"><label for="rank-search">Szukaj w prognozach<input id="rank-search" type="search" placeholder="Nazwa gospodarzy lub gości…" maxlength="90" autocomplete="off"></label><button id="rank-watched" class="watch-button" type="button" aria-pressed="false">☆ Tylko obserwowane</button><button id="rank-reset" class="watch-button" type="button" aria-label="Wyczyść wszystkie filtry prognoz">↺ Wyczyść filtry</button></div>
       <p id="watch-storage-note" class="watch-note">Obserwowane prognozy zapisują się w tej przeglądarce na tym urządzeniu.</p>
       <p id="rank-filter-note" class="rank-filter-note" role="status">Pokazujemy całe publiczne archiwum. Nie ukrywamy nieudanych prognoz.</p>
       <div id="rank-list" class="rank-cards" aria-live="polite"><div class="rank-empty">Trwa weryfikacja archiwum…</div></div>
@@ -1029,6 +1029,15 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
     render();
   });
   $('rank-watched').addEventListener('click',()=>{onlyWatched=!onlyWatched;$('rank-watched').setAttribute('aria-pressed',String(onlyWatched));renderRanking();});
+  $('rank-reset').addEventListener('click',()=>{
+    for(const [id,value] of [['rank-league','all'],['rank-state','all'],['rank-order','newest'],['rank-minprob','0']])$(id).value=value;
+    $('rank-search').value='';
+    onlyWatched=false;
+    $('rank-watched').setAttribute('aria-pressed','false');
+    focusSharedForecast=false;
+    renderRanking();
+    $('rank-search').focus();
+  });
   const now = new Date();
   const currentSeason = now.getMonth() >= 6 ? now.getFullYear() : now.getFullYear()-1;
   state.season=currentSeason;
