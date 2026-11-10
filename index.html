@@ -117,6 +117,11 @@
     .demo-stats{display:none}
     .live-refresh{height:44px}
     .live-refresh:disabled{opacity:.5;cursor:wait}
+    .live-fav-row{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0 12px}
+    .live-fav-team{display:inline-flex;align-items:center;min-height:40px;max-width:100%;padding:8px 11px;background:#19252c;border:1px solid #3a4e52;border-radius:12px;color:var(--muted);font-size:12px;font-weight:750;text-align:left;overflow-wrap:anywhere}
+    .live-fav-team[aria-pressed="true"],#live-favorites[aria-pressed="true"]{background:#293923;border-color:#a6f475;color:#dfffc8}
+    .live-favorites-note{font-size:12px;color:var(--muted);margin:4px 0 12px}
+    .live-favorites-note.warn{color:var(--gold)}
     @media(max-width:760px){.real-grid{grid-template-columns:1fr}.real-summary{grid-template-columns:repeat(3,minmax(0,1fr))}.real-metric{padding:10px}.real-metric strong{font-size:21px}}
     @media(max-width:380px){.form-grid{grid-template-columns:1fr}.real-summary{gap:6px}.real-metric strong{font-size:18px}}
 
@@ -471,6 +476,7 @@ button:disabled{opacity:.55;cursor:wait}
         <button type="button" class="filter" data-live-tab="done" aria-pressed="false">Wyniki</button>
       </div>
       <button type="button" id="refresh-live" class="filter live-refresh">↻ Odśwież dane</button>
+      <button type="button" id="live-favorites" class="filter" aria-pressed="false">☆ Moje drużyny</button>
     </div>
     <div id="live-summary" class="real-summary" aria-label="Statystyki sezonu">
       <div class="real-metric"><strong id="live-all">—</strong><span>Meczów w bazie</span></div>
@@ -479,6 +485,7 @@ button:disabled{opacity:.55;cursor:wait}
     </div>
     <p id="live-status" class="status-real" role="status" aria-live="polite">Łączenie ze źródłem meczów…</p>
     <div class="match-search"><label for="live-search">Znajdź drużynę<input id="live-search" type="search" placeholder="Wpisz nazwę drużyny…" maxlength="90" autocomplete="off"></label></div>
+    <p id="live-favorites-note" class="live-favorites-note" role="status" aria-live="polite">Dotknij ☆ przy drużynie, aby ją zapamiętać na tym urządzeniu. Filtr działa w wybranej lidze i sezonie.</p>
     <p id="live-filter-count" class="watch-note" role="status"></p>
     <div id="live-list" class="real-grid" aria-live="polite"><div class="empty">Pobieranie terminarza…</div></div>
     <button type="button" id="live-more" class="filter show-more" hidden>Pokaż kolejne mecze</button>
@@ -885,6 +892,43 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
   const maxAgeMs = 10*60*1000;
   const state = {league:'bl1',season:2026,tab:'next',matches:[],loadedAt:null,archive:[],archiveAt:null,archiveReady:false,archiveFailed:false};
   const watchKey='rzotkiewka:watched:v1';
+  const favoriteTeamsKey='rzotkiewka:favorite-teams:v1';
+  let favoriteTeams=new Set(), onlyFavoriteTeams=false;
+  try{
+    const savedTeams=JSON.parse(localStorage.getItem(favoriteTeamsKey)||'[]');
+    if(Array.isArray(savedTeams)){
+      favoriteTeams=new Set(savedTeams.filter(id=>typeof id==='string'&&/^[1-9][0-9]{0,11}$/.test(id)).slice(0,60));
+    }
+  }catch{/* Ulubione działają także bez localStorage — do końca wizyty. */}
+  function favoriteMatch(match){
+    return favoriteTeams.has(String(match.homeId))||favoriteTeams.has(String(match.awayId));
+  }
+  function toggleFavoriteTeam(teamId){
+    const key=String(teamId);
+    if(!/^[1-9][0-9]{0,11}$/.test(key))return;
+    if(favoriteTeams.has(key))favoriteTeams.delete(key);
+    else if(favoriteTeams.size<60)favoriteTeams.add(key);
+    else{$('live-favorites-note').textContent='Limit 60 ulubionych drużyn. Usuń jedną, aby dodać kolejną.';return;}
+    try{
+      localStorage.setItem(favoriteTeamsKey,JSON.stringify([...favoriteTeams]));
+      $('live-favorites-note').textContent='Wybrano '+favoriteTeams.size+' ulubionych drużyn. Zapisane tylko w tej przeglądarce; filtr obejmuje bieżącą ligę i sezon.';
+    }catch{
+      $('live-favorites-note').textContent='Przeglądarka blokuje zapis. Ulubione będą dostępne tylko podczas tej wizyty.';
+    }
+    render();
+    const button=document.querySelector('[data-favorite-team="'+key+'"]');
+    if(button)button.focus({preventScroll:true});
+  }
+  function favoriteTeamButton(teamId,teamName){
+    const chosen=favoriteTeams.has(String(teamId));
+    const button=make('button','live-fav-team',(chosen?'★ ':'☆ ')+teamName);
+    button.type='button';
+    button.dataset.favoriteTeam=String(teamId);
+    button.setAttribute('aria-pressed',String(chosen));
+    button.setAttribute('aria-label',(chosen?'Usuń z ulubionych: ':'Dodaj do ulubionych: ')+teamName);
+    button.addEventListener('click',()=>toggleFavoriteTeam(teamId));
+    return button;
+  }
   // Deep links name a public archived record only; never bypass verification.
   const rawSharedId=new URLSearchParams(location.search).get('forecast');
   const sharedForecastId=rawSharedId&&/^[a-zA-Z0-9_-]{1,100}$/.test(rawSharedId)?rawSharedId:null;
@@ -926,6 +970,13 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
   }
   $('rank-search').addEventListener('input',renderRanking);
   $('live-search').addEventListener('input',()=>{liveLimit=16;render();});
+  $('live-favorites').addEventListener('click',()=>{
+    onlyFavoriteTeams=!onlyFavoriteTeams;
+    liveLimit=16;
+    $('live-favorites').setAttribute('aria-pressed',String(onlyFavoriteTeams));
+    $('live-favorites').textContent=onlyFavoriteTeams?'★ Moje drużyny':'☆ Moje drużyny';
+    render();
+  });
   $('rank-watched').addEventListener('click',()=>{onlyWatched=!onlyWatched;$('rank-watched').setAttribute('aria-pressed',String(onlyWatched));renderRanking();});
   const now = new Date();
   const currentSeason = now.getMonth() >= 6 ? now.getFullYear() : now.getFullYear()-1;
@@ -1486,7 +1537,9 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
     head.append(make('p','eyebrow',`${allowedLeagues[state.league]}${m.round?' · '+m.round:''} · ${df.format(new Date(m.time))}`));
     const complete=Boolean(m.score);
     head.append(make('span','badge'+(complete?' closed':''), complete?'WYNIK':'TERMINARZ'));
-    card.append(head,make('h3','',`${m.home} – ${m.away}`));
+    const favoriteRow=make('div','live-fav-row');
+    favoriteRow.append(favoriteTeamButton(m.homeId,m.home),favoriteTeamButton(m.awayId,m.away));
+    card.append(head,make('h3','',`${m.home} – ${m.away}`),favoriteRow);
     if(complete)card.append(make('div','real-score',`${m.score[0]} : ${m.score[1]}`));
     else card.append(make('p','rationale',m.time<Date.now()?'Brak potwierdzonego wyniku w źródle.':'Spotkanie zaplanowane — wynik nie jest jeszcze znany.'));
     card.append(renderForecast(m),buildPassport(m));
@@ -1673,13 +1726,14 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
     const candidates=(state.tab==='done'
       ?completed.sort((a,b)=>b.time-a.time)
       :state.matches.filter(m=>!m.score && m.time>Date.now()-3*60*60*1000).sort((a,b)=>a.time-b.time))
-      .filter(m=>matchesQuery(m.home,m.away,query));
+      .filter(m=>matchesQuery(m.home,m.away,query))
+      .filter(m=>!onlyFavoriteTeams||favoriteMatch(m));
     const games=candidates.slice(0,liveLimit);
     $('live-more').hidden=games.length>=candidates.length;
     $('live-filter-count').textContent=`Pasujących meczów: ${candidates.length} · wyświetlono ${games.length}. Wyszukiwanie obejmuje wybraną ligę, sezon i widok.`;
     if(!games.length){
       target.append(make('div','empty',state.matches.length
-        ? 'Brak pasujących meczów. Zmień wyszukiwanie, widok lub sezon.'
+        ? (onlyFavoriteTeams?'Nie ma meczów Twoich ulubionych drużyn w wybranej lidze, sezonie i widoku. Dodaj ☆ przy meczu lub wyłącz filtr.':'Brak pasujących meczów. Zmień wyszukiwanie, widok lub sezon.')
         : 'Źródło nie zwróciło spotkań dla tego sezonu i ligi.'));
     } else for(const game of games) target.append(renderCard(game));
   }
