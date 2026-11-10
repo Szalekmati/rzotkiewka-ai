@@ -92,6 +92,13 @@ class SiteIntegrity(unittest.TestCase):
         js = "\\n".join(self.page.js)
         self.assertIn("a.setAttribute('aria-current','page')", js)
 
+    def test_free_forecast_legend_explains_1x2_without_promises(self):
+        self.assertIn('id="forecast-legend"', self.html)
+        for phrase in ("wygrana gospodarzy", "remis", "wygrana gości",
+                       "szacowane prawdopodobieństwa modelu",
+                       "a nie kursy ani pewność wyniku"):
+            self.assertIn(phrase, self.html)
+
     def test_version_two_showcase_has_real_archive_bindings(self):
         self.assertIn("RZOTKIEWKA 2.0", self.html)
         for ident in ("hero-archive-total", "hero-archive-graded",
