@@ -24,6 +24,21 @@ def match(ident, kickoff, home=101, away=202, finished=True, score=True):
     }
 
 
+def reference_2024_season():
+    rows = season_data(2024)
+    for i in range(88):
+        rows.append(match(2024900 + i, datetime(2025, 4, 1, tzinfo=timezone.utc) +
+                          timedelta(days=i % 30), home=301 + i % 18,
+                          away=401 + i % 18))
+    finale = match(2024999, datetime(2025, 5, 31, 19, tzinfo=timezone.utc),
+                   home=888, away=889)
+    finale["team1"]["teamName"] = "Paris Saint-Germain"
+    finale["team2"]["teamName"] = "Inter Milano"
+    finale["matchResults"] = [{"resultTypeID": 2, "pointsTeam1": 5, "pointsTeam2": 0}]
+    rows.append(finale)
+    return rows
+
+
 def season_data(year):
     if year < 2026:
         start = datetime(year, 9, 1, tzinfo=timezone.utc)
@@ -42,12 +57,23 @@ def season_data(year):
 
 class UclDeepAuditTests(unittest.TestCase):
     def test_three_seasons_clean_candidate_is_not_admitted(self):
-        blocks = [audit.inspect_season(season_data(y), y, NOW)
+        blocks = [audit.inspect_season(reference_2024_season() if y == 2024 else season_data(y), y, NOW)
                   for y in (2024, 2025, 2026)]
-        self.assertEqual(blocks[0]["finished_with_score"], 100)
+        blocks[0]["uefa_2024_reference"] = audit.uefa_2024_reference_check(reference_2024_season())
+        self.assertEqual(blocks[0]["finished_with_score"], 189)
         self.assertEqual(blocks[1]["finished_with_score"], 100)
         self.assertEqual(blocks[2]["future_scheduled"], 55)
         self.assertEqual(audit.decide(blocks), ("DO RĘCZNEGO SPRAWDZENIA", []))
+
+    def test_official_uefa_reference_requires_count_and_final_result(self):
+        full = reference_2024_season()
+        self.assertEqual(len(full), 189)
+        reference = audit.uefa_2024_reference_check(full)
+        self.assertTrue(reference["count_matches_uefa"])
+        self.assertTrue(reference["uefa_final_paris_inter_5_0_found"])
+        reference = audit.uefa_2024_reference_check(full[:-1])
+        self.assertFalse(reference["count_matches_uefa"])
+        self.assertFalse(reference["uefa_final_paris_inter_5_0_found"])
 
     def test_duplicate_id_and_repeated_pair_date_are_flagged(self):
         data = season_data(2025)
@@ -102,13 +128,20 @@ class UclDeepAuditTests(unittest.TestCase):
         self.assertTrue(any("API" in issue for issue in issues))
 
     def test_report_is_readonly_and_uses_mocked_source(self):
+        def fixture_fetch(code, yr):
+            if code == "ucl" and yr == 2024:
+                return []
+            if code == "ucl24" and yr == 2024:
+                return reference_2024_season()
+            return season_data(yr)
         with tempfile.TemporaryDirectory() as folder:
-            with patch.object(audit, "get_matches",
-                              side_effect=lambda code, yr: season_data(yr)) as fetch:
+            with patch.object(audit, "get_matches", side_effect=fixture_fetch) as fetch:
                 result = audit.run(now=NOW, output=Path(folder))
-            self.assertEqual(fetch.call_count, 3)
+            self.assertEqual(fetch.call_count, 4)
             self.assertEqual([c.args for c in fetch.call_args_list],
-                             [("ucl", 2024), ("ucl", 2025), ("ucl", 2026)])
+                             [("ucl", 2024), ("ucl24", 2024), ("ucl", 2025), ("ucl", 2026)])
+            self.assertEqual(result["seasons"][0]["source_shortcut"], "ucl24")
+            self.assertTrue(result["seasons"][0]["uefa_2024_reference"]["count_matches_uefa"])
             self.assertFalse(result["automatic_admission"])
             self.assertFalse(result["models_changed"])
             self.assertNotIn("all_match_ids", result["seasons"][0])
