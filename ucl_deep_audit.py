@@ -12,6 +12,8 @@ from datetime import datetime, timedelta, timezone
 import json
 import os
 from pathlib import Path
+import re
+import unicodedata
 
 from league_candidates import get_matches, normalize, accepted_final_score
 
@@ -25,6 +27,77 @@ MIN_CURRENT_FUTURE = 1
 UEFA_2024_MATCH_COUNT = 189
 UEFA_2024_FINAL_DAY = "2025-05-31"
 UEFA_2024_FINAL_SCORE = [5, 0]
+
+# Official UEFA results, representative phases from September to May.
+# Source: https://www.uefa.com/uefachampionsleague/news/0290-1bbe6365b47a-0668db2bbcb1-1000/
+# These are 8 specific checks, not a full season reconciliation.
+UEFA_2024_SPOTCHECKS = (
+    {"date": "2024-09-17", "home": "real madrid", "away": "stuttgart", "score": [3, 1]},
+    {"date": "2024-09-18", "home": "manchester city", "away": "inter", "score": [0, 0]},
+    {"date": "2024-10-01", "home": "arsenal", "away": "paris", "score": [2, 0]},
+    {"date": "2024-11-26", "home": "bayern", "away": "paris", "score": [1, 0]},
+    {"date": "2025-02-11", "home": "manchester city", "away": "real madrid", "score": [2, 3]},
+    {"date": "2025-04-08", "home": "arsenal", "away": "real madrid", "score": [3, 0]},
+    {"date": "2025-05-07", "home": "paris", "away": "arsenal", "score": [2, 1]},
+    {"date": "2025-05-31", "home": "paris", "away": "inter", "score": [5, 0]},
+)
+UEFA_TEAM_ALIASES = {
+    "real madrid": ("real madrid",),
+    "stuttgart": ("stuttgart",),
+    "manchester city": ("manchester city", "man city"),
+    "inter": ("inter", "internazionale"),
+    "arsenal": ("arsenal",),
+    "paris": ("paris", "psg"),
+    "bayern": ("bayern",),
+}
+
+
+def normalize_team_name(name):
+    folded = "".join(char for char in unicodedata.normalize("NFKD", str(name).casefold())
+                     if not unicodedata.combining(char))
+    return " ".join(re.findall(r"[a-z0-9]+", folded))
+
+
+def team_matches(name, expected):
+    actual = normalize_team_name(name)
+    return any(alias in actual for alias in UEFA_TEAM_ALIASES[expected])
+
+
+def uefa_2024_match_spotchecks(raw_matches):
+    """Compare date, ordered home/away teams, and regular full-time score."""
+    checks = []
+    for spec in UEFA_2024_SPOTCHECKS:
+        candidates = []
+        for raw in raw_matches:
+            if not isinstance(raw, dict):
+                continue
+            match = normalize(raw)
+            if match is None or match["kickoff"].date().isoformat() != spec["date"]:
+                continue
+            home, away = raw.get("team1"), raw.get("team2")
+            if not isinstance(home, dict) or not isinstance(away, dict):
+                continue
+            if team_matches(home.get("teamName", ""), spec["home"]) and team_matches(
+                    away.get("teamName", ""), spec["away"]):
+                candidates.append((match["id"], accepted_final_score(raw)))
+        if not candidates:
+            outcome = "BRAK MECZU"
+        elif len(candidates) > 1:
+            outcome = "NIEJEDNOZNACZNY"
+        elif candidates[0][1] != spec["score"]:
+            outcome = "NIEZGODNY WYNIK"
+        else:
+            outcome = "ZGODNY"
+        checks.append({
+            "date": spec["date"], "home": spec["home"], "away": spec["away"],
+            "uefa_score": spec["score"], "outcome": outcome,
+            "source_match_id": candidates[0][0] if len(candidates) == 1 else None,
+            "source_score": candidates[0][1] if len(candidates) == 1 else None,
+        })
+    return {"checked": len(checks), "passed": sum(c["outcome"] == "ZGODNY" for c in checks),
+            "all_passed": all(c["outcome"] == "ZGODNY" for c in checks),
+            "matches": checks}
+
 
 
 def uefa_2024_reference_check(raw_matches):
@@ -116,6 +189,9 @@ def decide(blocks):
     for block in blocks:
         year = block["season"]
         if year == 2024:
+            spots = block.get("uefa_2024_spotchecks")
+            if not spots or not spots["all_passed"]:
+                issues.append("2024: niezgodność punktowych porównań meczów z UEFA")
             ref = block.get("uefa_2024_reference")
             if not ref or not ref["count_matches_uefa"]:
                 issues.append("2024: liczba spotkań niezgodna z UEFA (189)")
@@ -174,6 +250,7 @@ def run(now=None, output=OUTPUT):
             block["source_shortcut"] = shortcut
             if year == 2024:
                 block["uefa_2024_reference"] = uefa_2024_reference_check(data)
+                block["uefa_2024_spotchecks"] = uefa_2024_match_spotchecks(data)
         except (Exception) as exc:
             # The report must explicitly state unavailable API instead of claiming a pass.
             block = {"season": year, "error": type(exc).__name__ + ": " + str(exc)[:160]}
@@ -195,7 +272,7 @@ def run(now=None, output=OUTPUT):
         "Stan UTC: " + report["observed_at_utc"],
         "",
         "**" + status + "** — to NIE oznacza dopuszczenia do prognoz 1X2.",
-        "Dane z OpenLigaDB; wyłącznie dwa punkty kontrolne UEFA dla 2024/25 (189 meczów i finał).",
+        "Dane z OpenLigaDB; 8 meczów kontrolnych UEFA dla 2024/25 oraz liczba 189 meczów.",
         "",
         "| Sezon | Kod API | Rekordy | Wyniki | Nadchodzące | Zaległe >48 h | Duplikaty ID |",
         "|---|---|---:|---:|---:|---:|---:|",
@@ -218,6 +295,26 @@ def run(now=None, output=OUTPUT):
             ("zgodny" if reference["uefa_final_paris_inter_5_0_found"] else "BRAK POTWIERDZENIA") + ".",
             "To nadal nie jest porównanie 189 spotkań jeden do jednego.",
         ])
+    spots = public_blocks[0].get("uefa_2024_spotchecks")
+    if spots:
+        lines.extend([
+            "",
+            "## Kontrola spotkań względem oficjalnych wyników UEFA",
+            "",
+            "Zgodne: " + str(spots["passed"]) + "/" + str(spots["checked"]) +
+            " (termin UTC, gospodarze, goście, wynik po 90 minutach).",
+            "",
+            "| Data | Gospodarze | Goście | UEFA | OpenLigaDB | Ocena |",
+            "|---|---|---|---|---|---|",
+        ])
+        for item in spots["matches"]:
+            published = item["source_score"]
+            shown_score = "—" if published is None else str(published[0]) + ":" + str(published[1])
+            lines.append("| " + item["date"] + " | " + item["home"] +
+                         " | " + item["away"] + " | " +
+                         str(item["uefa_score"][0]) + ":" + str(item["uefa_score"][1]) +
+                         " | " + shown_score + " | " + item["outcome"] + " |")
+        lines.extend(["", "Nawet kompletna zgodność 8/8 nie dowodzi poprawności pozostałych spotkań."])
     lines.extend(["", "## Wykryte kwestie"])
     lines.extend(["- " + item for item in issues] if issues else
                  ["- Nie wykryto niezgodności objętych tą kontrolą."])
