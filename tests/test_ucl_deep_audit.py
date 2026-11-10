@@ -85,7 +85,7 @@ class UclDeepAuditTests(unittest.TestCase):
         reference = audit.uefa_2024_reference_check(full)
         self.assertTrue(reference["count_matches_uefa"])
         self.assertTrue(reference["uefa_final_paris_inter_5_0_found"])
-        reference = audit.uefa_2024_reference_check(full[:-1])
+        reference = audit.uefa_2024_reference_check([r for r in full if r["matchDateTimeUTC"][:10] != "2025-05-31"])
         self.assertFalse(reference["count_matches_uefa"])
         self.assertFalse(reference["uefa_final_paris_inter_5_0_found"])
 
