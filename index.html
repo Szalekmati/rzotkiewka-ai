@@ -122,6 +122,19 @@
     .live-fav-team[aria-pressed="true"],#live-favorites[aria-pressed="true"]{background:#293923;border-color:#a6f475;color:#dfffc8}
     .live-favorites-note{font-size:12px;color:var(--muted);margin:4px 0 12px}
     .live-favorites-note.warn{color:var(--gold)}
+    .league-overview-panel{margin:12px 0 22px;padding:19px;border:1px solid #36534a;border-radius:18px;background:#121d22}
+    .league-overview-panel[hidden]{display:none}
+    .league-overview-head{display:flex;gap:14px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap}
+    .league-overview-head h3{font-size:19px;margin:0 0 6px}
+    .league-overview-head p,.league-overview-status{font-size:12px;color:var(--muted);margin:0 0 12px}
+    .league-overview-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:12px}
+    .league-overview-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;min-width:0}
+    .league-overview-card h4{font-size:16px;margin:0 0 6px}
+    .league-overview-card p{font-size:12px;color:var(--muted);margin:0 0 9px}
+    .league-overview-card ul{list-style:none;padding:0;margin:0 0 12px}
+    .league-overview-card li{border-top:1px solid var(--line);padding:8px 0;font-size:12px;overflow-wrap:anywhere}
+    .league-overview-card time{display:block;font-size:11px;color:var(--muted);margin-top:2px}
+    @media(max-width:760px){.league-overview-grid{grid-template-columns:1fr}}
     @media(max-width:760px){.real-grid{grid-template-columns:1fr}.real-summary{grid-template-columns:repeat(3,minmax(0,1fr))}.real-metric{padding:10px}.real-metric strong{font-size:21px}}
     @media(max-width:380px){.form-grid{grid-template-columns:1fr}.real-summary{gap:6px}.real-metric strong{font-size:18px}}
 
@@ -477,7 +490,14 @@ button:disabled{opacity:.55;cursor:wait}
       </div>
       <button type="button" id="refresh-live" class="filter live-refresh">↻ Odśwież dane</button>
       <button type="button" id="live-favorites" class="filter" aria-pressed="false">☆ Moje drużyny</button>
+      <button type="button" id="league-overview-toggle" class="filter" aria-expanded="false" aria-controls="league-overview">🌍 Przegląd lig</button>
     </div>
+    <section id="league-overview" class="league-overview-panel" hidden aria-labelledby="league-overview-title">
+      <div class="league-overview-head"><div><h3 id="league-overview-title">🌍 Przegląd lig</h3><p>Najbliższe terminy ze źródła OpenLigaDB. Na razie trzy sprawdzone rozgrywki — bez symulowanych meczów ani wyników AI.</p></div>
+      <button type="button" class="filter" id="league-overview-refresh">↻ Odśwież trzy ligi</button></div>
+      <p id="league-overview-status" class="league-overview-status" role="status" aria-live="polite">Otwórz przegląd, aby pobrać aktualne terminarze.</p>
+      <div id="league-overview-grid" class="league-overview-grid"></div>
+    </section>
     <div id="live-summary" class="real-summary" aria-label="Statystyki sezonu">
       <div class="real-metric"><strong id="live-all">—</strong><span>Meczów w bazie</span></div>
       <div class="real-metric"><strong id="live-finished">—</strong><span>Zakończonych</span></div>
@@ -1738,6 +1758,12 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
     } else for(const game of games) target.append(renderCard(game));
   }
   async function load(force=false) {
+    // Wybrana liga pozostaje jedynym źródłem historii dla aktualnego modelu.
+    if(!$('league-overview').hidden){
+      $('league-overview').hidden=true;
+      $('league-overview-toggle').setAttribute('aria-expanded','false');
+      $('league-overview-toggle').textContent='🌍 Przegląd lig';
+    }
     liveLimit=16;
     const league=$('live-league').value;
     const season=Number($('live-season').value);
@@ -1785,6 +1811,98 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
       }
     }finally {clearTimeout(timeout);$('refresh-live').disabled=false;}
   }
+  // Oddzielny przegląd terminarzy; nie włącza innych lig do obliczeń modelu.
+  let overviewBusy=false;
+  const overviewDate=new Intl.DateTimeFormat('pl-PL',{timeZone:'Europe/Warsaw',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+  async function loadLeagueOverview(force=false){
+    if(overviewBusy)return;
+    const season=Number($('live-season').value);
+    if(!Number.isInteger(season)||season<2000||season>2100)return;
+    overviewBusy=true;
+    $('league-overview-refresh').disabled=true;
+    $('league-overview-status').textContent='Sprawdzanie terminarzy trzech lig…';
+    const board=$('league-overview-grid');
+    board.replaceChildren();
+    const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),14000);
+    try{
+      const leagueRows=await Promise.all(Object.keys(allowedLeagues).map(async code=>{
+        const key=code+'/'+season,cached=cache.get(key);
+        if(!force&&cached&&Date.now()-cached.loadedAt<maxAgeMs)return {code,matches:cached.matches,stale:false};
+        try{
+          const response=await fetch('https://api.openligadb.de/getmatchdata/'+code+'/'+season,
+            {signal:controller.signal,cache:'no-store'});
+          if(!response.ok)throw new Error('HTTP '+response.status);
+          const payload=await response.json();
+          if(!Array.isArray(payload))throw new Error('Niepoprawne dane');
+          const unique=new Map();
+          for(const item of payload){
+            const match=normalizeMatch(item);
+            if(match)unique.set(match.id||match.homeId+':'+match.awayId+':'+match.time,match);
+          }
+          const matches=[...unique.values()].sort((a,b)=>a.time-b.time);
+          cache.set(key,{matches,loadedAt:Date.now()});
+          return {code,matches,stale:false};
+        }catch{
+          return cached?{code,matches:cached.matches,stale:true}:{code,error:true};
+        }
+      }));
+      if($('league-overview').hidden||Number($('live-season').value)!==season)return;
+      let futureTotal=0,failures=0;
+      for(const item of leagueRows){
+        const card=make('article','league-overview-card');
+        card.append(make('h4','',allowedLeagues[item.code]));
+        if(item.error){
+          failures++;
+          card.append(make('p','','Nie udało się pobrać tej ligi. Spróbuj odświeżyć później.'));
+        }else{
+          const upcoming=item.matches.filter(m=>!m.score&&m.time>Date.now())
+            .sort((a,b)=>a.time-b.time);
+          futureTotal+=upcoming.length;
+          card.append(make('p','',upcoming.length+' nadchodzących meczów'+
+            (item.stale?' · dane mogą być nieaktualne':'')+' · sezon '+season+'/'+(season+1)));
+          if(!upcoming.length)card.append(make('p','','Źródło nie zwróciło przyszłych meczów.'));
+          else {
+            const list=make('ul');
+            for(const game of upcoming.slice(0,3)){
+              const row=make('li','',game.home+' – '+game.away+(favoriteMatch(game)?' ★':''));
+              const time=make('time','',overviewDate.format(new Date(game.time))+' · Polska');
+              time.dateTime=new Date(game.time).toISOString();
+              row.append(time);
+              list.append(row);
+            }
+            card.append(list);
+          }
+          const open=make('button','filter league-overview-jump','Zobacz ligę');
+          open.type='button';
+          open.addEventListener('click',()=>{
+            $('live-league').value=item.code;
+            $('league-overview').hidden=true;
+            $('league-overview-toggle').setAttribute('aria-expanded','false');
+            $('league-overview-toggle').textContent='🌍 Przegląd lig';
+            load();
+          });
+          card.append(open);
+        }
+        board.append(card);
+      }
+      $('league-overview-status').textContent='W trzech ligach: '+futureTotal+' przyszłych meczów'+
+        (failures?' · brak danych dla '+failures+' lig.':' · źródło: OpenLigaDB.')+
+        ' To przegląd terminarzy, nie prognozy 1X2.';
+    }finally{
+      clearTimeout(timeout);
+      $('league-overview-refresh').disabled=false;
+      overviewBusy=false;
+    }
+  }
+  $('league-overview-toggle').addEventListener('click',()=>{
+    const panel=$('league-overview');
+    const open=panel.hidden;
+    panel.hidden=!open;
+    $('league-overview-toggle').setAttribute('aria-expanded',String(open));
+    $('league-overview-toggle').textContent=open?'🌍 Zamknij przegląd':'🌍 Przegląd lig';
+    if(open)void loadLeagueOverview(false);
+  });
+  $('league-overview-refresh').addEventListener('click',()=>void loadLeagueOverview(true));
   $('live-more').addEventListener('click',()=>{liveLimit+=16;render();});
   $('live-league').addEventListener('change',()=>load());
   $('live-season').addEventListener('change',()=>load());
