@@ -105,7 +105,8 @@ jobs:
                   lines += ['', f'Oczekujace mecze, ktorych czas startu minal: {overdue}.',
                             'Sprawdz raport obserwatora; mecz moze jeszcze trwac lub oczekiwac na wynik.']
               if not rows:
-                  lines += ['', 'Archiwum istnieje, ale nie ma jeszcze prognoz.',
+                  lines += ['', '**STATUS: OCZEKIWANIE NA PIERWSZA PROGNOZE.**',
+                            'Archiwum istnieje, ale nie ma jeszcze prognoz ani podstaw do oceny skutecznosci.',
                             'Sprawdz bledy API i mecze w oknie 162–168 godzin w raporcie ponizej.']
               report = root / 'RAPORT.md'
               if report.exists():
