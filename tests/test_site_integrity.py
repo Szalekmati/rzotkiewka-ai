@@ -108,6 +108,48 @@ class SiteIntegrity(unittest.TestCase):
         self.assertIn("void loadLabAutomation(controller.signal);", js)
         self.assertIn("Brak prognoz może także oznaczać", self.html)
 
+    def test_quality_brier_has_same_sample_uniform_baseline(self):
+        import math
+        js = "\n".join(self.page.js)
+        self.assertIn("quality-brier-baseline", self.page.ids)
+        for term in (
+            "const meanBrier=graded.length?graded.reduce((sum,r)=>sum+brierOf(r),0)/graded.length:null;",
+            "const uniformBrier=2/9;",
+            "Brier modelu:",
+            "równe szanse 1/X/2:",
+            "Porównanie na tych samych",
+            "próba za mała, by oceniać przewagę.",
+            "To nie jest wynik LAB ani miara opłacalności zakładów.",
+        ):
+            self.assertIn(term, js)
+        self.assertIn("Brier archiwum = średnia trzech kwadratowych błędów", self.html)
+        self.assertIn("W LAB 2.1/2.2 Brier jest SUMĄ", self.html)
+
+        # A multinomial Brier score averaged across 1/X/2 is always 2/9
+        # for uniform probabilities, regardless of the realized result.
+        uniform = {"1": 1/3, "X": 1/3, "2": 1/3}
+        for outcome in ("1", "X", "2"):
+            average = sum((uniform[k] - (k == outcome)) ** 2
+                          for k in ("1", "X", "2")) / 3
+            self.assertTrue(math.isclose(average, 2/9, abs_tol=1e-12))
+            self.assertTrue(math.isclose(3*average, 2/3, abs_tol=1e-12))
+
+        # Compute the real current sample without imposing any expected winner.
+        from forecast_engine import valid_doc
+        archive = json.loads((ROOT / "predictions.json").read_text(encoding="utf-8"))
+        valid_doc(archive)
+        scored = [r for r in archive["forecasts"]
+                  if r["settlement"]["state"] == "graded"]
+        values = []
+        for record in scored:
+            p = record["snapshot"]["probabilities"]
+            result = record["settlement"]["outcome"]
+            brier = sum((p[k] - (k == result)) ** 2 for k in ("1", "X", "2")) / 3
+            self.assertTrue(math.isfinite(brier) and 0 <= brier <= 2/3)
+            values.append(brier)
+        if values:
+            self.assertTrue(0 <= sum(values)/len(values) <= 2/3)
+
     def test_lab_report_counts_must_match_raw_ledger(self):
         for ident in ("lab-ledger-check", "lab-run-direct"):
             self.assertIn(ident, self.page.ids)

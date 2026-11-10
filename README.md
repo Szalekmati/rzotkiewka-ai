@@ -36,6 +36,12 @@ Zakładka **Test LAB** pokazuje bezpośredni odnośnik do ostatniego zapisanego 
 
 Zakładka **Test LAB** w interfejsie strony 2.0 pokazuje teraz ostatnie *zapisane* zdarzenie z `lab_forward/run_status.json`: czas, rodzaj zdarzenia (ręczne lub `schedule`) i jego wynik. Jeśli status jest starszy niż 3 godziny, pojawia się ostrzeżenie i odnośnik do [historii GitHub Actions](https://github.com/Szalekmati/rzotkiewka-ai/actions/workflows/test_przedmeczowy.yml). **To nie jest odczyt bieżącego stanu GitHub Actions**, więc ostrzeżenie nie dowodzi awarii, a zielony test ręczny nie dowodzi sprawnego harmonogramu. Nie zmieniono zamrożonych silników 2.1/2.2, okna 162–168 h ani plików archiwum.
 
+## Punkt odniesienia Brier na stronie (bez selekcji wyników)
+
+Zakładka **Jakość modelu** pokazuje teraz średni błąd Brier zweryfikowanych, **rozliczonych** publicznych prognoz 1/X/2 obok prostego punktu odniesienia: stałych prawdopodobieństw 1/3, 1/3 i 1/3. W skali archiwum liczymy **średnią** trzech kwadratowych błędów — punkt odniesienia = **2/9 ≈ 0,222** (0 oznacza idealnie). W osobnym historycznym badaniu 2.1/2.2 LAB używamy **sumy** trzech błędów; jej punkt odniesienia to **2/3 ≈ 0,667**, czyli dokładnie trzy razy więcej. **Nie wolno porównywać tych wyników bez wyrównania skali i użycia tych samych spotkań.**
+
+Dla małej liczby rozliczonych prognoz strona wyraźnie ostrzega o niepewności. Nie podaje ROI, nie wybiera korzystnych meczów i nie przedstawia porównania z naiwną prognozą jako dowodu przewagi nad bukmacherem. Cała analiza pozostaje oparta na wcześniej zweryfikowanym archiwum SHA-256, bez modyfikacji modeli i zapisów LAB. Testy zabezpieczają wzór i obecność ostrzeżenia.
+
 ## Kontrola jakości strony
 
 Automatyczne testy na GitHubie sprawdzają unikalne identyfikatory HTML, domyślne filtry darmowych prognoz bez pomijania porażek, etykiety DEMO/Premium, integralność archiwum i składnię JavaScript (Node.js). Kontrola uruchamia się po zmianach strony lub danych, nie pobiera kursów ani nie wykonuje transakcji. Wymaga Node.js tylko do testu JavaScript; bez Node ten test lokalnie jest pomijany. Zielony test nie zastępuje sprawdzenia strony w przeglądarce i nie blokuje automatycznie publikacji GitHub Pages.

@@ -691,11 +691,12 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
         <div class="quality-box">
           <h3>Weryfikacja po zakończeniu meczu</h3>
           <p id="quality-accuracy" class="quality-info">Pobieranie danych…</p>
+          <p id="quality-brier-baseline" class="quality-info" style="margin-top:12px" role="status" aria-live="polite">Porównanie Brier z prostą prognozą 1/X/2 będzie dostępne po weryfikacji wyników.</p>
           <p id="quality-calibration" class="quality-info" style="margin-top:12px">Porównanie prognoz z wynikami będzie możliwe po rozliczeniu spotkań.</p>
         </div>
       </div>
       <p id="quality-alert" class="quality-alert" role="status" aria-live="polite">Sprawdzanie udziału prognoz na gospodarzy i wielkości próby…</p>
-      <p class="quality-note">Próg alarmu: co najmniej 8 prognoz i co najmniej 80% wskazań jednego wyniku. To sygnał ostrzegawczy, nie dowód błędu modelu. Próg 50% to filtr techniczny, nie rekomendacja obstawiania. Statystyki nie obejmują fikcyjnej sekcji Demo.</p>
+      <p class="quality-note">Brier archiwum = średnia trzech kwadratowych błędów (skala 0–2/3); stała prognoza 1/X/2 po 1/3 daje dokładnie 2/9 ≈ 0,222. W LAB 2.1/2.2 Brier jest SUMĄ trzech błędów (skala 0–2), więc bez zmiany skali i tej samej próby wyników nie wolno porównywać. Próg alarmu: co najmniej 8 prognoz i co najmniej 80% wskazań jednego wyniku. Próg 50% to filtr techniczny, nie rekomendacja obstawiania. Statystyki nie obejmują DEMO.</p>
     </div>
   </section>
 
@@ -1537,9 +1538,17 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
         status.textContent=`Rozkład wskazań: najczęściej ${keyText} (${percent(share)}). Alarm 80% nie został przekroczony. Sprawdź również kalibrację wyników po rozliczeniu.`;
       }
     }
+    const meanBrier=graded.length?graded.reduce((sum,r)=>sum+brierOf(r),0)/graded.length:null;
+    const uniformBrier=2/9; // 1/X/2 = 1/3 each; mean of three squared errors.
+    const showBrier=(v)=>v.toFixed(3).replace('.',',');
     $('quality-accuracy').textContent=!ready?'Brak zweryfikowanych danych.'
       :graded.length===0?'Brak rozliczonych spotkań. Nie można jeszcze policzyć skuteczności ani błędu Brier.'
-      :`Trafienia: ${hit}/${graded.length} (${percent(hit/graded.length)}). Średni Brier: ${(graded.reduce((sum,r)=>sum+brierOf(r),0)/graded.length).toFixed(3).replace('.',',')}. ${graded.length<30?'Mała próba — wartości wstępne.':'Wynik z publicznego archiwum.'}`;
+      :`Trafienia: ${hit}/${graded.length} (${percent(hit/graded.length)}). Średni Brier: ${showBrier(meanBrier)}. ${graded.length<30?'Mała próba — wartości wstępne.':'Wynik z publicznego archiwum.'}`;
+    $('quality-brier-baseline').textContent=!ready
+      ?'Porównanie Brier jest niedostępne bez zweryfikowanego archiwum.'
+      :!graded.length
+        ?'Brak rozliczonych prognoz — nie porównujemy modelu z punktem odniesienia.'
+        :`Brier modelu: ${showBrier(meanBrier)} · równe szanse 1/X/2: ${showBrier(uniformBrier)}. ${meanBrier<uniformBrier?'Model ma niższy błąd w tej próbie.':meanBrier>uniformBrier?'Model ma wyższy błąd w tej próbie.':'Błąd modelu jest równy punktowi odniesienia.'} Porównanie na tych samych ${graded.length} rozliczonych meczach; ${graded.length<30?'próba za mała, by oceniać przewagę.':'nadal potrzebna ocena na większej próbie i kolejnych sezonach.'} To nie jest wynik LAB ani miara opłacalności zakładów.`;
     if(!ready||graded.length===0){
       $('quality-calibration').textContent='Kalibrację oszacujemy po rozliczeniu co najmniej 30 prognoz; do tego czasu brak wiarygodnego porównania.';
     }else if(graded.length<30){
