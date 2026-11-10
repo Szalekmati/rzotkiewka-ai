@@ -7,6 +7,8 @@ on:
     paths:
       - 'league_candidates.py'
       - 'tests/test_league_candidates.py'
+      - 'ucl_deep_audit.py'
+      - 'tests/test_ucl_deep_audit.py'
       - '.github/workflows/audyt_nowych_lig.yml'
   schedule:
     # Niedziela 06:23 UTC; zdarzenia scheduled moga sie opoznic.
@@ -32,8 +34,12 @@ jobs:
           python-version: '3.12'
       - name: Testy analizy jakosci lig (bez internetu)
         run: python -m unittest discover -s tests -p 'test_league_candidates.py' -v
+      - name: Testy pogłębionego audytu Ligi Mistrzow (offline)
+        run: python -m unittest discover -s tests -p 'test_ucl_deep_audit.py' -v
       - name: Przeprowadz audyt 3 kandydatow (tylko odczyt)
         run: python league_candidates.py
+      - name: Sprawdz 3 sezony Ligi Mistrzow (tylko odczyt)
+        run: python ucl_deep_audit.py
       - name: Raport i metryki do pobrania
         if: always()
         uses: actions/upload-artifact@v4
