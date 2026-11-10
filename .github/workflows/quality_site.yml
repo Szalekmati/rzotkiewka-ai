@@ -11,6 +11,8 @@ on:
       - 'tests/test_site_integrity.py'
       - 'tests/test_archive_fail_closed.mjs'
       - 'tests/test_lab_schedule.py'
+      - 'tests/test_lab_diagnostics.py'
+      - '.github/workflows/diagnostyka_terminarza_lab.yml'
       - '.github/workflows/test_przedmeczowy.yml'
       - '.github/workflows/quality_site.yml'
   workflow_dispatch:
@@ -37,3 +39,5 @@ jobs:
         run: node --test tests/test_archive_fail_closed.mjs
       - name: Testy niezmiennosci harmonogramu i modeli LAB
         run: python -m unittest discover -s tests -p 'test_lab_schedule.py' -v
+      - name: Testy diagnostyki terminarza LAB (offline)
+        run: python -m unittest discover -s tests -p 'test_lab_diagnostics.py' -v
