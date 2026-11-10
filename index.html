@@ -453,6 +453,16 @@ button:disabled{opacity:.55;cursor:wait}
     @media(max-width:600px){.compact-hero{padding:8px 0 20px;gap:13px}.hero-story{padding:24px 18px;border-radius:20px}.compact-hero h1{font-size:clamp(40px,11vw,58px)}.hero-topline{margin-bottom:17px;font-size:9px}.hero-story .actions{flex-direction:column}.hero-story .actions a{width:100%}.hero-trust{gap:9px}.hero-trust span{font-size:10px}.compact-hero .hero-board{padding:20px 16px;border-radius:20px}.hero-board-heading h2{font-size:29px}.hero-board-metrics{gap:4px}.hero-board-metrics>div{padding:12px 3px}.hero-board-metrics span{font-size:9px}.app-nav{gap:5px;padding:12px 0}.app-nav a{border-radius:10px;padding:9px 3px;min-width:54px}}
     @media(prefers-reduced-motion:reduce){#hero-bar-hits,#hero-bar-misses{transition:none!important}}
 
+
+    /* UX 2.1: pięć równych, dostępnych zakładek na małych ekranach. */
+    @media(max-width:720px){
+      .mobile-nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px;padding-left:max(4px,env(safe-area-inset-left));padding-right:max(4px,env(safe-area-inset-right))}
+      .mobile-nav a{min-width:0;width:100%;min-height:48px;padding:7px 1px;text-align:center;line-height:1.2;overflow-wrap:normal}
+      .mobile-nav a:focus-visible{outline:3px solid var(--accent);outline-offset:-3px}
+      .mobile-nav a[aria-current="page"]{font-weight:900;box-shadow:inset 0 0 0 1px var(--accent)}
+    }
+    @media(max-width:360px){.mobile-nav a{font-size:11px}.mobile-nav span{font-size:17px}}
+
 </style>
 </head>
 <body>

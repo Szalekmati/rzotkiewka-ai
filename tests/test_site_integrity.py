@@ -58,6 +58,40 @@ class SiteIntegrity(unittest.TestCase):
                       "rank-minprob", "rank-hit", "rank-brier", "premium", "lab"):
             self.assertIn(ident, self.page.ids)
 
+    def test_mobile_navigation_has_five_accessible_destinations(self):
+        from html.parser import HTMLParser
+
+        class MobileNavParser(HTMLParser):
+            def __init__(self):
+                super().__init__()
+                self.inside_mobile_nav = False
+                self.links = []
+
+            def handle_starttag(self, tag, attrs):
+                attrs = dict(attrs)
+                if tag == "nav" and "mobile-nav" in attrs.get("class", "").split():
+                    self.inside_mobile_nav = True
+                elif self.inside_mobile_nav and tag == "a":
+                    self.links.append((attrs.get("href"), "data-page-link" in attrs))
+
+            def handle_endtag(self, tag):
+                if tag == "nav" and self.inside_mobile_nav:
+                    self.inside_mobile_nav = False
+
+        parser = MobileNavParser()
+        parser.feed(self.html)
+        self.assertEqual(
+            parser.links,
+            [(dest, True) for dest in (
+                "#mecze", "#ranking", "#sporty", "#raport", "#wiecej"
+            )],
+        )
+        self.assertIn("grid-template-columns:repeat(5,minmax(0,1fr))", self.html)
+        self.assertIn('.mobile-nav a[aria-current="page"]', self.html)
+        self.assertIn(".mobile-nav a:focus-visible", self.html)
+        js = "\\n".join(self.page.js)
+        self.assertIn("a.setAttribute('aria-current','page')", js)
+
     def test_version_two_showcase_has_real_archive_bindings(self):
         self.assertIn("RZOTKIEWKA 2.0", self.html)
         for ident in ("hero-archive-total", "hero-archive-graded",
