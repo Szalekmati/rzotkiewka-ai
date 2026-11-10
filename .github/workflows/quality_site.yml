@@ -6,6 +6,7 @@ on:
     paths:
       - 'index.html'
       - 'tests/test_site_integrity.py'
+      - 'tests/test_mobile_nav.cjs'
       - '.github/workflows/quality_site.yml'
   push:
     branches: [main]
@@ -29,7 +30,7 @@ permissions:
 jobs:
   check:
     runs-on: ubuntu-24.04
-    timeout-minutes: 5
+    timeout-minutes: 12
     steps:
       - name: Pobierz repozytorium
         uses: actions/checkout@v4
@@ -43,6 +44,19 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_site_integrity.py' -v
       - name: Test zablokowania niespojnego archiwum (Node.js, offline)
         run: node --test tests/test_archive_fail_closed.mjs
+      - name: Chromium - kontrola mobilnych zakladek (320-720 px)
+        run: |
+          npm install --no-save playwright@1.58.2
+          npx playwright install chromium
+          node tests/test_mobile_nav.cjs
+      - name: Zapisz podglady mobilne
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rzotkiewka-mobile-nav-preview
+          path: mobile-nav-*.png
+          if-no-files-found: ignore
+          retention-days: 7
       - name: Testy niezmiennosci harmonogramu i modeli LAB
         run: python -m unittest discover -s tests -p 'test_lab_schedule.py' -v
       - name: Testy diagnostyki terminarza LAB (offline)
