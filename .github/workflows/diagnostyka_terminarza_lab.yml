@@ -1,6 +1,10 @@
 name: RZOTKIEWKA - diagnostyka terminarza LAB
 on:
   workflow_dispatch:
+  schedule:
+    # Codzienna diagnostyka read-only (17:17 UTC = 18:17 CET / 19:17 CEST).
+    # GitHub moze opozniac start; nie zastepuje obserwatora co godzine.
+    - cron: '17 17 * * *'
 permissions:
   contents: read
 jobs:
