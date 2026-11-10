@@ -107,7 +107,9 @@ jobs:
               if not rows:
                   lines += ['', '**STATUS: OCZEKIWANIE NA PIERWSZA PROGNOZE.**',
                             'Archiwum istnieje, ale nie ma jeszcze prognoz ani podstaw do oceny skutecznosci.',
-                            'Sprawdz bledy API i mecze w oknie 162–168 godzin w raporcie ponizej.']
+                            'Sprawdz bledy API i mecze w oknie 162–168 godzin w raporcie ponizej.',
+                            'Brak prognoz nie dowodzi, ze harmonogram dziala: zweryfikuj ostatnie rzeczywiste uruchomienie w Actions.',
+                            'Rozroznij: brak meczow w oknie, blad pobierania danych i brak uruchomienia workflow.']
               report = root / 'RAPORT.md'
               if report.exists():
                   lines += ['', '## Ostatni zapisany raport obserwatora', '', report.read_text()]
