@@ -29,6 +29,8 @@ const path = require('node:path');
       for (const hash of ['#mecze', '#ranking', '#sporty', '#raport', '#wiecej']) {
         const link = nav.locator('a[href="' + hash + '"]');
         await link.click();
+        await page.waitForFunction(expected => location.hash === expected &&
+          document.querySelector('nav.mobile-nav a[href="' + expected + '"]')?.getAttribute('aria-current') === 'page', hash, { timeout: 5000 });
         assert.equal(await link.getAttribute('aria-current'), 'page', 'Inactive tab ' + hash + ' at ' + width);
       }
       await page.screenshot({ path: 'mobile-nav-' + width + '.png' });
