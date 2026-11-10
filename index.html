@@ -533,7 +533,7 @@ button:disabled{opacity:.55;cursor:wait}
       <div class="real-metric"><strong id="live-upcoming">—</strong><span>Przyszłych meczów</span></div>
     </div>
     <p id="live-status" class="status-real" role="status" aria-live="polite">Łączenie ze źródłem meczów…</p>
-    <div class="match-search"><label for="live-search">Znajdź drużynę<input id="live-search" type="search" placeholder="Wpisz nazwę drużyny…" maxlength="90" autocomplete="off"></label></div>
+    <div class="match-search"><label for="live-search">Znajdź drużynę<input id="live-search" type="search" placeholder="Wpisz nazwę drużyny…" maxlength="90" autocomplete="off"></label><button type="button" id="live-clear-team-filters" class="watch-button" aria-label="Pokaż wszystkie drużyny w wybranej lidze i sezonie">↺ Pokaż wszystkie drużyny</button></div>
     <p id="live-favorites-note" class="live-favorites-note" role="status" aria-live="polite">Dotknij ☆ przy drużynie, aby ją zapamiętać na tym urządzeniu. Filtr działa w wybranej lidze i sezonie.</p>
     <p id="live-filter-count" class="watch-note" role="status"></p>
     <div id="live-list" class="real-grid" aria-live="polite"><div class="empty">Pobieranie terminarza…</div></div>
@@ -1021,6 +1021,15 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
   }
   $('rank-search').addEventListener('input',renderRanking);
   $('live-search').addEventListener('input',()=>{liveLimit=16;render();});
+  $('live-clear-team-filters').addEventListener('click',()=>{
+    $('live-search').value='';
+    onlyFavoriteTeams=false;
+    liveLimit=16;
+    $('live-favorites').setAttribute('aria-pressed','false');
+    $('live-favorites').textContent='☆ Moje drużyny';
+    render();
+    $('live-search').focus();
+  });
   $('live-favorites').addEventListener('click',()=>{
     onlyFavoriteTeams=!onlyFavoriteTeams;
     liveLimit=16;
