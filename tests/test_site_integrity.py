@@ -108,6 +108,36 @@ class SiteIntegrity(unittest.TestCase):
         self.assertIn("void loadLabAutomation(controller.signal);", js)
         self.assertIn("Brak prognoz może także oznaczać", self.html)
 
+    def test_lab_report_counts_must_match_raw_ledger(self):
+        for ident in ("lab-ledger-check", "lab-run-direct"):
+            self.assertIn(ident, self.page.ids)
+        js = "\n".join(self.page.js)
+        for required in (
+            "fetch('./lab_forward/ledger.json'",
+            "ledger?.schema!==1",
+            "Array.isArray(ledger.forecasts)",
+            "ledger.forecasts.length!==data.pairs",
+            "To kontrola spójności, nie dowód skuteczności ani czasu publikacji.",
+            "Nie pokazujemy niesprawdzonych statystyk.",
+            "if(/^[0-9]{1,20}$/.test(runId))",
+            "direct.hidden=false;",
+        ):
+            self.assertIn(required, js)
+        self.assertIn('href="./lab_forward/ledger.json"', self.html)
+
+        # The current published report and raw research ledger must be
+        # consistent. Test on a real CSV-free fixture, no network access.
+        from pathlib import Path
+        import re
+        report = (ROOT / "lab_forward" / "RAPORT.md").read_text(encoding="utf-8")
+        match = re.search(r"Zapisane pary prognoz:\\s*(\\d+)", report)
+        self.assertIsNotNone(match)
+        ledger = json.loads((ROOT / "lab_forward" / "ledger.json").read_text(encoding="utf-8"))
+        self.assertEqual(ledger.get("schema"), 1)
+        self.assertIsInstance(ledger.get("forecasts"), list)
+        self.assertIsInstance(ledger.get("settlements"), dict)
+        self.assertEqual(int(match.group(1)), len(ledger["forecasts"]))
+
     def test_full_verified_archive_can_be_downloaded_safely(self):
         self.assertIn("rank-export-csv", self.page.ids)
         self.assertIn("rank-export-status", self.page.ids)

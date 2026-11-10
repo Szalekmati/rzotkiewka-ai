@@ -28,6 +28,10 @@ Zakładka **Darmowe** udostępnia przycisk **Pobierz pełną historię CSV**. Pr
 
 W zakładce **Darmowe** każda karta z publicznego, zweryfikowanego archiwum oferuje **Udostępnij analizę**. Na Androidzie otwiera systemowe udostępnianie, a w innych przeglądarkach próbuje skopiować link lub pokazuje okno ręcznego kopiowania. Link ma postać `?forecast=<identyfikator>#ranking`; odbiorca zobaczy wyróżniony, konkretny rekord tylko wtedy, gdy nadal znajduje się w archiwum po weryfikacji SHA-256. Dane nie są generowane ponownie ani ukrywane według wyniku. Brak kont, śledzenia kliknięć, kursów i obietnic zysku.
 
+## Kontrola zgodności publicznego eksperymentu LAB
+
+Zakładka **Test LAB** pokazuje bezpośredni odnośnik do ostatniego zapisanego uruchomienia GitHub Actions (tylko po zweryfikowaniu numerycznego `run_id`). Ponadto przed wyświetleniem liczników i porównania modeli pobiera **osobno** raport `lab_forward/RAPORT.md` i surowy `lab_forward/ledger.json`. Liczba zapisanych par musi być zgodna, a rejestr musi mieć oczekiwaną strukturę. Jeśli jeden plik jest nieosiągalny, ma nieznany format lub liczniki się różnią, strona ukrywa niepotwierdzone wyniki zamiast przedstawiać błędne zero. Użytkownik może sam otworzyć cały surowy rejestr, bez selekcji wyników. To **kontrola spójności plików, nie podpis kryptograficzny, niezależny dowód czasu publikacji ani potwierdzenie trafności**. Nie zmieniamy zamrożonego LAB, nie dodajemy prognoz wstecz i nie naruszamy archiwum produkcyjnego.
+
 ## Status automatyzacji LAB
 
 Zakładka **Test LAB** w interfejsie strony 2.0 pokazuje teraz ostatnie *zapisane* zdarzenie z `lab_forward/run_status.json`: czas, rodzaj zdarzenia (ręczne lub `schedule`) i jego wynik. Jeśli status jest starszy niż 3 godziny, pojawia się ostrzeżenie i odnośnik do [historii GitHub Actions](https://github.com/Szalekmati/rzotkiewka-ai/actions/workflows/test_przedmeczowy.yml). **To nie jest odczyt bieżącego stanu GitHub Actions**, więc ostrzeżenie nie dowodzi awarii, a zielony test ręczny nie dowodzi sprawnego harmonogramu. Nie zmieniono zamrożonych silników 2.1/2.2, okna 162–168 h ani plików archiwum.

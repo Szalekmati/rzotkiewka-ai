@@ -521,11 +521,14 @@ button:disabled{opacity:.55;cursor:wait}
     <aside class="lab-automation" aria-labelledby="lab-automation-heading">
       <div class="lab-automation-head"><strong id="lab-automation-heading">⏱ Automatyzacja eksperymentu</strong><span id="lab-run-badge" class="lab-run-badge">SPRAWDZANIE</span></div>
       <p id="lab-run-detail" role="status" aria-live="polite">Sprawdzanie ostatniego zapisanego uruchomienia LAB…</p>
+      <a id="lab-run-direct" href="https://github.com/Szalekmati/rzotkiewka-ai/actions/workflows/test_przedmeczowy.yml" target="_blank" rel="noopener noreferrer" hidden>↗ Zobacz to konkretne uruchomienie na GitHubie</a>
       <p class="lab-automation-foot">Własny harmonogram LAB i wyzwalanie zapasowe po pomyślnym automatycznym zadaniu głównym mogą zostać opóźnione lub pominięte. Ten status pochodzi z zapisanego pliku, nie z bieżącej listy zadań GitHub. Brak prognoz może także oznaczać, że nie ma jeszcze meczów w oknie 162–168 godzin.</p>
       <a href="https://github.com/Szalekmati/rzotkiewka-ai/actions/workflows/test_przedmeczowy.yml" target="_blank" rel="noopener noreferrer">Sprawdź uruchomienia LAB w GitHub Actions ↗</a>
     </aside>
     <div class="lab-metrics"><div><strong id="lab-pairs">—</strong><span>Zapisane pary prognoz</span></div><div><strong id="lab-settled">—</strong><span>Rozliczone pary</span></div><div><strong id="lab-errors">—</strong><span>Zgłoszone błędy pobierania</span></div></div>
     <p id="lab-status" role="status" aria-live="polite">Pobieranie raportu testu…</p>
+    <p id="lab-ledger-check" class="research-note" role="status" aria-live="polite">Sprawdzanie zgodności raportu z surowym rejestrem prognoz…</p>
+    <p><a href="./lab_forward/ledger.json" target="_blank" rel="noopener">Zobacz surowy rejestr LAB (wszystkie zapisane prognozy) ↗</a></p>
     <progress id="lab-progress" max="300" value="0" hidden aria-label="Rozliczone pary do przeglądu wyników"></progress>
     <p id="lab-progress-note">Próg przeglądu wyników będzie odczytany z konfiguracji eksperymentu.</p>
     <p id="lab-updated">Ostatnia obserwacja: —</p>
@@ -2068,7 +2071,8 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
     $('lab-comparison').hidden=false;
   }
   async function loadLabAutomation(signal){
-    const badge=$('lab-run-badge'),detail=$('lab-run-detail');
+    const badge=$('lab-run-badge'),detail=$('lab-run-detail'),direct=$('lab-run-direct');
+    direct.hidden=true;
     badge.className='lab-run-badge';
     badge.textContent='SPRAWDZANIE';
     detail.textContent='Sprawdzanie ostatniego zapisanego uruchomienia LAB…';
@@ -2085,6 +2089,11 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
         :status.event==='workflow_dispatch'?'ręczne':'inne ('+String(status.event||'nieznane').slice(0,35)+')';
       const observed=new Date(at).toLocaleString('pl-PL',{timeZone:'Europe/Warsaw'});
       const outcome=status.observation_outcome==='success'?'bez zgłoszonego błędu':'z wynikiem '+String(status.observation_outcome||'nieznanym').slice(0,35);
+      const runId=String(status.run_id||'');
+      if(/^[0-9]{1,20}$/.test(runId)){
+        direct.href='https://github.com/Szalekmati/rzotkiewka-ai/actions/runs/'+runId;
+        direct.hidden=false;
+      }
       // A green manual run cannot prove that cron is being delivered.
       if(ageHours>3||status.observation_outcome!=='success'){
         badge.classList.add('warning');
@@ -2109,13 +2118,27 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
   async function loadLab(){
     $('lab-refresh').disabled=true;
     $('lab-status').textContent='Pobieranie aktualnego raportu…';
+    $('lab-ledger-check').textContent='Sprawdzanie zgodności raportu z surowym rejestrem prognoz…';
     const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),15000);
     // Separate from the research report: no false 'automatic' claim from a manual run.
     void loadLabAutomation(controller.signal);
     try{
-      const res=await fetch('./lab_forward/RAPORT.md',{cache:'no-store',signal:controller.signal});
-      if(!res.ok)throw new Error('Raport niedostępny');
-      const data=parseLabReport(await res.text());
+      const [res,ledgerRes]=await Promise.all([
+        fetch('./lab_forward/RAPORT.md',{cache:'no-store',signal:controller.signal}),
+        fetch('./lab_forward/ledger.json',{cache:'no-store',signal:controller.signal})
+      ]);
+      if(!res.ok||!ledgerRes.ok)throw new Error('Raport lub rejestr niedostępny');
+      const [reportText,ledger]=await Promise.all([res.text(),ledgerRes.json()]);
+      const data=parseLabReport(reportText);
+      // Count consistency, not a cryptographic proof or proof of prediction time.
+      if(ledger?.schema!==1||!Array.isArray(ledger.forecasts)||
+         !ledger.settlements||typeof ledger.settlements!=='object'||Array.isArray(ledger.settlements)||
+         typeof ledger.experiment!=='string'||!/^[a-f0-9]{64}$/i.test(ledger.experiment)||
+         ledger.forecasts.length!==data.pairs){
+        throw new Error('Niezgodność liczników lub formatu rejestru LAB');
+      }
+      $('lab-ledger-check').textContent='Zgodność liczby par z rejestrem LAB: '+data.pairs+
+        '. To kontrola spójności, nie dowód skuteczności ani czasu publikacji.';
       renderLabComparison(data);
       $('lab-pairs').textContent=String(data.pairs);$('lab-settled').textContent=String(data.settled);$('lab-errors').textContent=String(data.errors);
       const age=Date.now()-Date.parse(data.time);
@@ -2140,7 +2163,8 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
       for(const id of ['lab-pairs','lab-settled','lab-errors'])$(id).textContent='—';
       $('lab-progress').hidden=true;
       $('lab-updated').textContent='Ostatnia obserwacja: nie udało się odczytać.';
-      $('lab-status').textContent='Nie udało się odczytać raportu LAB. Brak danych nie oznacza zera prognoz. Otwórz pełny raport lub spróbuj ponownie.';
+      $('lab-status').textContent='Nie udało się odczytać lub potwierdzić spójności raportu LAB. Brak danych nie oznacza zera prognoz. Otwórz surowy rejestr i pełny raport lub spróbuj ponownie.';
+      $('lab-ledger-check').textContent='Brak potwierdzenia zgodności licznika prognoz. Nie pokazujemy niesprawdzonych statystyk.';
       $('lab-progress-note').textContent='Pozostałe widoki strony działają niezależnie od raportu LAB.';
     }finally{clearTimeout(timer);$('lab-refresh').disabled=false;}
   }
