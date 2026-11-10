@@ -70,6 +70,19 @@ class SiteIntegrity(unittest.TestCase):
         self.assertIn("const hitPercent=ready&&stats.graded", js)
         self.assertNotIn("RZOTKIEWKA 1.14", self.html)
 
+    def test_openligadb_license_notice_is_visible_on_all_page_tabs(self):
+        # Keep the ODbL notice in the unconditional footer, not only
+        # the match section (which hides when browsing other tabs).
+        footer = self.html.split('<footer class="footer">', 1)[1].split(
+            '</footer>', 1)[0]
+        self.assertIn("Dane meczowe:", footer)
+        self.assertIn("https://www.openligadb.de/", footer)
+        self.assertIn("https://www.openligadb.de/lizenz", footer)
+        self.assertIn("ODbL 1.0", footer)
+        self.assertIn('rel="noopener noreferrer"', footer)
+        self.assertNotIn("TeamIconUrl", self.html)
+        self.assertNotIn("teamIconUrl", self.html)
+
     def test_favorite_teams_filter_is_local_and_safe(self):
         for ident in ("live-favorites", "live-favorites-note", "live-search", "live-list"):
             self.assertIn(ident, self.page.ids)
