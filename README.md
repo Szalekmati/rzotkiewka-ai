@@ -20,6 +20,10 @@ Zakładka **🔓 Darmowe** pokazuje realnie zapisane przed meczem prognozy 1/X/2
 
 Pomysł produktowy: bezpłatna, możliwa do zweryfikowania próbka może pomagać użytkownikom ocenić usługę. Nie zakładamy wzrostu konwersji bez pomiaru. Statystyki trafień 1/X/2 nie są zwrotem z kuponów ani dowodem przewagi nad kursami. Przed uruchomieniem płatności i marketingu trzeba sprawdzić wymagania prawne i ograniczenia wiekowe.
 
+## Bezpieczeństwo pełnej próby archiwum (fail-closed)
+
+Publikowane wskaźniki muszą obejmować **wszystkie** zapisane rekordy, nie tylko te, które przeszły weryfikację. Po pobraniu `predictions.json` przeglądarka sprawdza SHA-256 **każdego** snapshotu, poprawność identyfikatorów i ich unikalność. Jeśli jeden rekord jest nieprawidłowy lub zduplikowany, **blokuje całe archiwum, wszystkie statystyki skuteczności, udostępnianie i eksport CSV** — zamiast pomijać błędny rekord. Repozytorium i modele pozostają niezmienione. Testy Node.js uruchamiają prawdziwe funkcje ładowania strony na danych prawidłowych, uszkodzonych i zduplikowanych. To wykrywanie niespójności danych, nie niezależne poświadczenie daty ich publikacji ani gwarancja trafności.
+
 ## Pobieranie całego archiwum CSV
 
 Zakładka **Darmowe** udostępnia przycisk **Pobierz pełną historię CSV**. Przycisk jest aktywny dopiero po udanym pobraniu i weryfikacji SHA-256 wszystkich dopuszczonych rekordów. Eksport zawsze obejmuje **całe zweryfikowane archiwum, niezależnie od filtrów**, zarówno trafione, nietrafione, jak i oczekujące prognozy. Pola: data publikacji i startu, liga, drużyny, 1/X/2, wskazany lider, wynik meczu, rozliczenie, trafienie, Brier i pełny skrót SHA-256. Plik używa UTF-8, średników oraz zabezpieczenia przed wstrzyknięciem formuły do arkusza. Nie udostępnia kursów bukmacherskich, ROI ani gwarancji zysku.

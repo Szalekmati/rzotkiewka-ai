@@ -1428,7 +1428,8 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
   }
   async function validArchiveRecord(rec){
     if(!rec||!rec.snapshot||!rec.settlement||typeof rec.snapshot_sha256!=='string'||
-        !/^[a-f0-9]{64}$/.test(rec.snapshot_sha256))return false;
+        !/^[a-f0-9]{64}$/.test(rec.snapshot_sha256)||
+        typeof rec.id!=='string'||!/^[a-zA-Z0-9_-]{1,100}$/.test(rec.id))return false;
     const s=rec.snapshot,p=s.probabilities;
     if(!p||!['1','X','2'].every(k=>Number.isFinite(p[k])&&p[k]>=0&&p[k]<=1)||
         Math.abs(p['1']+p.X+p['2']-1)>.00001||
@@ -1456,17 +1457,21 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
       const payload=await resp.json();
       if(payload.schema!==1||!Array.isArray(payload.forecasts))throw new Error('Niepoprawny format archiwum');
       const checks=await Promise.all(payload.forecasts.map(validArchiveRecord));
-      const verified=payload.forecasts.filter((r,i)=>checks[i]);
-      const rejected=payload.forecasts.length-verified.length;
-      state.archive=verified;
+      // Fail closed: discarding invalid results could silently cherry-pick
+      // winning records and distort public hit-rate and Brier statistics.
+      const invalid=checks.filter(ok=>!ok).length;
+      if(invalid)throw new Error('Archiwum niekompletne: '+invalid+' niepoprawnych rekordów');
+      const ids=payload.forecasts.map(r=>r.id);
+      if(new Set(ids).size!==ids.length)throw new Error('Archiwum zawiera powtarzające się identyfikatory');
+      state.archive=payload.forecasts;
       state.archiveAt=payload.updated_at;
       state.archiveReady=true;state.archiveFailed=false;
       $('archive-status').textContent=payload.updated_at
-        ?`Publiczne archiwum: ${verified.length} rekordów z poprawną sumą SHA-256 · ostatnia zmiana: ${new Date(payload.updated_at).toLocaleString('pl-PL')}.`+(rejected?` ODRZUCONO ${rejected} błędnych rekordów.`:'')
-        :'Archiwum jest puste: automatyczna publikacja prognoz nie została jeszcze uruchomiona.';
+        ?`Publiczne archiwum: ${payload.forecasts.length} rekordów z poprawną sumą SHA-256 · ostatnia zmiana: ${new Date(payload.updated_at).toLocaleString('pl-PL')}.`
+        :'Archiwum zweryfikowane, ale brak daty jego aktualizacji.';
     }catch(err){
-      state.archive=[];state.archiveReady=false;state.archiveFailed=true;
-      $('archive-status').textContent='Nie udało się pobrać lub zweryfikować publicznego archiwum. Uruchom stronę przez HTTPS i sprawdź predictions.json.';
+      state.archive=[];state.archiveAt=null;state.archiveReady=false;state.archiveFailed=true;
+      $('archive-status').textContent='Archiwum jest niedostępne lub niespójne. Nie pokazujemy częściowej próbki ani statystyk z wybranych rekordów. Otwórz predictions.json i sprawdź historię zmian na GitHubie.';
       console.warn('RZOTKIEWKA: archiwum niedostepne',err);
     }
     archiveLoading=false;

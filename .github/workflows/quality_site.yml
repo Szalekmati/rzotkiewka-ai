@@ -9,6 +9,7 @@ on:
       - 'tips.json'
       - 'forecast_engine.py'
       - 'tests/test_site_integrity.py'
+      - 'tests/test_archive_fail_closed.mjs'
       - 'tests/test_lab_schedule.py'
       - '.github/workflows/test_przedmeczowy.yml'
       - '.github/workflows/quality_site.yml'
@@ -32,5 +33,7 @@ jobs:
         run: node --version
       - name: Testy archiwum, darmowych prognoz i JavaScript
         run: python -m unittest discover -s tests -p 'test_site_integrity.py' -v
+      - name: Test zablokowania niespojnego archiwum (Node.js, offline)
+        run: node --test tests/test_archive_fail_closed.mjs
       - name: Testy niezmiennosci harmonogramu i modeli LAB
         run: python -m unittest discover -s tests -p 'test_lab_schedule.py' -v

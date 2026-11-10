@@ -200,6 +200,16 @@ class SiteIntegrity(unittest.TestCase):
             self.assertIn(required, js)
         self.assertIn("bez ukrywania wyników", js)
 
+    def test_archive_verification_fails_closed(self):
+        js = "\n".join(self.page.js)
+        self.assertIn("const invalid=checks.filter(ok=>!ok).length;", js)
+        self.assertIn("if(invalid)throw new Error('Archiwum niekompletne:", js)
+        self.assertIn("if(new Set(ids).size!==ids.length)", js)
+        self.assertIn("state.archive=payload.forecasts;", js)
+        self.assertIn("state.archive=[];state.archiveAt=null;state.archiveReady=false;state.archiveFailed=true;", js)
+        self.assertIn("Nie pokazujemy częściowej próbki ani statystyk z wybranych rekordów.", js)
+        self.assertNotIn("state.archive=verified;", js)
+
     def test_no_default_cherry_picking(self):
         self.assertRegex(self.html, r'<select id="rank-state">\s*<option value="all" selected>')
         self.assertRegex(self.html, r'<select id="rank-minprob">\s*<option value="0" selected>')
