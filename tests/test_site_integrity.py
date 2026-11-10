@@ -70,6 +70,27 @@ class SiteIntegrity(unittest.TestCase):
         self.assertIn("const hitPercent=ready&&stats.graded", js)
         self.assertNotIn("RZOTKIEWKA 1.14", self.html)
 
+    def test_favorite_teams_filter_is_local_and_safe(self):
+        for ident in ("live-favorites", "live-favorites-note", "live-search", "live-list"):
+            self.assertIn(ident, self.page.ids)
+        js = "\n".join(self.page.js)
+        for term in (
+            "rzotkiewka:favorite-teams:v1",
+            "favoriteTeams=new Set(savedTeams.filter(",
+            "function favoriteMatch(match)",
+            "function toggleFavoriteTeam(teamId)",
+            "function favoriteTeamButton(teamId,teamName)",
+            "localStorage.setItem(favoriteTeamsKey,JSON.stringify([...favoriteTeams]))",
+            "button.setAttribute('aria-pressed',String(chosen));",
+            "button.setAttribute('aria-label',(chosen?",
+            ".filter(m=>!onlyFavoriteTeams||favoriteMatch(m));",
+            "onlyFavoriteTeams?'Nie ma meczów Twoich ulubionych drużyn",
+            "if(favoriteTeams.size<60)",
+        ):
+            with self.subTest(term=term):
+                self.assertIn(term, js)
+        self.assertIn("Filtr działa w wybranej lidze i sezonie.", self.html)
+
     def test_forecast_sharing_uses_only_verified_archive_and_deep_link(self):
         self.assertIn("shared-forecast-status", self.page.ids)
         js = "\n".join(self.page.js)
