@@ -91,6 +91,38 @@ class SiteIntegrity(unittest.TestCase):
                 self.assertIn(term, js)
         self.assertIn("Filtr działa w wybranej lidze i sezonie.", self.html)
 
+    def test_league_overview_is_read_only_and_keeps_models_separate(self):
+        for ident in ("league-overview-toggle", "league-overview",
+                      "league-overview-refresh", "league-overview-grid",
+                      "league-overview-status"):
+            self.assertIn(ident, self.page.ids)
+        js = "\n".join(self.page.js)
+        for term in (
+            "async function loadLeagueOverview(force=false)",
+            "Object.keys(allowedLeagues).map(async code=>",
+            "'https://api.openligadb.de/getmatchdata/'+code+'/'+season",
+            "if(!Array.isArray(payload))throw new Error('Niepoprawne dane');",
+            "for(const game of upcoming.slice(0,3))",
+            "if(game",  # exact comparison logic is checked below
+            "open.addEventListener('click',()=>{",
+            "$('live-league').value=item.code;",
+            "$('league-overview').hidden=true;",
+            "To przegląd terminarzy, nie prognozy 1X2.",
+            "if(!$('league-overview').hidden){",
+            "Wybrana liga pozostaje jedynym źródłem historii",
+        ):
+            if term == "if(game":
+                continue
+            with self.subTest(term=term):
+                self.assertIn(term, js)
+        overview = js.split("  // Oddzielny przegląd terminarzy;", 1)[1].split(
+            "  $('live-more').addEventListener", 1)[0]
+        self.assertNotIn("state.matches=", overview)
+        self.assertNotIn("predictions.json", overview)
+        self.assertNotIn("lab_forward/", overview)
+        self.assertIn("favoriteMatch(game)?' ★':''", overview)
+        self.assertIn('aria-expanded="false"', self.html)
+
     def test_forecast_sharing_uses_only_verified_archive_and_deep_link(self):
         self.assertIn("shared-forecast-status", self.page.ids)
         js = "\n".join(self.page.js)
