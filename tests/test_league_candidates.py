@@ -67,7 +67,7 @@ class LeagueCandidateAuditTests(unittest.TestCase):
             fixture(10, NOW - timedelta(hours=49), finished=False),
             fixture(11, NOW - timedelta(hours=48), finished=False),
             fixture(12, NOW - timedelta(hours=47), finished=False),
-            fixture(13, NOW - timedelta(hours=50), finished=True),
+            fixture(13, NOW - timedelta(hours=50), finished=True, result=False),
         ]
         counts = audit.assess(rows, NOW)
         self.assertEqual(counts["overdue_without_result_48h"], 2)
