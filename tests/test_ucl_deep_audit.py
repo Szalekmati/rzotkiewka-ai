@@ -25,17 +25,30 @@ def match(ident, kickoff, home=101, away=202, finished=True, score=True):
 
 
 def reference_2024_season():
+    # Simulated history exercises the checker; real data is independently
+    # fetched from OpenLigaDB by GitHub Actions.
     rows = season_data(2024)
-    for i in range(88):
+    for i in range(89):
         rows.append(match(2024900 + i, datetime(2025, 4, 1, tzinfo=timezone.utc) +
                           timedelta(days=i % 30), home=301 + i % 18,
                           away=401 + i % 18))
-    finale = match(2024999, datetime(2025, 5, 31, 19, tzinfo=timezone.utc),
-                   home=888, away=889)
-    finale["team1"]["teamName"] = "Paris Saint-Germain"
-    finale["team2"]["teamName"] = "Inter Milano"
-    finale["matchResults"] = [{"resultTypeID": 2, "pointsTeam1": 5, "pointsTeam2": 0}]
-    rows.append(finale)
+    official_names = {
+        "real madrid": "Real Madrid CF",
+        "stuttgart": "VfB Stuttgart",
+        "manchester city": "Manchester City FC",
+        "inter": "FC Internazionale Milano",
+        "arsenal": "Arsenal FC",
+        "paris": "Paris Saint-Germain",
+        "bayern": "FC Bayern München",
+    }
+    for i, spec in enumerate(audit.UEFA_2024_SPOTCHECKS):
+        row = match(990000 + i, datetime.fromisoformat(spec["date"] + "T20:00:00+00:00"),
+                    home=9000 + 2*i, away=9001 + 2*i)
+        row["team1"]["teamName"] = official_names[spec["home"]]
+        row["team2"]["teamName"] = official_names[spec["away"]]
+        row["matchResults"] = [{"resultTypeID": 2, "pointsTeam1": spec["score"][0],
+                                "pointsTeam2": spec["score"][1]}]
+        rows[i] = row
     return rows
 
 
@@ -60,6 +73,7 @@ class UclDeepAuditTests(unittest.TestCase):
         blocks = [audit.inspect_season(reference_2024_season() if y == 2024 else season_data(y), y, NOW)
                   for y in (2024, 2025, 2026)]
         blocks[0]["uefa_2024_reference"] = audit.uefa_2024_reference_check(reference_2024_season())
+        blocks[0]["uefa_2024_spotchecks"] = audit.uefa_2024_match_spotchecks(reference_2024_season())
         self.assertEqual(blocks[0]["finished_with_score"], 189)
         self.assertEqual(blocks[1]["finished_with_score"], 100)
         self.assertEqual(blocks[2]["future_scheduled"], 55)
@@ -74,6 +88,39 @@ class UclDeepAuditTests(unittest.TestCase):
         reference = audit.uefa_2024_reference_check(full[:-1])
         self.assertFalse(reference["count_matches_uefa"])
         self.assertFalse(reference["uefa_final_paris_inter_5_0_found"])
+
+    def test_eight_uefa_spotchecks_and_discrepancies(self):
+        full = reference_2024_season()
+        result = audit.uefa_2024_match_spotchecks(full)
+        self.assertEqual(result["checked"], 8)
+        self.assertEqual(result["passed"], 8)
+        self.assertTrue(result["all_passed"])
+        self.assertEqual([r["outcome"] for r in result["matches"]], ["ZGODNY"]*8)
+        self.assertTrue(audit.team_matches("Paris Saint-Germain", "paris"))
+        self.assertTrue(audit.team_matches("FC Internazionale Milano", "inter"))
+
+        missing = audit.uefa_2024_match_spotchecks(full[1:])
+        self.assertFalse(missing["all_passed"])
+        self.assertEqual(missing["matches"][0]["outcome"], "BRAK MECZU")
+
+        wrong_result = [dict(row) for row in full]
+        wrong_result[0]["matchResults"] = [
+            {"resultTypeID": 2, "pointsTeam1": 0, "pointsTeam2": 3}]
+        result = audit.uefa_2024_match_spotchecks(wrong_result)
+        self.assertEqual(result["matches"][0]["outcome"], "NIEZGODNY WYNIK")
+        self.assertFalse(result["all_passed"])
+
+        duplicated = full + [dict(full[0], matchID=888888)]
+        result = audit.uefa_2024_match_spotchecks(duplicated)
+        self.assertEqual(result["matches"][0]["outcome"], "NIEJEDNOZNACZNY")
+        self.assertFalse(result["all_passed"])
+
+    def test_wrong_home_away_is_not_silently_accepted(self):
+        full = reference_2024_season()
+        changed = [dict(row) for row in full]
+        changed[0]["team1"], changed[0]["team2"] = changed[0]["team2"], changed[0]["team1"]
+        result = audit.uefa_2024_match_spotchecks(changed)
+        self.assertEqual(result["matches"][0]["outcome"], "BRAK MECZU")
 
     def test_duplicate_id_and_repeated_pair_date_are_flagged(self):
         data = season_data(2025)
@@ -142,6 +189,7 @@ class UclDeepAuditTests(unittest.TestCase):
                              [("ucl", 2024), ("ucl24", 2024), ("ucl", 2025), ("ucl", 2026)])
             self.assertEqual(result["seasons"][0]["source_shortcut"], "ucl24")
             self.assertTrue(result["seasons"][0]["uefa_2024_reference"]["count_matches_uefa"])
+            self.assertEqual(result["seasons"][0]["uefa_2024_spotchecks"]["passed"], 8)
             self.assertFalse(result["automatic_admission"])
             self.assertFalse(result["models_changed"])
             self.assertNotIn("all_match_ids", result["seasons"][0])
