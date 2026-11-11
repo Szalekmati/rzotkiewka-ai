@@ -344,6 +344,9 @@
 .passport-body h4{font-size:14px;margin:16px 0 6px}
 .passport-body p,.passport-body li{font-size:13px;line-height:1.7;color:var(--muted)}
 .passport-body ol,.passport-body ul{padding-left:20px}
+.passport-provenance{margin:12px 0;border:1px solid #36534a;border-radius:10px;padding:9px 12px}
+.passport-provenance summary{min-height:44px;padding:8px 2px;color:#d5f4c6;font-size:12px}
+.passport-provenance p{overflow-wrap:anywhere;margin:8px 0}
 
 /* 2.0: oddzielne widoki i czytelna nawigacja. */
 [hidden]{display:none!important}
@@ -1176,6 +1179,14 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
     if(p)section('Szanse 1 / X / 2',`1 ${formattedPercent(p['1'])} · X ${formattedPercent(p.X)} · 2 ${formattedPercent(p['2'])}`);
     section('Metryka',`${allowedLeagues[league]||league} · ${season}/${season+1} · model ${latest?latest.snapshot.model_version:'1.3 (przeglądarkowy)'}`);
     section('Zapis i aktualność',latest?'Zapis prognozy: '+passportDate(latest.snapshot.created_at):'Brak publicznego zapisu prognozy.');
+    if(latest){
+      const s=latest.snapshot,leadMinutes=Math.round((Date.parse(s.kickoff)-Date.parse(s.created_at))/60000);
+      section('Pierwszy gwizdek',passportDate(s.kickoff));
+      if(Number.isFinite(leadMinutes)&&leadMinutes>0){
+        section('Wyprzedzenie zapisu',Math.floor(leadMinutes/60)+' godz. '+(leadMinutes%60)+' min przed planowanym początkiem. To zapis modelu '+s.model_version+', nie wynik testu LAB 2.1/2.2.');
+      }
+      section('Źródło wyników i terminarza','OpenLigaDB (dane społecznościowe). Nie mamy tu niezależnie potwierdzonej kompletności, ani czasu aktualizacji każdego wejścia.');
+    }
     if(match&&state.loadedAt)body.append(make('p','','Pobranie bazy wyników: '+passportDate(state.loadedAt)+'. Czas pobrania nie potwierdza aktualności każdego wyniku.'));
     body.append(make('h4','','Co wiemy o tej analizie'));
     const list=make('ul');
@@ -1185,10 +1196,29 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
       `Prognozowana liczba goli: ${probFormatter.format(f.expectedHome)} – ${probFormatter.format(f.expectedAway)}. To nie pomiar xG ze strzałów.`
     ]:latest?[
       'Rozkład 1X2 i wersja modelu pochodzą z zapisanego rekordu.',
-      'Ten widok nie odtwarza wejściowej próby ani wpływu poszczególnych czynników dla archiwalnej prognozy.',
+      Number.isSafeInteger(latest.snapshot.league_matches_used)&&Number.isSafeInteger(latest.snapshot.home_matches_used)&&Number.isSafeInteger(latest.snapshot.away_matches_used)
+        ? 'Zapisana próba: '+latest.snapshot.league_matches_used+' wcześniejszych meczów ligi; gospodarze: '+latest.snapshot.home_matches_used+' spotkań, goście: '+latest.snapshot.away_matches_used+' spotkań.'
+        : 'Brak pełnych liczników meczów wejściowych w zapisanej prognozie.',
+      Number.isFinite(latest.snapshot.expected_home_goals)&&Number.isFinite(latest.snapshot.expected_away_goals)
+        ? 'Prognozowane gole: gospodarze '+probFormatter.format(latest.snapshot.expected_home_goals)+', goście '+probFormatter.format(latest.snapshot.expected_away_goals)+'. To szacunek modelu, NIE pomiar xG.'
+        : 'Brak zapisanych szacunków liczby goli.',
+      'Znamy liczniki i identyfikatory historycznych spotkań, ale rekord nie zawiera szczegółowych wag ani pełnej analizy wpływu czynników.',
       'Nie dopisujemy starej prognozie uzasadnienia na podstawie dzisiejszej formy.'
     ]:[`Minimum modelu: ${modelConfig.minLeague} wcześniejsze wyniki ligi i ${modelConfig.minTeam} mecze każdej drużyny.`];
     for(const text of facts)list.append(make('li','',text));body.append(list);
+    if(latest){
+      const s=latest.snapshot;
+      const hasIds=arr=>Array.isArray(arr)&&arr.length>0&&arr.every(n=>Number.isSafeInteger(n)&&n>0);
+      if(hasIds(s.home_match_ids)||hasIds(s.away_match_ids)){
+        const trail=make('details','passport-provenance');
+        trail.append(make('summary','','🔎 Identyfikatory zapisanych meczów wejściowych'));
+        for(const [name,ids] of [['Gospodarze',s.home_match_ids],['Goście',s.away_match_ids]]){
+          trail.append(make('p','',name+': '+(hasIds(ids)?ids.slice(0,20).join(', ')+(ids.length>20?' (pokazano 20 z '+ids.length+')':''):'brak identyfikatorów w zapisie')));
+        }
+        trail.append(make('p','','To identyfikatory z chwili prognozy, nie potwierdzenie jakości każdego historycznego meczu. Pełne dane wejściowe wymagają osobnej weryfikacji.'));
+        body.append(trail);
+      }
+    }
     section('Ograniczenia danych','Brak potwierdzonych składów, kontuzji, pogody i bieżących kursów w tym widoku. Nie oceniamy opłacalności zakładu. Wielkość próby i SHA-256 nie potwierdzają skuteczności modelu.');
     body.append(make('h4','','Historia zapisanych wersji'));
     if(records.length){
