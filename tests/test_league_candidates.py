@@ -96,6 +96,67 @@ class LeagueCandidateAuditTests(unittest.TestCase):
         summary = audit.assess([fixture(1, NOW - timedelta(days=1), finished=True, result=False)], NOW)
         self.assertEqual(summary["finished_without_accepted_score"], 1)
 
+    def test_missing_score_diagnostic_distinguishes_provider_fields(self):
+        when = NOW - timedelta(hours=60)
+        rows = []
+        empty_unfinished = fixture(110, when)
+        rows.append(empty_unfinished)  # scheduled/unfinished + no score
+
+        final_but_open = fixture(111, when)
+        final_but_open["matchResults"] = [
+            {"resultTypeID": 2, "pointsTeam1": 2, "pointsTeam2": 0}]
+        rows.append(final_but_open)  # final present, end flag still False
+
+        finished_empty = fixture(112, when, finished=True, result=False)
+        rows.append(finished_empty)
+
+        finished_no_list = fixture(113, when, finished=True)
+        finished_no_list["matchResults"] = None
+        rows.append(finished_no_list)
+
+        finished_halftime_only = fixture(114, when, finished=True)
+        finished_halftime_only["matchResults"] = [
+            {"resultTypeID": 1, "pointsTeam1": 1, "pointsTeam2": 0}]
+        rows.append(finished_halftime_only)
+
+        finished_bad_points = fixture(115, when, finished=True)
+        finished_bad_points["matchResults"] = [
+            {"resultTypeID": 2, "pointsTeam1": "2", "pointsTeam2": 0}]
+        rows.append(finished_bad_points)
+
+        expected = {
+            "not_marked_finished_no_final": 1,
+            "not_marked_finished_with_final": 1,
+            "marked_finished_empty_result_list": 1,
+            "marked_finished_invalid_result_list": 1,
+            "marked_finished_no_final_result": 1,
+            "marked_finished_invalid_final_points": 1,
+        }
+        summary = audit.assess(rows, NOW)
+        self.assertEqual(summary["overdue_without_result_48h"], 6)
+        self.assertEqual(summary["overdue_cause_counts"], expected)
+        self.assertEqual(len(summary["overdue_without_result_samples"]), 6)
+        self.assertEqual([x["match_id"] for x in summary["overdue_without_result_samples"]],
+                         [110, 111, 112, 113, 114, 115])
+        self.assertEqual(summary["finished_with_score"], 0)
+        sample = summary["overdue_without_result_samples"][1]
+        self.assertEqual(sample["home"], "Home")
+        self.assertEqual(sample["away"], "Away")
+        self.assertEqual(sample["cause"], "not_marked_finished_with_final")
+        self.assertFalse(sample["finished_flag"])
+
+        valid = fixture(116, when, finished=True)
+        self.assertIsNone(audit.normalize(valid)["missing_score_reason"])
+        self.assertEqual(audit.assess([valid], NOW)["overdue_cause_counts"], {})
+
+    def test_team_labels_escaped_in_markdown_without_corrupting_letters(self):
+        example = fixture(121, NOW - timedelta(days=3))
+        example["team1"]["teamName"] = "Northern|Rangers [A]\\n<b>Club</b>"
+        team = audit.normalize(example)
+        self.assertIsNotNone(team)
+        self.assertEqual(team["home"], "Northern Rangers  A   b Club /b ")
+        self.assertEqual(team["away"], "Away")
+
     def test_overdue_without_result_uses_48_hour_grace_period(self):
         rows = [
             fixture(10, NOW - timedelta(hours=49), finished=False),
