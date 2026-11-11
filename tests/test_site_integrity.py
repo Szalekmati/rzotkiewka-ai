@@ -230,6 +230,29 @@ class SiteIntegrity(unittest.TestCase):
         self.assertIn("favoriteMatch(game)?' ★':''", overview)
         self.assertIn('aria-expanded="false"', self.html)
 
+    def test_league_catalogue_filter_shows_only_actually_connected_sources(self):
+        # This is a presentation filter, NOT a new provider or model.
+        self.assertIn('id="sport-connected-only"', self.html)
+        self.assertIn('aria-pressed="false">✓ Tylko podłączone ligi', self.html)
+        js = "\\n".join(self.page.js)
+        for token in (
+            "let sport='all',connectedOnly=false;",
+            "$('sport-connected-only').addEventListener('click',()=>{",
+            "connectedOnly=!connectedOnly;",
+            "$('sport-connected-only').setAttribute('aria-pressed',String(connectedOnly));",
+            "(!connectedOnly||Boolean(r[4]))",
+            "Brak podłączonych lig w tych filtrach.",
+            "active?'Dane podłączone':'Planowane'",
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, js)
+        catalogue = js.split("const catalogue=[", 1)[1].split("];", 1)[0]
+        # Exactly the three German leagues have source ids; all other
+        # catalogue entries are only a roadmap and must not claim live data.
+        for ident in ("'bl1'", "'bl2'", "'bl3'"):
+            self.assertEqual(catalogue.count(ident), 1)
+        self.assertEqual(catalogue.count("['"), 17)
+
     def test_forecast_sharing_uses_only_verified_archive_and_deep_link(self):
         self.assertIn("shared-forecast-status", self.page.ids)
         js = "\n".join(self.page.js)
