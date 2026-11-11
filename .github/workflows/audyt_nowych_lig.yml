@@ -2,6 +2,14 @@ name: RZOTKIEWKA - audyt kandydatow nowych lig
 
 on:
   workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'league_candidates.py'
+      - 'tests/test_league_candidates.py'
+      - 'ucl_deep_audit.py'
+      - 'tests/test_ucl_deep_audit.py'
+      - '.github/workflows/audyt_nowych_lig.yml'
   push:
     branches: [main]
     paths:
@@ -37,11 +45,13 @@ jobs:
       - name: Testy pogłębionego audytu Ligi Mistrzow (offline)
         run: python -m unittest discover -s tests -p 'test_ucl_deep_audit.py' -v
       - name: Przeprowadz audyt 3 kandydatow (tylko odczyt)
+        if: github.event_name != 'pull_request'
         run: python league_candidates.py
       - name: Sprawdz 3 sezony Ligi Mistrzow (tylko odczyt)
+        if: github.event_name != 'pull_request'
         run: python ucl_deep_audit.py
       - name: Raport i metryki do pobrania
-        if: always()
+        if: always() && github.event_name != 'pull_request'
         uses: actions/upload-artifact@v4
         with:
           name: RZOTKIEWKA_AUDYT_KANDYDATOW_LIG
