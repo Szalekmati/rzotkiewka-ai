@@ -1,0 +1,35 @@
+name: RZOTKIEWKA - bramka wydania klubow i danych API
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'club_identity_release_gate.py'
+      - 'data/identity_release_registry.json'
+      - 'tests/test_club_identity_release_gate.py'
+      - '.github/workflows/identity_release_gate.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'club_identity_release_gate.py'
+      - 'data/identity_release_registry.json'
+      - 'tests/test_club_identity_release_gate.py'
+      - '.github/workflows/identity_release_gate.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-registry:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Testy zabezpieczen offline (zero zapytan API)
+        run: python -m unittest discover -s tests -p 'test_club_identity_release_gate.py' -v
+      - name: Rozroznij stan rejestru od gotowosci produktu
+        run: python club_identity_release_gate.py
