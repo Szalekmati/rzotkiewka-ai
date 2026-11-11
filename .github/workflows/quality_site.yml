@@ -8,6 +8,7 @@ on:
       - 'tests/test_site_integrity.py'
       - 'tests/test_mobile_nav.cjs'
       - 'tests/test_archive_fail_closed.mjs'
+      - 'tests/test_prediction_passport.mjs'
       - 'tests/test_lab_schedule.py'
       - 'tests/test_lab_diagnostics.py'
       - '.github/workflows/diagnostyka_terminarza_lab.yml'
@@ -23,6 +24,7 @@ on:
       - 'tests/test_site_integrity.py'
       - 'tests/test_mobile_nav.cjs'
       - 'tests/test_archive_fail_closed.mjs'
+      - 'tests/test_prediction_passport.mjs'
       - 'tests/test_lab_schedule.py'
       - 'tests/test_lab_diagnostics.py'
       - '.github/workflows/diagnostyka_terminarza_lab.yml'
@@ -50,6 +52,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_site_integrity.py' -v
       - name: Test zablokowania niespojnego archiwum (Node.js, offline)
         run: node --test tests/test_archive_fail_closed.mjs
+      - name: Paszport prognozy - rzeczywiste pola i bezpieczny brak danych (Node.js, offline)
+        run: node --test tests/test_prediction_passport.mjs
       - name: Chromium - kontrola mobilnych zakladek (320-720 px)
         run: |
           npm install --no-save playwright@1.58.2
