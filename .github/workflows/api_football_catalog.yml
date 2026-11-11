@@ -1,0 +1,36 @@
+name: RZOTKIEWKA - audyt metadanych 7 lig API-FOOTBALL
+
+on:
+  workflow_dispatch:
+    inputs:
+      season:
+        description: "Rok rozpoczecia sezonu (jedno zapytanie /leagues)"
+        required: true
+        type: string
+        default: "2026"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rzotkiewka-api-football-league-catalog
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 4
+    steps:
+      - name: Pobierz repozytorium
+        uses: actions/checkout@v4
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Testy offline katalogu
+        run: python -m unittest discover -s tests -p 'test_api_football_league_catalog.py' -v
+      - name: Audyt metadanych siedmiu lig
+        env:
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+          SEASON: ${{ inputs.season }}
+        run: python api_football_league_catalog.py --season "$SEASON"
