@@ -1,0 +1,44 @@
+name: RZOTKIEWKA - kandydaci mapowania klubow API
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'api_football_alias_candidates.py'
+      - 'tests/test_api_football_alias_candidates.py'
+      - '.github/workflows/api_football_alias_candidates.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'api_football_alias_candidates.py'
+      - 'tests/test_api_football_alias_candidates.py'
+      - '.github/workflows/api_football_alias_candidates.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: rzotkiewka-alias-candidates-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  offline:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m unittest discover -s tests -p 'test_api_football_alias_candidates.py' -v
+  preview:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    needs: offline
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Maks 2 zapytania i tylko liczby o kandydatach
+        env:
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+        run: python api_football_alias_candidates.py
