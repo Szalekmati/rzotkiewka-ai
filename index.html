@@ -825,6 +825,7 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
 <div class="kicker">KATALOG ROZGRYWEK</div><h2 id="sport-title" style="margin-top:14px">Sporty i ligi</h2>
 <p class="section-sub">Wybierz dyscyplinę. Podłączone rozgrywki prowadzą do meczów, pozostałe pokazują kierunek rozwoju.</p>
 <div id="sport-filters" class="filters" role="group" aria-label="Dyscyplina" style="margin-top:20px"></div>
+<div class="filters" role="group" aria-label="Dostępność terminarzy" style="margin-top:12px"><button type="button" id="sport-connected-only" class="filter" aria-pressed="false">✓ Tylko podłączone ligi</button></div>
 <div class="match-search" style="margin-top:18px"><label for="sport-search">Szukaj ligi lub kraju<input id="sport-search" type="search" placeholder="np. Polska, NBA, Premier League" maxlength="90"></label></div>
 <p id="sport-count" class="watch-note" role="status" aria-live="polite"></p><div id="sport-list" class="competition-grid"></div>
 <p class="real-note">Planowane rozgrywki nie mają jeszcze terminarzy ani prognoz. Każda nowa dyscyplina wymaga własnych danych i osobnego sprawdzenia modelu.</p></section>
@@ -2517,13 +2518,18 @@ const catalogue=[
  ['tennis','Tenis','Świat','ATP Tour'],['tennis','Tenis','Świat','WTA Tour'],
  ['hockey','Hokej','USA / Kanada','NHL'],['handball','Piłka ręczna','Polska','Liga polska']
 ];
-let sport='all';
+let sport='all',connectedOnly=false;
 const sportLabels=[['all','Wszystkie'],['football','⚽ Piłka nożna'],['basketball','🏀 Koszykówka'],['volleyball','🏐 Siatkówka'],['tennis','🎾 Tenis'],['hockey','🏒 Hokej'],['handball','🤾 Piłka ręczna']];
 const make=(tag,cls,text)=>{const n=document.createElement(tag);n.className=cls||'';n.textContent=text||'';return n;};
 for(const [key,label] of sportLabels){const b=make('button','filter',label);b.type='button';b.setAttribute('aria-pressed',String(key==='all'));b.addEventListener('click',()=>{sport=key;document.querySelectorAll('#sport-filters button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));renderCatalogue();});$('sport-filters').append(b);}
+$('sport-connected-only').addEventListener('click',()=>{
+ connectedOnly=!connectedOnly;
+ $('sport-connected-only').setAttribute('aria-pressed',String(connectedOnly));
+ renderCatalogue();
+});
 function renderCatalogue(){
  const q=$('sport-search').value.trim().toLocaleLowerCase('pl');
- const rows=catalogue.filter(r=>(sport==='all'||r[0]===sport)&&r.slice(1,4).join(' ').toLocaleLowerCase('pl').includes(q));
+ const rows=catalogue.filter(r=>(sport==='all'||r[0]===sport)&&(!connectedOnly||Boolean(r[4]))&&r.slice(1,4).join(' ').toLocaleLowerCase('pl').includes(q));
  $('sport-count').textContent=rows.length+' rozgrywek w katalogu · '+rows.filter(r=>r[4]).length+' z podłączonym źródłem meczów';
  const root=$('sport-list');root.replaceChildren();
  for(const r of rows){
@@ -2533,7 +2539,7 @@ function renderCatalogue(){
    if(active){const b=make('button','secondary','Otwórz mecze →');b.type='button';b.addEventListener('click',()=>{const select=$('live-league');if(select.value!==r[4]){select.value=r[4];select.dispatchEvent(new Event('change',{bubbles:true}));}positions.set('mecze',0);location.hash='mecze';if(current==='mecze')window.scrollTo(0,0);});card.append(b);}
    root.append(card);
  }
- if(!rows.length)root.append(make('p','empty','Brak rozgrywek pasujących do wyszukiwania.'));
+ if(!rows.length)root.append(make('p','empty',connectedOnly?'Brak podłączonych lig w tych filtrach. Zmień dyscyplinę lub wyłącz „Tylko podłączone ligi”.':'Brak rozgrywek pasujących do wyszukiwania.'));
 }
 $('sport-search').addEventListener('input',renderCatalogue);
 renderCatalogue();
