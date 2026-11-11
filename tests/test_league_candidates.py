@@ -154,7 +154,7 @@ class LeagueCandidateAuditTests(unittest.TestCase):
         example["team1"]["teamName"] = "Northern|Rangers [A]\\n<b>Club</b>"
         team = audit.normalize(example)
         self.assertIsNotNone(team)
-        self.assertEqual(team["home"], "Northern Rangers  A   b Club /b ")
+        self.assertEqual(team["home"], "Northern Rangers  A b Club /b")
         self.assertEqual(team["away"], "Away")
 
     def test_overdue_without_result_uses_48_hour_grace_period(self):
