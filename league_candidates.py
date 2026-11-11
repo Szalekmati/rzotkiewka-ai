@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 import os
 import re
+from collections import Counter
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from urllib.error import HTTPError, URLError
@@ -71,6 +72,38 @@ def accepted_final_score(raw):
     return None
 
 
+def final_score_items(raw):
+    """Only inspect results explicitly labeled as final; never guess from order."""
+    results = raw.get("matchResults")
+    if not isinstance(results, list):
+        return []
+    return [item for item in results if isinstance(item, dict) and
+            (item.get("resultTypeID") == 2 or
+             "endergebnis" in str(item.get("resultName", "")).lower())]
+
+
+def missing_score_reason(raw):
+    """Explain the absence of an accepted score, without assuming any match was played."""
+    if accepted_final_score(raw) is not None:
+        return None
+    if raw.get("matchIsFinished") is not True:
+        return ("not_marked_finished_with_final" if final_score_items(raw)
+                else "not_marked_finished_no_final")
+    results = raw.get("matchResults")
+    if not isinstance(results, list):
+        return "marked_finished_invalid_result_list"
+    if not results:
+        return "marked_finished_empty_result_list"
+    if not final_score_items(raw):
+        return "marked_finished_no_final_result"
+    return "marked_finished_invalid_final_points"
+
+
+def report_team_label(text):
+    """Keep public, provider-supplied team names readable in Markdown reports."""
+    return re.sub(r"[\\r\\n|<>\\[\\]]+", " ", str(text)).strip()[:90]
+
+
 def normalize(raw):
     if not isinstance(raw, dict):
         return None
@@ -89,8 +122,11 @@ def normalize(raw):
         return None
     return {
         "id": mids[0], "kickoff": date,
+        "home": report_team_label(home["teamName"]),
+        "away": report_team_label(away["teamName"]),
         "finished_flag": raw.get("matchIsFinished") is True,
         "score": accepted_final_score(raw),
+        "missing_score_reason": missing_score_reason(raw),
     }
 
 
@@ -112,9 +148,18 @@ def assess(raw_matches, now):
     # Bounded, deterministic evidence permits tracing bad source updates
     # without copying full responses or changing the model.
     overdue_samples = [
-        {"match_id": m["id"], "kickoff_utc": m["kickoff"].isoformat()}
+        {
+            "match_id": m["id"],
+            "kickoff_utc": m["kickoff"].isoformat(),
+            "home": m["home"],
+            "away": m["away"],
+            "finished_flag": m["finished_flag"],
+            "cause": m["missing_score_reason"],
+        }
         for m in overdue[:10]
     ]
+    overdue_reasons = dict(sorted(Counter(
+        m["missing_score_reason"] for m in overdue).items()))
     return {
         "total": len(raw_matches),
         "valid": len(valid),
@@ -124,6 +169,7 @@ def assess(raw_matches, now):
         "finished_without_accepted_score": invalid_finished,
         "overdue_without_result_48h": len(overdue),
         "overdue_without_result_samples": overdue_samples,
+        "overdue_cause_counts": overdue_reasons,
         "future_with_kickoff": len(future),
         "nearest_future_utc": min((m["kickoff"].isoformat() for m in future), default=None),
     }
@@ -231,11 +277,17 @@ def run(now=None, output=OUT):
             samples = block.get("overdue_without_result_samples") or []
             if samples:
                 lines.append("Zaległe spotkania sezonu " + str(block["season"]) +
-                             " (ID; termin UTC; próbka do 10 z " +
+                             " (ID; termin UTC; drużyny; stan źródła; próbka do 10 z " +
                              str(block["overdue_without_result_48h"]) + "):")
                 for row in samples:
                     lines.append("- #" + str(row["match_id"]) + " — " +
-                                 str(row["kickoff_utc"]))
+                                 str(row["kickoff_utc"]) + " — " + row["home"] +
+                                 " / " + row["away"] + " — " + row["cause"])
+                counts = block.get("overdue_cause_counts") or {}
+                lines.append("Przyczyny według pól źródła (cała próba zaległych): " +
+                             ", ".join(k + "=" + str(v) for k, v in sorted(counts.items())) + ".")
+                lines.append("Oznaczenie meczu jako niezakończony nie rozstrzyga, czy " +
+                             "spotkanie faktycznie odbyło się: sprawdź drugie źródło.")
                 lines.append("")
             if block.get("error"):
                 lines.append("API " + item["shortcut"] + "/" + str(block["season"]) +
