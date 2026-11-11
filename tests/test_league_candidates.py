@@ -175,7 +175,7 @@ class LeagueCandidateAuditTests(unittest.TestCase):
             if season == 2025:
                 return history()
             rows = current()
-            rows[0]["matchResults"] = []
+            rows[2]["matchResults"] = []
             return rows
         with tempfile.TemporaryDirectory() as directory, patch.object(audit, "get_matches", fake_fetch):
             result = audit.run(NOW, Path(directory))
@@ -185,10 +185,10 @@ class LeagueCandidateAuditTests(unittest.TestCase):
             report = (Path(directory) / "RAPORT_LIG.md").read_text(encoding="utf-8")
             self.assertIn("Zaległe spotkania sezonu 2026", report)
             self.assertIn("próbka do 10 z 1", report)
-            self.assertIn("#200 — ", report)
+            self.assertIn("#202 — ", report)
             json_report = json.loads((Path(directory) / "wyniki_lig.json").read_text())
             self.assertEqual(json_report["candidates"][0]["current"]
-                             ["overdue_without_result_samples"][0]["match_id"], 200)
+                             ["overdue_without_result_samples"][0]["match_id"], 202)
 
 
 if __name__ == "__main__":
