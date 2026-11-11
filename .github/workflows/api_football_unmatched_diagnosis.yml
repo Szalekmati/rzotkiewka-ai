@@ -1,0 +1,42 @@
+name: RZOTKIEWKA - diagnoza nieporownanych meczow
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'api_football_unmatched_diagnosis.py'
+      - 'tests/test_api_football_unmatched_diagnosis.py'
+      - '.github/workflows/api_football_unmatched_diagnosis.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'api_football_unmatched_diagnosis.py'
+      - 'tests/test_api_football_unmatched_diagnosis.py'
+      - '.github/workflows/api_football_unmatched_diagnosis.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  offline:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Testy bez danych i dostepu do API
+        run: python -m unittest discover -s tests -p 'test_api_football_unmatched_diagnosis.py' -v
+  diagnostic:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    needs: offline
+    runs-on: ubuntu-24.04
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Diagnoza dwoch rozgrywek, dwa wywolania API
+        env:
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+        run: python api_football_unmatched_diagnosis.py
