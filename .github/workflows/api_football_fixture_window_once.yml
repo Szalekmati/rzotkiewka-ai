@@ -1,0 +1,34 @@
+name: RZOTKIEWKA - jednorazowy audyt terminarzy 7 lig
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/api_football_fixture_window_once.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rzotkiewka-api-football-fixtures-one-shot-202611
+  cancel-in-progress: false
+
+jobs:
+  one-shot-fixture-audit:
+    if: >-
+      ${{ github.event.head_commit.message == 'RZOTKIEWKA: jednorazowa kontrola siedmiu lig 01-10.11.2026' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Weryfikuj struktury offline
+        run: python -m unittest discover -s tests -p 'test_api_football_fixtures_quality.py' -v
+      - name: Weryfikuj 7 lig na ograniczonej probie rzeczywistej
+        env:
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+        run: |
+          python api_football_fixtures_quality.py \
+            --season 2026 --from-date 2026-11-01 --to-date 2026-11-10
