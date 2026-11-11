@@ -1,0 +1,50 @@
+name: RZOTKIEWKA - gotowosc danych przedmeczowych API
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'api_football_prematch_readiness.py'
+      - 'tests/test_api_football_prematch_readiness.py'
+      - '.github/workflows/api_football_prematch_readiness.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'api_football_prematch_readiness.py'
+      - 'tests/test_api_football_prematch_readiness.py'
+      - '.github/workflows/api_football_prematch_readiness.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rzotkiewka-prematch-readiness-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  offline-tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Bezpieczne testy adaptera offline
+        run: python -m unittest discover -s tests -p 'test_api_football_prematch_readiness.py' -v
+
+  live-audit:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    needs: offline-tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Sprawdz dostepnosc historii i przyszlych spotkan, maks. 2 zapytania
+        env:
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+        run: python api_football_prematch_readiness.py
