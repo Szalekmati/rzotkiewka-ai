@@ -231,6 +231,18 @@ class LeagueCandidateAuditTests(unittest.TestCase):
             self.assertIn("100 | 100 | 100 | 50 | 50 |", text)
             self.assertNotIn("Zaległe spotkania sezonu", text)
 
+    def test_empty_historical_league_lists_manual_discovery_without_guessing(self):
+        def fake_fetch(code, season):
+            return [] if season == 2025 else current()
+        with tempfile.TemporaryDirectory() as directory, patch.object(audit, "get_matches", fake_fetch):
+            result = audit.run(NOW, Path(directory))
+            self.assertTrue(all(row["decision"] == "DANE NIEWYSTARCZAJĄCE"
+                                for row in result["candidates"]))
+            report = (Path(directory) / "RAPORT_LIG.md").read_text(encoding="utf-8")
+            self.assertIn("https://api.openligadb.de/getavailableleagues/2025", report)
+            self.assertIn("Pusta lista meczów nie dowodzi", report)
+            self.assertFalse(result["automatic_promotion"])
+
     def test_run_report_lists_overdue_ids_and_counts_without_auto_accept(self):
         def fake_fetch(code, season):
             if season == 2025:
@@ -247,7 +259,7 @@ class LeagueCandidateAuditTests(unittest.TestCase):
             self.assertIn("Zaległe spotkania sezonu 2026", report)
             self.assertIn("próbka do 10 z 1", report)
             self.assertIn("#202 — ", report)
-            self.assertIn("Home / Away — marked_finished_empty_result_list", report)
+            self.assertIn("Home / Away — Flaga zakończenia jest, lista wyników pusta (marked_finished_empty_result_list)", report)
             self.assertIn("Przyczyny według pól źródła", report)
             self.assertIn("marked_finished_empty_result_list=1", report)
             json_report = json.loads((Path(directory) / "wyniki_lig.json").read_text())
