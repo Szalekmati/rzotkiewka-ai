@@ -1,0 +1,32 @@
+name: RZOTKIEWKA - jednorazowa kontrola danych przedmeczowych
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/api_football_prematch_once.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rzotkiewka-data-readiness-once-20261111
+  cancel-in-progress: false
+
+jobs:
+  prematch-readiness-once:
+    if: >-
+      ${{ github.event.head_commit.message == 'RZOTKIEWKA: jednorazowo sprawdz gotowosc danych Premier League i LaLiga' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Testy offline przed sprawdzeniem platnego API
+        run: python -m unittest discover -s tests -p 'test_api_football_prematch_readiness.py' -v
+      - name: Dwa kontrolowane zapytania o mecze i historie
+        env:
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+        run: python api_football_prematch_readiness.py
