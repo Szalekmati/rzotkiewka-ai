@@ -1,0 +1,28 @@
+name: RZOTKIEWKA - jednorazowa kontrola ID klubow
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/api_football_team_ids_once.yml'
+permissions:
+  contents: read
+concurrency:
+  group: rzotkiewka-team-id-one-shot-20261111
+  cancel-in-progress: false
+jobs:
+  team-id-one-shot:
+    if: >-
+      ${{ github.event.head_commit.message == 'RZOTKIEWKA: jednorazowy audyt ID klubow listopad 2026' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Testy offline 14 przypadkow
+        run: python -m unittest discover -s tests -p 'test_api_football_team_id_audit.py' -v
+      - name: Sprawdz 2 ligi, do 6 zapytan
+        env:
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+        run: python api_football_team_id_audit.py
