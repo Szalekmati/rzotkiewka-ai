@@ -62,7 +62,7 @@ const path = require('node:path');
       assert.equal(await cards.count(), 3, 'Planned basketball leagues return after reset: ' + width);
       assert.equal(await page.locator('#sport-list .competition-status.active').count(), 0);
       await page.locator('#sport-filters button').first().click();
-      assert.equal(await cards.count(), 17, 'Reset must restore full catalogue: ' + width);
+      assert.equal(await cards.count(), 18, 'Reset must restore full catalogue: ' + width);
       await page.screenshot({ path: 'mobile-nav-' + width + '.png' });
       await page.close();
     }
