@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from urllib.error import HTTPError, URLError
@@ -28,14 +29,23 @@ MIN_VALID_FRACTION = 0.98
 OUT = Path("league_audit")
 
 
+# The provider publishes matchDateTime (local) AND matchDateTimeUTC.
+# Never guess that an unzoned timestamp means UTC: it could be local time,
+# moving the 162–168h study window and invalidating historical comparisons.
+UTC_TIMESTAMP = re.compile(
+    r"^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}"
+    r"(?:\\.\\d+)?(?:Z|[+-]\\d{2}:\\d{2})$"
+)
+
+
 def parse_utc(raw):
     text = raw.get("matchDateTimeUTC")
-    if not isinstance(text, str) or not text:
+    if not isinstance(text, str) or not UTC_TIMESTAMP.fullmatch(text):
         return None
     try:
         date = datetime.fromisoformat(text.replace("Z", "+00:00"))
         if date.tzinfo is None:
-            date = date.replace(tzinfo=timezone.utc)
+            return None
         date = date.astimezone(timezone.utc)
         if not 2000 <= date.year <= 2100:
             return None
