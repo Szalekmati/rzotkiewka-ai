@@ -1,0 +1,50 @@
+name: RZOTKIEWKA - oficjalne listy klubow 2026
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'api_football_official_roster.py'
+      - 'tests/test_api_football_official_roster.py'
+      - '.github/workflows/api_football_official_roster.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'api_football_official_roster.py'
+      - 'tests/test_api_football_official_roster.py'
+      - '.github/workflows/api_football_official_roster.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rzotkiewka-official-roster-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  offline:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Testy offline list ligowych
+        run: python -m unittest discover -s tests -p 'test_api_football_official_roster.py' -v
+
+  compare:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    needs: offline
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Porownaj tylko zagregowane metryki, max dwa odczyty API
+        env:
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+        run: python api_football_official_roster.py
