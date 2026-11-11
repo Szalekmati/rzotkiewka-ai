@@ -57,23 +57,6 @@ test('archive passport lists recorded inputs, lead time and source, not invented
   assert.equal(find(root,'details').length,2,'Passport and nested ID list should use accessible details');
 });
 
-test('missing snapshot input metadata is explicitly unavailable, never invented',()=>{
-  const rec=structuredClone(archive[0]);
-  delete rec.snapshot.league_matches_used;
-  delete rec.snapshot.home_matches_used;
-  delete rec.snapshot.away_matches_used;
-  delete rec.snapshot.expected_home_goals;
-  delete rec.snapshot.expected_away_goals;
-  delete rec.snapshot.home_match_ids;
-  delete rec.snapshot.away_match_ids;
-  // Unit test of presentation fallback only: this mutated record is never
-  // inserted into the verified archive or shown by the real page.
-  const root=passport(rec);
-  // Remove original record from fixture state by changing the match ID so
-  // the lookup will be empty and the supplied record will be used as latest.
-  assert.ok(root);
-});
-
 // Verify fallback with a record ID absent from the true archive.
 test('passport shows missing counts and scores without fabricating values',()=>{
   const rec=structuredClone(archive[0]);
