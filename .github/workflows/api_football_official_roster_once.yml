@@ -1,0 +1,28 @@
+name: RZOTKIEWKA - jednorazowe sprawdzenie oficjalnych list klubow
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/api_football_official_roster_once.yml'
+permissions:
+  contents: read
+concurrency:
+  group: rzotkiewka-official-rosters-once-20261111
+  cancel-in-progress: false
+jobs:
+  triangulate-once:
+    if: >-
+      ${{ github.event.head_commit.message == 'RZOTKIEWKA: jednorazowa kontrola aliasow wobec oficjalnych list lig' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Najpierw testy offline
+        run: python -m unittest discover -s tests -p 'test_api_football_official_roster.py' -v
+      - name: Porownaj oficjalne wykazy, dwa odczyty zespolow
+        env:
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+        run: python api_football_official_roster.py
