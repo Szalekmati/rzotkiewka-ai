@@ -40,7 +40,7 @@ class ClubNamesTests(unittest.TestCase):
 
     def test_many_to_one_ambiguity_rejected(self):
         names, counts = propose_names(
-            {"futbol deportivo alaves","club deportivo alaves"}, {"alaves"}
+            {"brighton north","brighton south"}, {"brighton north south"}
         )
         self.assertEqual(names, {})
         self.assertEqual(counts["ambiguous_api_names"], 1)
