@@ -99,6 +99,18 @@ def missing_score_reason(raw):
     return "marked_finished_invalid_final_points"
 
 
+# Machine-readable reasons are stable across audits. Human labels do not
+# claim that a scheduled game actually happened; they describe provider fields.
+CAUSE_EXPLANATIONS = {
+    "not_marked_finished_no_final": "Brak flagi zakończenia i wyniku końcowego",
+    "not_marked_finished_with_final": "Wynik końcowy jest, flaga zakończenia niepotwierdzona",
+    "marked_finished_invalid_result_list": "Flaga zakończenia jest, lista wyników nieprawidłowa",
+    "marked_finished_empty_result_list": "Flaga zakończenia jest, lista wyników pusta",
+    "marked_finished_no_final_result": "Flaga zakończenia jest, brak pozycji końcowego wyniku",
+    "marked_finished_invalid_final_points": "Flaga zakończenia jest, punkty wyniku końcowego nieprawidłowe",
+}
+
+
 def report_team_label(text):
     """Keep public, provider-supplied team names readable in Markdown reports."""
     return re.sub(r"[\r\n|<>\[\]]+", " ", str(text)).strip()[:90]
@@ -269,6 +281,13 @@ def run(now=None, output=OUT):
                      met(cur, "finished_with_score") + " | " +
                      met(cur, "future_with_kickoff") + " | " +
                      item["decision"] + " |")
+        if not hist.get("error") and hist.get("total") == 0:
+            lines.append("")
+            lines.append("Historyczne dane " + item["shortcut"] + "/" + str(hist["season"]) +
+                         " to pusta odpowiedź. Sprawdź osobno dostępne skróty sezonu: " +
+                         "https://api.openligadb.de/getavailableleagues/" +
+                         str(hist["season"]) + ". Pusta lista meczów nie dowodzi " +
+                         "istnienia albo nieistnienia ligi.")
         if item["reasons"]:
             lines.append("")
             lines.append("**" + item["league"] + ":** " + "; ".join(item["reasons"]) + ".")
@@ -282,7 +301,9 @@ def run(now=None, output=OUT):
                 for row in samples:
                     lines.append("- #" + str(row["match_id"]) + " — " +
                                  str(row["kickoff_utc"]) + " — " + row["home"] +
-                                 " / " + row["away"] + " — " + row["cause"])
+                                 " / " + row["away"] + " — " +
+                                 CAUSE_EXPLANATIONS.get(row["cause"], row["cause"]) +
+                                 " (" + row["cause"] + ")")
                 counts = block.get("overdue_cause_counts") or {}
                 lines.append("Przyczyny według pól źródła (cała próba zaległych): " +
                              ", ".join(k + "=" + str(v) for k, v in sorted(counts.items())) + ".")
