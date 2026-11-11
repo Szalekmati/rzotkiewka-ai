@@ -14,6 +14,10 @@ Publiczny, eksperymentalny serwis z terminarzem piłkarskim, modelem prawdopodob
 - Oddzielny test historyczny, jednoznacznie oznaczony jako retrospektywny.
 - Fikcyjne typy **DEMO** w `tips.json`; widok planowanego Premium za 19,99 zł miesięcznie.
 
+## Kontrola czasu meczów w audycie nowych lig
+
+W audycie kandydatów (Premier League, LaLiga, Liga Mistrzów) wymagamy jednoznacznej daty i godziny `matchDateTimeUTC` z podaną strefą (`Z` lub przesunięcie `±HH:MM`). Dat lokalnych bez strefy nie wolno po cichu traktować jako UTC: taka pomyłka mogłaby przesunąć mecz oraz okna porównywania modeli. Niepoprawne daty obniżają kompletność danych w raporcie; nie są naprawiane przez zgadywanie. Kontrole pull request działają bez zapytań do zewnętrznego API, a istniejące zaplanowane audyty pozostają tylko badaniem źródeł: **nie dodają lig do aplikacji ani LAB automatycznie**.
+
 ## Katalog dostępnych i planowanych lig
 
 Zakładka **Sporty i ligi** rozdziela rozgrywki z prawdziwie podłączonym źródłem danych od pozycji planowanych. Filtr **„Tylko podłączone ligi”** pokazuje obecnie trzy dostępne terminarze: Bundesliga, 2. Bundesliga i 3. Liga. Filtr współpracuje z wyszukiwaniem i wyborem dyscypliny, można go wyłączyć bez utraty pozostałych pozycji katalogu. Nie włącza nowych API, nie zmienia analizy meczów ani zamrożonych modeli LAB 2.1/2.2. Testy Chromium na małych ekranach sprawdzają, że wybranie dyscypliny bez danych nie powoduje fałszywej deklaracji dostępności.

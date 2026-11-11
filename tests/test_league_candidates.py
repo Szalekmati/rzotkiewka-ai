@@ -55,6 +55,40 @@ class LeagueCandidateAuditTests(unittest.TestCase):
         broken["matchDateTimeUTC"] = "bad-time"
         self.assertIsNone(audit.normalize(broken))
 
+    def test_utc_kickoff_must_be_explicit_and_never_guessed(self):
+        # The provider also exposes a local matchDateTime field; neither a
+        # naive datetime nor date-only data can be silently interpreted as UTC.
+        for value in (
+            "2026-11-13T18:30:00",
+            "2026-11-13 18:30:00",
+            "2026-11-13",
+            "2026-11-13T18:30:00 ",
+            "2026-11-13T18:30:00Z ",
+            "",
+        ):
+            with self.subTest(utc=value):
+                row = fixture(20, NOW + timedelta(days=3))
+                row["matchDateTimeUTC"] = value
+                self.assertIsNone(audit.normalize(row))
+        row = fixture(21, NOW + timedelta(days=3))
+        row["matchDateTimeUTC"] = "2026-11-13T18:30:00+01:00"
+        parsed = audit.normalize(row)
+        self.assertIsNotNone(parsed)
+        self.assertEqual(parsed["kickoff"].isoformat(), "2026-11-13T17:30:00+00:00")
+        row["matchDateTimeUTC"] = "2026-11-13T17:30:00Z"
+        self.assertEqual(audit.normalize(row)["kickoff"], parsed["kickoff"])
+        row["matchDateTimeUTC"] = "2026-11-13T17:30:00.125Z"
+        self.assertEqual(audit.normalize(row)["kickoff"].microsecond, 125000)
+        # Invalid datetime is reported as an incomplete candidate, not
+        # quietly accepted as if the provider supplied valid UTC.
+        broken = [fixture(i + 1, NOW - timedelta(days=i + 1), finished=True)
+                  for i in range(100)]
+        broken[1]["matchDateTimeUTC"] = "2026-11-10T18:30:00"
+        report = audit.assess(broken, NOW)
+        self.assertEqual(report["valid"], 99)
+        self.assertEqual(report["valid_fraction"], 0.99)
+        self.assertIsNone(audit.normalize({"matchDateTimeUTC": None}))
+
     def test_finished_requires_accepted_final_result(self):
         item = audit.normalize(fixture(1, NOW - timedelta(days=1), finished=True, result=False))
         self.assertTrue(item["finished_flag"])
