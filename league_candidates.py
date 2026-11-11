@@ -101,7 +101,7 @@ def missing_score_reason(raw):
 
 def report_team_label(text):
     """Keep public, provider-supplied team names readable in Markdown reports."""
-    return re.sub(r"[\\r\\n|<>\\[\\]]+", " ", str(text)).strip()[:90]
+    return re.sub(r"[\r\n|<>\[\]]+", " ", str(text)).strip()[:90]
 
 
 def normalize(raw):
