@@ -7,6 +7,8 @@ on:
     paths:
       - 'league_candidates.py'
       - 'tests/test_league_candidates.py'
+      - 'league_shortcuts_2025.py'
+      - 'tests/test_league_shortcuts_2025.py'
       - 'ucl_deep_audit.py'
       - 'tests/test_ucl_deep_audit.py'
       - '.github/workflows/audyt_nowych_lig.yml'
@@ -15,6 +17,8 @@ on:
     paths:
       - 'league_candidates.py'
       - 'tests/test_league_candidates.py'
+      - 'league_shortcuts_2025.py'
+      - 'tests/test_league_shortcuts_2025.py'
       - 'ucl_deep_audit.py'
       - 'tests/test_ucl_deep_audit.py'
       - '.github/workflows/audyt_nowych_lig.yml'
@@ -44,6 +48,11 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_league_candidates.py' -v
       - name: Testy pogłębionego audytu Ligi Mistrzow (offline)
         run: python -m unittest discover -s tests -p 'test_ucl_deep_audit.py' -v
+      - name: Testy spisu identyfikatorow lig 2025 (offline)
+        run: python -m unittest discover -s tests -p 'test_league_shortcuts_2025.py' -v
+      - name: Sprawdz historyczne skroty lig 2025 (jeden odczyt API)
+        if: github.event_name != 'pull_request'
+        run: python league_shortcuts_2025.py
       - name: Przeprowadz audyt 3 kandydatow (tylko odczyt)
         if: github.event_name != 'pull_request'
         run: python league_candidates.py
