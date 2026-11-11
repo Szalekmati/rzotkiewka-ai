@@ -76,7 +76,11 @@ class OpenFootballHistoryTests(unittest.TestCase):
             self.assertFalse(result["automatic_promotion"])
             self.assertFalse(result["models_modified"])
             self.assertEqual(len(result["leagues"]), 2)
-            self.assertTrue(all(x["structurally_complete"]
+            # The two-match fixture is intentionally too small for a 380-game
+            # real season. The report must NOT label it complete.
+            self.assertTrue(all(x["parsed_scores"] == 2
+                                for x in result["leagues"].values()))
+            self.assertTrue(all(not x["structurally_complete"]
                                 for x in result["leagues"].values()))
             text = (Path(tmp) / "OPENFOOTBALL_HISTORIA_2025.md").read_text()
             self.assertIn("Struktura", text)
