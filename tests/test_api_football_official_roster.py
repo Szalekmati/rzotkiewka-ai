@@ -2,7 +2,7 @@
 import unittest
 
 from api_football_official_roster import (
-    OFFICIAL, official_pivot, triangulate, validate_registry,
+    OFFICIAL, OFFICIAL_FULL_NAME_EVIDENCE, official_pivot, triangulate, validate_registry,
 )
 
 
@@ -66,6 +66,29 @@ class OfficialRosterTests(unittest.TestCase):
         result = triangulate({"barcellona","arsenal"}, {"barcelona","arsenal"},39)
         self.assertEqual(result["official_roster_source_matches"],1)
         self.assertEqual(result["auto_approved_aliases"],0)
+
+    def test_deportivo_full_name_from_club_official_evidence(self):
+        forms = OFFICIAL_FULL_NAME_EVIDENCE[140]
+        clubs = OFFICIAL[140]["clubs"]
+        for label in ("RC Deportivo La Coruña", "Deportivo La Coruna",
+                      "Real Club Deportivo de A Coruña",
+                      "Real Club Deportivo de La Coruña"):
+            with self.subTest(label=label):
+                self.assertEqual(
+                    official_pivot(label, clubs, forms), "rc deportivo")
+
+    def test_deportivo_alaves_is_never_misidentified(self):
+        forms = OFFICIAL_FULL_NAME_EVIDENCE[140]
+        clubs = OFFICIAL[140]["clubs"]
+        self.assertEqual(
+            official_pivot("Deportivo Alavés", clubs, forms),
+            "deportivo alaves")
+        self.assertIsNone(official_pivot("Deportivo", clubs, forms))
+
+    def test_full_name_evidence_must_point_to_official_club(self):
+        with self.assertRaises(ValueError):
+            official_pivot("Coruna", OFFICIAL[140]["clubs"],
+                           {"nonexisting club": ("Coruna",)})
 
     def test_registry_is_season_specific(self):
         for league in (39,140):
