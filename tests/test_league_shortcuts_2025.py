@@ -51,7 +51,7 @@ class LeagueShortcutTests(unittest.TestCase):
         ])
         self.assertEqual(x["matching_entries"], 1)
         row = x["manual_review_leads"][0]
-        self.assertEqual(row["name"], "Primera División   Spain  a")
+        self.assertEqual(row["name"], "Primera División   Spain a")
         self.assertNotIn("|", row["name"])
         self.assertNotIn("\n", row["name"])
 
