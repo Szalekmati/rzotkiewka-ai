@@ -33,6 +33,25 @@ const path = require('node:path');
           document.querySelector('nav.mobile-nav a[href="' + expected + '"]')?.getAttribute('aria-current') === 'page', hash, { timeout: 5000 });
         assert.equal(await link.getAttribute('aria-current'), 'page', 'Inactive tab ' + hash + ' at ' + width);
       }
+      // The 17-item catalogue must distinguish actual data from the roadmap.
+      await nav.locator('a[href="#sporty"]').click();
+      const cards = page.locator('#sport-list .competition-card');
+      const connected = page.locator('#sport-connected-only');
+      assert.equal(await cards.count(), 17, 'Entire league catalogue must be visible initially: ' + width);
+      assert.equal(await connected.getAttribute('aria-pressed'), 'false');
+      await connected.click();
+      assert.equal(await connected.getAttribute('aria-pressed'), 'true');
+      assert.equal(await cards.count(), 3, 'Only three football leagues have connected data: ' + width);
+      assert.equal(await page.locator('#sport-list .competition-status.active').count(), 3);
+      await page.locator('#sport-filters button').filter({ hasText: 'Koszykówka' }).click();
+      assert.equal(await cards.count(), 0, 'Unavailable sport must not pretend to be connected: ' + width);
+      assert.match(await page.locator('#sport-list .empty').innerText(), /Brak podłączonych lig/);
+      await connected.click();
+      assert.equal(await connected.getAttribute('aria-pressed'), 'false');
+      assert.equal(await cards.count(), 3, 'Planned basketball leagues return after reset: ' + width);
+      assert.equal(await page.locator('#sport-list .competition-status.active').count(), 0);
+      await page.locator('#sport-filters button').first().click();
+      assert.equal(await cards.count(), 17, 'Reset must restore full catalogue: ' + width);
       await page.screenshot({ path: 'mobile-nav-' + width + '.png' });
       await page.close();
     }
