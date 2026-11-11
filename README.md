@@ -28,6 +28,12 @@ Kontrola jakości GitHub Actions dodatkowo uruchamia test `tests/test_prediction
 
 Zakładka **Sporty i ligi** rozdziela rozgrywki z prawdziwie podłączonym źródłem danych od pozycji planowanych. Filtr **„Tylko podłączone ligi”** pokazuje obecnie trzy dostępne terminarze: Bundesliga, 2. Bundesliga i 3. Liga. Filtr współpracuje z wyszukiwaniem i wyborem dyscypliny, można go wyłączyć bez utraty pozostałych pozycji katalogu. Nie włącza nowych API, nie zmienia analizy meczów ani zamrożonych modeli LAB 2.1/2.2. Testy Chromium na małych ekranach sprawdzają, że wybranie dyscypliny bez danych nie powoduje fałszywej deklaracji dostępności.
 
+## Darmowa analiza dnia — bez wybierania zwycięzców po fakcie
+
+Na stronie **Darmowe** wyróżniamy analizę najbliższego **jeszcze nierozpoczętego** spotkania w **bieżącej dacie kalendarzowej Warszawy**, ale **wyłącznie** wtedy, gdy jej zapis `predictions.json` został wcześniej pozytywnie zweryfikowany (wszystkie rekordy i SHA-256). Wybór to **najwcześniejszy termin rozpoczęcia, potem identyfikator**, bez sortowania po wysokiej szansie, wcześniejszej skuteczności czy wyniku. Pokazujemy cały rozkład 1/X/2, datę utworzenia, model, informację o oczekiwaniu na wynik i link do tego samego Paszportu prognozy w publicznym archiwum. Nie przepisujemy rekordów do drugiego pliku ani nie tworzymy fikcyjnego typu DEMO.
+
+Gdy nie ma prognozy dla przyszłego meczu danego dnia, widać jednoznaczny komunikat **„Brak nowej, zapisanej prognozy na dziś”**. Brak spójnego archiwum lub nieukończona weryfikacja **blokują pokazanie dziennej analizy**. Zmiana daty według `Europe/Warsaw` nie zależy od strefy urządzenia i jest testowana przy przejściu przez północ. Ani prognoza dnia, ani jej miejsce na stronie nie oznaczają porady do zakładu, gwarancji trafienia lub potwierdzonej rentowności.
+
 ## Darmowe prognozy i przyszły Premium
 
 Zakładka **🔓 Darmowe** pokazuje realnie zapisane przed meczem prognozy 1/X/2, ich rozliczenia oraz całe archiwum (trafienia i pomyłki). Widok Premium jest planem produktu; płatności i bezpieczna kontrola dostępu nie działają. Plik `tips.json` zawiera wyłącznie fikcyjne rekordy DEMO — nie można przedstawiać ich jako historii skutecznych zakładów.

@@ -212,6 +212,12 @@
     .free-showcase .free-showcase-note{font-size:12px;color:#b4c5bc;margin-top:15px}
     .free-showcase-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:17px}
     .free-showcase-actions a{font-size:13px;text-align:center}
+    .free-daily{margin:12px 0 21px;padding:clamp(16px,3vw,22px);border:1px solid #41634a;border-radius:16px;background:#11231e}
+    .free-daily h3{font-size:clamp(18px,3vw,23px);margin:8px 0 10px;line-height:1.3}
+    .free-daily p{font-size:13px;line-height:1.7;color:#c7d9cf;margin:7px 0}
+    .free-daily .daily-eyebrow{font-size:11px;color:#c7f3a8;font-weight:850;letter-spacing:.04em}
+    .free-daily .daily-probs{font-size:15px;font-weight:800;color:#e1ffd8}
+    .free-daily a{display:inline-flex;align-items:center;margin-top:12px;min-height:44px}
     .rank-shell{border:1px solid #345a43;background:linear-gradient(145deg,#14231c,#131c24 70%);border-radius:24px;padding:clamp(16px,4vw,26px)}
     .rank-shell h2{margin:0 0 9px}
     .rank-explainer{color:var(--muted);font-size:13px;max-width:810px;margin:0 0 17px;line-height:1.7}
@@ -685,6 +691,12 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
         </div>
         <p class="free-showcase-note">Statystyki poniżej obejmują całą zweryfikowaną próbę. Mała liczba meczów nie dowodzi przewagi ani przyszłych zysków. Dostęp do prognoz jest obecnie darmowy.</p>
       </div>
+      <section class="free-daily" aria-label="Darmowa analiza dnia">
+        <span class="daily-eyebrow">⚽ DARMOWA ANALIZA DNIA · TYLKO ZAPISANE PRZED MECZEM</span>
+        <div id="free-daily-forecast" role="status" aria-live="polite">
+          <p>Sprawdzamy archiwum prognoz i SHA-256…</p>
+        </div>
+      </section>
 
       <p class="rank-explainer" id="forecast-legend"><strong>Jak czytać 1/X/2?</strong> <strong>1</strong> — wygrana gospodarzy, <strong>X</strong> — remis, <strong>2</strong> — wygrana gości. Procenty oznaczają szacowane prawdopodobieństwa modelu, a nie kursy ani pewność wyniku.</p>
       <p class="rank-explainer">Tylko prognozy opublikowane przed spotkaniem i pozytywnie zweryfikowane SHA-256. <strong>Domyślnie widać wszystkie: trafione, nietrafione i oczekujące.</strong> Najnowsze są na początku; możesz też sortować według najwyższego prawdopodobieństwa 1X2. Kolejność ani wysoki procent nie oznaczają opłacalności zakładu.</p>
@@ -1390,11 +1402,56 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
     $('rank-export-status').textContent='Wygenerowano CSV: '+records.length+' zweryfikowanych prognoz (bez ukrywania wyników).';
   }
   $('rank-export-csv').addEventListener('click',downloadVerifiedArchiveCsv);
+  // Date labels are compared in Warsaw local time. Midnight in Warsaw does
+  // not coincide with midnight UTC, especially around daylight saving.
+  function warsawDay(value){
+    const parts=Object.fromEntries(new Intl.DateTimeFormat('en-GB',{
+      timeZone:'Europe/Warsaw',year:'numeric',month:'2-digit',day:'2-digit'
+    }).formatToParts(new Date(value)).map(part=>[part.type,part.value]));
+    return parts.year+'-'+parts.month+'-'+parts.day;
+  }
+  // Selection is strictly chronological (first future kickoff today), never
+  // based on model confidence, wins, or errors. Call ONLY on SHA-checked data.
+  function pickTodayForecast(records,at=Date.now()){
+    const day=warsawDay(at);
+    return records.filter(r=>{
+      const s=r.snapshot,start=Date.parse(s.kickoff),saved=Date.parse(s.created_at);
+      return r.settlement.state==='pending'&&saved<start&&saved<=at&&start>at
+        &&warsawDay(start)===day;
+    }).sort((a,b)=>Date.parse(a.snapshot.kickoff)-Date.parse(b.snapshot.kickoff)
+      ||a.id.localeCompare(b.id))[0]||null;
+  }
+  function renderDailyForecast(at=Date.now()){
+    const root=$('free-daily-forecast');root.replaceChildren();
+    if(state.archiveFailed){
+      root.append(make('p','','Nie udało się zweryfikować archiwum. Nie publikujemy dziś żadnego typu bez potwierdzonych danych.'));return;
+    }
+    if(!state.archiveReady){
+      root.append(make('p','','Trwa weryfikacja archiwum SHA-256. Nie pokazujemy niepotwierdzonych prognoz.'));return;
+    }
+    const chosen=pickTodayForecast(state.archive,at);
+    if(!chosen){
+      root.append(make('h3','','Brak nowej, zapisanej prognozy na dziś'));
+      root.append(make('p','','Na dziś nie ma w zweryfikowanym archiwum prognozy przyszłego meczu. Nie podstawiamy dawnych trafień ani prognoz DEMO.'));
+      const archiveLink=make('a','archive-link','Sprawdź pełne archiwum — także pomyłki');
+      archiveLink.href='./predictions.json';archiveLink.target='_blank';archiveLink.rel='noopener noreferrer';root.append(archiveLink);return;
+    }
+    const s=chosen.snapshot,p=s.probabilities;
+    root.append(make('h3','',s.home+' – '+s.away));
+    root.append(make('p','', (allowedLeagues[s.league]||s.league)+' · mecz: '+passportDate(s.kickoff)+' · model '+s.model_version));
+    root.append(make('p','daily-probs','1 '+formattedPercent(p['1'])+' · X '+formattedPercent(p.X)+' · 2 '+formattedPercent(p['2'])));
+    root.append(make('p','','Zapis: '+passportDate(s.created_at)+' · SHA-256: '+chosen.snapshot_sha256.slice(0,16)+'… · wynik oczekuje. Wybór wyłącznie według najbliższej godziny meczu, bez selekcji po trafności.'));
+    root.append(make('p','','Prawdopodobieństwa modelu, nie kursy bukmacherskie i nie gwarancja wyniku. SHA-256 potwierdza spójność zapisu, nie niezależny czas publikacji.'));
+    const link=make('a','secondary','Otwórz Paszport prognozy i jej historię');
+    const url=new URL(location.pathname,location.origin);url.searchParams.set('forecast',chosen.id);url.hash='ranking';
+    link.href=url.toString();root.append(link);
+  }
   function renderRanking(){
     const data=state.archive,stats=rankGroup(data);
     // The hero only presents SHA-verified archive entries already accepted by
     // the archive loader. Missing/invalid data never turns into a success claim.
     const ready=state.archiveReady&&!state.archiveFailed;
+    renderDailyForecast();
     $('rank-export-csv').disabled=!ready;
     $('rank-export-status').textContent=state.archiveFailed
       ?'Nie udało się zweryfikować archiwum — eksport zablokowany.'

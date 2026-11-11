@@ -92,6 +92,29 @@ class SiteIntegrity(unittest.TestCase):
         js = "\\n".join(self.page.js)
         self.assertIn("a.setAttribute('aria-current','page')", js)
 
+    def test_free_daily_forecast_only_from_verified_upcoming_records(self):
+        self.assertIn('id="free-daily-forecast"', self.html)
+        self.assertIn('aria-label="Darmowa analiza dnia"', self.html)
+        js = "\\n".join(self.page.js)
+        for token in (
+            "function warsawDay(value)",
+            "timeZone:'Europe/Warsaw'",
+            "function pickTodayForecast(records,at=Date.now())",
+            "r.settlement.state==='pending'",
+            "saved<start&&saved<=at&&start>at",
+            "warsawDay(start)===day",
+            "function renderDailyForecast(at=Date.now())",
+            "if(state.archiveFailed)",
+            "if(!state.archiveReady)",
+            "Nie podstawiamy dawnych trafień ani prognoz DEMO.",
+            "renderDailyForecast();",
+            "url.searchParams.set('forecast',chosen.id)",
+        ):
+            with self.subTest(token=token):
+                self.assertIn(token, js)
+        self.assertIn("wyłącznie według najbliższej godziny meczu", self.html)
+        self.assertIn("SHA-256 potwierdza spójność zapisu", self.html)
+
     def test_free_forecast_legend_explains_1x2_without_promises(self):
         self.assertIn('id="forecast-legend"', self.html)
         for phrase in ("wygrana gospodarzy", "remis", "wygrana gości",
