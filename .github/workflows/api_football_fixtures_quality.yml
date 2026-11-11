@@ -1,0 +1,72 @@
+name: RZOTKIEWKA - kontrola terminarzy API-FOOTBALL
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'api_football_fixtures_quality.py'
+      - 'tests/test_api_football_fixtures_quality.py'
+      - '.github/workflows/api_football_fixtures_quality.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'api_football_fixtures_quality.py'
+      - 'tests/test_api_football_fixtures_quality.py'
+      - '.github/workflows/api_football_fixtures_quality.yml'
+  workflow_dispatch:
+    inputs:
+      season:
+        description: "Rok startu sezonu (YYYY)"
+        type: string
+        required: true
+        default: "2026"
+      from_date:
+        description: "Data UTC od (puste = ostatnie 10 dni)"
+        type: string
+        required: false
+        default: ""
+      to_date:
+        description: "Data UTC do (puste = dzis)"
+        type: string
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rzotkiewka-fixture-quality-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  offline-tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Testy syntetyczne bez dostepu do API
+        run: python -m unittest discover -s tests -p 'test_api_football_fixtures_quality.py' -v
+
+  api-fixture-audit:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    needs: offline-tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Kontrolowany odczyt maksimum 7 zapytan
+        env:
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+          SEASON: ${{ inputs.season }}
+          FROM_DATE: ${{ inputs.from_date }}
+          TO_DATE: ${{ inputs.to_date }}
+        run: |
+          python api_football_fixtures_quality.py --season "$SEASON" --from-date "$FROM_DATE" --to-date "$TO_DATE"
