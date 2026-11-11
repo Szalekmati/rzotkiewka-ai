@@ -274,7 +274,32 @@ class SiteIntegrity(unittest.TestCase):
         # catalogue entries are only a roadmap and must not claim live data.
         for ident in ("'bl1'", "'bl2'", "'bl3'"):
             self.assertEqual(catalogue.count(ident), 1)
-        self.assertEqual(catalogue.count("['"), 17)
+        self.assertEqual(catalogue.count("['"), 18)
+
+    def test_league_quality_radar_has_dated_audit_evidence_and_no_false_admission(self):
+        for ident in ("league-radar", "league-radar-title"):
+            self.assertIn(ident, self.page.ids)
+        start = self.html.split('<section class="league-radar" id="league-radar"', 1)[1]
+        radar = start.split("</section>", 1)[0]
+        self.assertEqual(radar.count('class="league-radar-card"'), 4)
+        self.assertIn("11 listopada 2026, 13:48 (Warszawa)", radar)
+        self.assertIn("https://github.com/Szalekmati/rzotkiewka-ai/actions/runs/43023505867", radar)
+        self.assertIn("https://github.com/Szalekmati/rzotkiewka-ai/issues/13", radar)
+        for text in (
+            "TERMINARZE PODŁĄCZONE",
+            "DANE NIEWYSTARCZAJĄCE",
+            "DO RĘCZNEJ OCENY",
+            "20 meczów ponad 48 godzin",
+            "8/8 zgodnych wybranych kontroli UEFA",
+            "nie bieżący podgląd API",
+            "nie są automatycznie pokazane",
+            "nie jest pełna weryfikacja",
+        ):
+            with self.subTest(text=text):
+                self.assertIn(text, radar)
+        catalogue = "\\n".join(self.page.js).split("const catalogue=[", 1)[1].split("];", 1)[0]
+        self.assertIn("'Liga Mistrzów UEFA']", catalogue)
+        self.assertNotIn("'Liga Mistrzów UEFA','ucl'", catalogue)
 
     def test_forecast_sharing_uses_only_verified_archive_and_deep_link(self):
         self.assertIn("shared-forecast-status", self.page.ids)

@@ -202,6 +202,20 @@
     .archive-chip.waiting{border-color:#987a4a;color:#ffdfad}
     @media(max-width:420px){.archive-panel{padding:14px}.archive-metric{padding:10px}.archive-metric strong{font-size:21px}}
 
+    /* Public league-quality radar: dated research snapshot, not model approval. */
+    .league-radar{margin:21px 0 24px;padding:clamp(16px,3vw,23px);border:1px solid #51715a;border-radius:19px;background:linear-gradient(135deg,#172d29,#131d29)}
+    .league-radar-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px}
+    .league-radar h3{font-size:clamp(19px,3vw,24px);margin:5px 0 9px}
+    .league-radar p{font-size:12px;line-height:1.65;color:#c7d5ca;margin:7px 0}
+    .league-radar-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin:17px 0 12px}
+    .league-radar-card{border:1px solid #344d4c;background:#111f24;border-radius:13px;padding:14px;min-width:0}
+    .league-radar-card h4{font-size:15px;margin:0 0 10px;line-height:1.4}
+    .league-radar-status{display:inline-block;border-radius:10px;border:1px solid #7e8b65;padding:4px 8px;color:#f5e9c0;font-size:10px;font-weight:800;line-height:1.4}
+    .league-radar-status.connected{border-color:#67936d;color:#dbf8d6}
+    .league-radar-status.blocked{border-color:#a17560;color:#ffe1bd}
+    .league-radar .radar-evidence{color:#e3ffc5;text-decoration:underline;text-underline-offset:3px;display:inline-flex;align-items:center;min-height:44px;font-size:12px}
+    .league-radar .radar-disclaimer{border-top:1px solid #344e4b;padding-top:12px;margin-top:12px}
+    @media(max-width:580px){.league-radar-grid{grid-template-columns:1fr}}
     /* RZOTKIEWKA 2.0 — publiczny ranking, wyłącznie zatwierdzone snapshoty */
     .ranking-section{margin:4px 0 58px}
     /* Free-to-premium path: real archived forecasts, never demo betting tips. */
@@ -839,6 +853,39 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
 <section hidden id="sporty" aria-labelledby="sport-title">
 <div class="kicker">KATALOG ROZGRYWEK</div><h2 id="sport-title" style="margin-top:14px">Sporty i ligi</h2>
 <p class="section-sub">Wybierz dyscyplinę. Podłączone rozgrywki prowadzą do meczów, pozostałe pokazują kierunek rozwoju.</p>
+<section class="league-radar" id="league-radar" aria-labelledby="league-radar-title">
+  <div class="league-radar-top">
+    <div>
+      <div class="kicker">🔎 KONTROLA ŹRÓDEŁ · NIE RANKING SKUTECZNOŚCI</div>
+      <h3 id="league-radar-title">Radar jakości lig</h3>
+      <p><strong>Stan badania: 11 listopada 2026, 13:48 (Warszawa).</strong> To zapis wyniku audytu z tej daty, nie bieżący podgląd API ani automatyczna akceptacja lig.</p>
+    </div>
+    <a class="radar-evidence" href="https://github.com/Szalekmati/rzotkiewka-ai/actions/runs/43023505867" target="_blank" rel="noopener noreferrer">↗ Raport źródłowy GitHub</a>
+  </div>
+  <div class="league-radar-grid">
+    <article class="league-radar-card">
+      <h4>Bundesliga · 2. Bundesliga · 3. Liga</h4>
+      <span class="league-radar-status connected">TERMINARZE PODŁĄCZONE</span>
+      <p>W aplikacji działają pobieranie terminarzy i wyników OpenLigaDB. To nie stanowi osobnego certyfikatu kompletności danych ani trafności modelu.</p>
+    </article>
+    <article class="league-radar-card">
+      <h4>Premier League · Anglia</h4>
+      <span class="league-radar-status blocked">DANE NIEWYSTARCZAJĄCE</span>
+      <p>W badanej odpowiedzi źródła: <strong>0 rekordów historycznego sezonu</strong>, przy 380 spotkaniach sezonu bieżącego. Bez zatwierdzenia do prognoz.</p>
+    </article>
+    <article class="league-radar-card">
+      <h4>LaLiga · Hiszpania</h4>
+      <span class="league-radar-status blocked">DANE NIEWYSTARCZAJĄCE</span>
+      <p>W badanej odpowiedzi: <strong>0 historycznych rekordów</strong> i <strong>20 meczów ponad 48 godzin bez zaakceptowanego wyniku</strong>. Wymagana niezależna kontrola.</p>
+    </article>
+    <article class="league-radar-card">
+      <h4>Liga Mistrzów UEFA</h4>
+      <span class="league-radar-status">DO RĘCZNEJ OCENY</span>
+      <p>Rok 2024/25: <strong>189 rekordów</strong> oraz <strong>8/8 zgodnych wybranych kontroli UEFA</strong>. To nie jest pełna weryfikacja wszystkich meczów ani dopuszczenie ligi do aplikacji.</p>
+    </article>
+  </div>
+  <p class="radar-disclaimer">„Terminarz podłączony”, „źródło badane” i „model sprawdzony” to trzy różne stany. Żaden wynik tego radaru nie potwierdza rentowności typowania. Zmiany w źródłach po dacie audytu nie są automatycznie pokazane w tym panelu. <a class="radar-evidence" href="https://github.com/Szalekmati/rzotkiewka-ai/issues/13" target="_blank" rel="noopener noreferrer">↗ Lista kwestii do wyjaśnienia</a></p>
+</section>
 <div id="sport-filters" class="filters" role="group" aria-label="Dyscyplina" style="margin-top:20px"></div>
 <div class="filters" role="group" aria-label="Dostępność terminarzy" style="margin-top:12px"><button type="button" id="sport-connected-only" class="filter" aria-pressed="false">✓ Tylko podłączone ligi</button></div>
 <div class="match-search" style="margin-top:18px"><label for="sport-search">Szukaj ligi lub kraju<input id="sport-search" type="search" placeholder="np. Polska, NBA, Premier League" maxlength="90"></label></div>
@@ -2599,7 +2646,7 @@ window.addEventListener('hashchange',route);
 document.querySelectorAll('[data-page-link]').forEach(a=>a.addEventListener('click',()=>{if(location.hash===a.hash)window.scrollTo({top:0,behavior:'smooth'});}));
 const catalogue=[
  ['football','Piłka nożna','Niemcy','Bundesliga','bl1'],['football','Piłka nożna','Niemcy','2. Bundesliga','bl2'],['football','Piłka nożna','Niemcy','3. Liga','bl3'],
- ['football','Piłka nożna','Polska','Ekstraklasa'],['football','Piłka nożna','Anglia','Premier League'],['football','Piłka nożna','Hiszpania','La Liga'],['football','Piłka nożna','Włochy','Serie A'],['football','Piłka nożna','Francja','Ligue 1'],
+ ['football','Piłka nożna','Polska','Ekstraklasa'],['football','Piłka nożna','Anglia','Premier League'],['football','Piłka nożna','Hiszpania','La Liga'],['football','Piłka nożna','Europa','Liga Mistrzów UEFA'],['football','Piłka nożna','Włochy','Serie A'],['football','Piłka nożna','Francja','Ligue 1'],
  ['basketball','Koszykówka','USA / Kanada','NBA'],['basketball','Koszykówka','Europa','Euroliga'],['basketball','Koszykówka','Polska','Liga polska'],
  ['volleyball','Siatkówka','Polska','PlusLiga'],['volleyball','Siatkówka','Polska','Liga kobiet'],
  ['tennis','Tenis','Świat','ATP Tour'],['tennis','Tenis','Świat','WTA Tour'],
@@ -2622,7 +2669,8 @@ function renderCatalogue(){
  for(const r of rows){
    const card=make('article','competition-card'),active=Boolean(r[4]);
    card.append(make('p','eyebrow',r[1]+' · '+r[2]),make('h3','',r[3]),make('span','competition-status '+(active?'active':''),active?'Dane podłączone':'Planowane'));
-   card.append(make('p','',active?'Terminarz i wyniki dostępne. Szacunki modelu zależą od ilości danych.':'Źródło danych i model nie są jeszcze podłączone.'));
+   const audited=['Premier League','La Liga','Liga Mistrzów UEFA'].includes(r[3]);
+   card.append(make('p','',active?'Terminarz i wyniki dostępne. Szacunki modelu zależą od ilości danych.':audited?'Kandydat objęty audytem źródeł. Brak dopuszczenia do publicznych prognoz — sprawdź Radar jakości lig powyżej.':'Źródło danych i model nie są jeszcze podłączone.'));
    if(active){const b=make('button','secondary','Otwórz mecze →');b.type='button';b.addEventListener('click',()=>{const select=$('live-league');if(select.value!==r[4]){select.value=r[4];select.dispatchEvent(new Event('change',{bubbles:true}));}positions.set('mecze',0);location.hash='mecze';if(current==='mecze')window.scrollTo(0,0);});card.append(b);}
    root.append(card);
  }

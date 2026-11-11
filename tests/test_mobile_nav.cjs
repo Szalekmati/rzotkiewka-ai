@@ -33,11 +33,22 @@ const path = require('node:path');
           document.querySelector('nav.mobile-nav a[href="' + expected + '"]')?.getAttribute('aria-current') === 'page', hash, { timeout: 5000 });
         assert.equal(await link.getAttribute('aria-current'), 'page', 'Inactive tab ' + hash + ' at ' + width);
       }
-      // The 17-item catalogue must distinguish actual data from the roadmap.
+      // The 18-item catalogue must distinguish actual data from the roadmap.
       await nav.locator('a[href="#sporty"]').click();
+      // Hashchange routing is asynchronous: wait until the SPA reveals the
+      // parent tab before inspecting visibility, not just the DOM node.
+      await page.waitForFunction(() => location.hash === '#sporty' &&
+        !document.getElementById('sporty').hidden, { timeout: 5000 });
+      const radar = page.locator('#league-radar');
+      await radar.waitFor({ state: 'visible', timeout: 5000 });
+      assert.equal(await radar.isVisible(), true, 'League quality radar must be visible: ' + width);
+      assert.equal(await radar.locator('.league-radar-card').count(), 4, 'Four source-quality cards: ' + width);
+      assert.match(await radar.innerText(), /DANE NIEWYSTARCZAJĄCE/);
+      assert.match(await radar.innerText(), /DO RĘCZNEJ OCENY/);
+      assert.match(await radar.innerText(), /nie bieżący podgląd API/);
       const cards = page.locator('#sport-list .competition-card');
       const connected = page.locator('#sport-connected-only');
-      assert.equal(await cards.count(), 17, 'Entire league catalogue must be visible initially: ' + width);
+      assert.equal(await cards.count(), 18, 'Entire league catalogue must be visible initially: ' + width);
       assert.equal(await connected.getAttribute('aria-pressed'), 'false');
       await connected.click();
       assert.equal(await connected.getAttribute('aria-pressed'), 'true');
@@ -51,7 +62,7 @@ const path = require('node:path');
       assert.equal(await cards.count(), 3, 'Planned basketball leagues return after reset: ' + width);
       assert.equal(await page.locator('#sport-list .competition-status.active').count(), 0);
       await page.locator('#sport-filters button').first().click();
-      assert.equal(await cards.count(), 17, 'Reset must restore full catalogue: ' + width);
+      assert.equal(await cards.count(), 18, 'Reset must restore full catalogue: ' + width);
       await page.screenshot({ path: 'mobile-nav-' + width + '.png' });
       await page.close();
     }

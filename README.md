@@ -24,6 +24,17 @@ Rozwijany **Paszport analizy** w zakładce Darmowe i kartach meczowych pokazuje 
 
 Kontrola jakości GitHub Actions dodatkowo uruchamia test `tests/test_prediction_passport.mjs` bez dostępu do sieci; potwierdza obecność danych wejściowych istniejącego archiwum oraz bezpieczny komunikat, gdy historyczne pola są niedostępne. Zamrożone modele, wyniki, statystyki całej próby i eksport CSV pozostają bez zmian.
 
+## Radar jakości lig — badanie źródeł, nie ocena skuteczności modelu
+
+W zakładce **Sporty i ligi** widoczny jest statyczny, datowany **Radar jakości lig**, oparty na rzeczywistym [audycie GitHub Actions 11 listopada 2026 o 12:48 UTC](https://github.com/Szalekmati/rzotkiewka-ai/actions/runs/43023505867), z linkiem do [zadania badawczego #13](https://github.com/Szalekmati/rzotkiewka-ai/issues/13). Radar wyraźnie oddziela:
+
+- **Terminarze podłączone:** Bundesliga, 2. Bundesliga i 3. Liga; to potwierdza funkcje pobierania spotkań OpenLigaDB, a **nie** pełną walidację modelu czy kompletności wyników.
+- **Premier League:** 0 historycznych rekordów w sprawdzonym skrócie źródła, dlatego brak zgody na prognozy.
+- **LaLiga:** 0 historycznych rekordów oraz 20 spotkań opóźnionych o ponad 48 h bez zaakceptowanego wyniku — wymaga kontroli niezależnej.
+- **Liga Mistrzów:** 189 rekordów w badanym sezonie 2024/25 i 8/8 zgodnych wybranych testów z UEFA, lecz wciąż **do ręcznej oceny**, nie wdrożona do prognoz. Do katalogu dodano ją wyłącznie jako **planowaną rozgrywkę**, bez aktywnego terminarza i modelu.
+
+Raport na stronie to **migawka z datą**. Nie odświeża się sam: jeśli aktualne wyniki audytu się zmienią, bez ponownej weryfikacji i aktualizacji strony nie wolno traktować tej migawki jako najnowszego stanu. Sukces zadania GitHub Actions nie oznacza sukcesu audytu jakości danych. Radar nie pobiera dodatkowych API, nie zmienia `predictions.json`, LAB 2.1/2.2, cen ani płatności.
+
 ## Katalog dostępnych i planowanych lig
 
 Zakładka **Sporty i ligi** rozdziela rozgrywki z prawdziwie podłączonym źródłem danych od pozycji planowanych. Filtr **„Tylko podłączone ligi”** pokazuje obecnie trzy dostępne terminarze: Bundesliga, 2. Bundesliga i 3. Liga. Filtr współpracuje z wyszukiwaniem i wyborem dyscypliny, można go wyłączyć bez utraty pozostałych pozycji katalogu. Nie włącza nowych API, nie zmienia analizy meczów ani zamrożonych modeli LAB 2.1/2.2. Testy Chromium na małych ekranach sprawdzają, że wybranie dyscypliny bez danych nie powoduje fałszywej deklaracji dostępności.
