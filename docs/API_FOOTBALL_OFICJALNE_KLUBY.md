@@ -37,3 +37,21 @@ Zadne mapowania nie sa zatwierdzane automatycznie.
 Nie zmieniamy `predictions.json`, `lab_forward/`,
 modelu ani strony. Testy `pull_request` i `push` sa bez dostepu
 do API, a pobranie prawdziwych `/teams` jest tylko reczne.
+
+## Szczegolny przypadek: RC Deportivo
+
+Oficjalny [profil ligowy klubu](https://www.laliga.com/es-GB/clubes/rc-deportivo)
+pokazuje skrocona nazwe `RC Deportivo` i pelne okreslenie
+`Real Club Deportivo de A Coruña SAD`.
+Oficjalna [strona klubu — dane ogolne](https://www.rcdeportivo.es/es/datos-generales)
+potwierdza pelne brzmienie z `A Coruña`. Klub
+[opublikowal wyjasnienie zmiany pisowni nazwy](https://www.rcdeportivo.es/es/noticias/preguntas-y-respuestas-referentes-a-la-consulta-vinculante-sobre-la-denominacion-oficial-del-clu)
+z `La Coruña` na `A Coruña`.
+
+Przy analizie nazw wolno rozpoznac te DWA oficjalne pelne
+warianty jako odniesienia do skrotu w oficjalnym spisie, ale tylko
+w badaniu ligi 140. Nazwa samego `Deportivo` jest niejednoznaczna
+(w lidze wystepuje rowniez Deportivo Alaves) i musi zostac odrzucona.
+
+Ten dodatkowy dowod nie zatwierdza sam z siebie zadnego konkretnego
+identyfikatora dostawcy ani automatycznej mapy aliasow w produkcji.
