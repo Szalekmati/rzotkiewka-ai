@@ -105,6 +105,11 @@ class LeagueCandidateAuditTests(unittest.TestCase):
         ]
         counts = audit.assess(rows, NOW)
         self.assertEqual(counts["overdue_without_result_48h"], 3)  # 48 h włącznie
+        self.assertEqual([r["match_id"] for r in counts["overdue_without_result_samples"]],
+                         [13, 10, 11])
+        self.assertEqual(
+            counts["overdue_without_result_samples"][0]["kickoff_utc"],
+            (NOW - timedelta(hours=50)).isoformat())
         self.assertEqual(counts["finished_without_accepted_score"], 1)
 
         past, present = audit.assess(history(), NOW), audit.assess(current(), NOW)
@@ -112,6 +117,17 @@ class LeagueCandidateAuditTests(unittest.TestCase):
         decision, reasons = audit.verdict(past, present)
         self.assertEqual(decision, "DANE NIEWYSTARCZAJĄCE")
         self.assertTrue(any("Zaległe mecze" in item for item in reasons))
+
+    def test_overdue_evidence_is_sorted_bounded_and_not_model_input(self):
+        # Eleven overdue records with IDs deliberately out of order.
+        rows = [fixture(50 - i, NOW - timedelta(days=3+i), finished=False)
+                for i in range(11)]
+        report = audit.assess(rows, NOW)
+        self.assertEqual(report["overdue_without_result_48h"], 11)
+        self.assertEqual(len(report["overdue_without_result_samples"]), 10)
+        self.assertEqual(report["overdue_without_result_samples"][0]["match_id"], 40)
+        self.assertNotIn("probabilities", report["overdue_without_result_samples"][0])
+        self.assertEqual(audit.assess([], NOW)["overdue_without_result_samples"], [])
 
     def test_good_coverage_requires_manual_review_not_automatic_promotion(self):
         past, present = audit.assess(history(), NOW), audit.assess(current(), NOW)
@@ -149,6 +165,30 @@ class LeagueCandidateAuditTests(unittest.TestCase):
             self.assertTrue((Path(directory) / "RAPORT_LIG.md").exists())
             data = json.loads((Path(directory) / "wyniki_lig.json").read_text())
             self.assertEqual(data["kind"], "read_only_league_candidate_audit")
+            text = (Path(directory) / "RAPORT_LIG.md").read_text(encoding="utf-8")
+            self.assertIn("Historia: mecze | Historia: wyniki", text)
+            self.assertIn("100 | 100 | 100 | 50 | 50 |", text)
+            self.assertNotIn("Zaległe spotkania sezonu", text)
+
+    def test_run_report_lists_overdue_ids_and_counts_without_auto_accept(self):
+        def fake_fetch(code, season):
+            if season == 2025:
+                return history()
+            rows = current()
+            rows[2]["matchResults"] = []
+            return rows
+        with tempfile.TemporaryDirectory() as directory, patch.object(audit, "get_matches", fake_fetch):
+            result = audit.run(NOW, Path(directory))
+            self.assertFalse(result["automatic_promotion"])
+            self.assertTrue(all(row["decision"] == "DANE NIEWYSTARCZAJĄCE"
+                                for row in result["candidates"]))
+            report = (Path(directory) / "RAPORT_LIG.md").read_text(encoding="utf-8")
+            self.assertIn("Zaległe spotkania sezonu 2026", report)
+            self.assertIn("próbka do 10 z 1", report)
+            self.assertIn("#202 — ", report)
+            json_report = json.loads((Path(directory) / "wyniki_lig.json").read_text())
+            self.assertEqual(json_report["candidates"][0]["current"]
+                             ["overdue_without_result_samples"][0]["match_id"], 202)
 
 
 if __name__ == "__main__":

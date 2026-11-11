@@ -104,8 +104,17 @@ def assess(raw_matches, now):
     settled = [m for m in valid if m["score"] is not None and m["kickoff"] <= now]
     invalid_finished = sum(m["finished_flag"] and m["score"] is None for m in valid)
     # Pomijamy 48 h na rozpoczęcie i aktualizację wyniku.
-    overdue_without_result = sum(m["kickoff"] <= now - timedelta(hours=48)
-                                 and m["score"] is None for m in valid)
+    overdue = sorted(
+        (m for m in valid if m["kickoff"] <= now - timedelta(hours=48)
+         and m["score"] is None),
+        key=lambda m: (m["kickoff"], m["id"]),
+    )
+    # Bounded, deterministic evidence permits tracing bad source updates
+    # without copying full responses or changing the model.
+    overdue_samples = [
+        {"match_id": m["id"], "kickoff_utc": m["kickoff"].isoformat()}
+        for m in overdue[:10]
+    ]
     return {
         "total": len(raw_matches),
         "valid": len(valid),
@@ -113,7 +122,8 @@ def assess(raw_matches, now):
         "duplicate_ids": len(valid) - len(unique_ids),
         "finished_with_score": len(settled),
         "finished_without_accepted_score": invalid_finished,
-        "overdue_without_result_48h": overdue_without_result,
+        "overdue_without_result_48h": len(overdue),
+        "overdue_without_result_samples": overdue_samples,
         "future_with_kickoff": len(future),
         "nearest_future_utc": min((m["kickoff"].isoformat() for m in future), default=None),
     }
@@ -200,13 +210,14 @@ def run(now=None, output=OUT):
         "**Status DO RĘCZNEJ OCENY nie oznacza dopuszczenia ligi do aplikacji ani LAB.**",
         "Brak zmian w modelach, predykcjach, prognozach i dostępie Premium.",
         "",
-        "| Rozgrywki | Historia: wyniki | Sezon: mecze | Sezon: wyniki | Przyszłe | Ocena |",
-        "|---|---:|---:|---:|---:|---|",
+        "| Rozgrywki | Historia: mecze | Historia: wyniki | Sezon: mecze | Sezon: wyniki | Przyszłe | Ocena |",
+        "|---|---:|---:|---:|---:|---:|---|",
     ]
     for item in records:
         hist, cur = item["historical"], item["current"]
         met = lambda block, name: str(block.get(name, "—"))
         lines.append("| " + item["league"] + " | " +
+                     met(hist, "total") + " | " +
                      met(hist, "finished_with_score") + " | " +
                      met(cur, "total") + " | " +
                      met(cur, "finished_with_score") + " | " +
@@ -217,6 +228,15 @@ def run(now=None, output=OUT):
             lines.append("**" + item["league"] + ":** " + "; ".join(item["reasons"]) + ".")
             lines.append("")
         for block in (hist, cur):
+            samples = block.get("overdue_without_result_samples") or []
+            if samples:
+                lines.append("Zaległe spotkania sezonu " + str(block["season"]) +
+                             " (ID; termin UTC; próbka do 10 z " +
+                             str(block["overdue_without_result_48h"]) + "):")
+                for row in samples:
+                    lines.append("- #" + str(row["match_id"]) + " — " +
+                                 str(row["kickoff_utc"]))
+                lines.append("")
             if block.get("error"):
                 lines.append("API " + item["shortcut"] + "/" + str(block["season"]) +
                              ": " + block["error"] + ".")
