@@ -1,0 +1,33 @@
+name: RZOTKIEWKA - jednorazowe porownanie dwoch zrodel
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/api_football_crosscheck_once.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rzotkiewka-api-football-crosscheck-once-2026
+  cancel-in-progress: false
+
+jobs:
+  compare-once:
+    if: >-
+      ${{ github.event.head_commit.message == 'RZOTKIEWKA: jednorazowo porownaj wyniki API i OpenFootball sierpien 2026' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Testy offline 2 zrodel
+        run: python -m unittest discover -s tests -p 'test_api_football_crosscheck.py' -v
+      - name: Porownaj sierpniowe spotkania dwoch lig
+        env:
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+        run: |
+          python api_football_crosscheck.py --from-date 2026-08-21 --to-date 2026-08-31
