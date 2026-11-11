@@ -151,7 +151,7 @@ class LeagueCandidateAuditTests(unittest.TestCase):
 
     def test_team_labels_escaped_in_markdown_without_corrupting_letters(self):
         example = fixture(121, NOW - timedelta(days=3))
-        example["team1"]["teamName"] = "Northern|Rangers [A]\\n<b>Club</b>"
+        example["team1"]["teamName"] = "Northern|Rangers [A]" + chr(10) + "<b>Club</b>"
         team = audit.normalize(example)
         self.assertIsNotNone(team)
         self.assertEqual(team["home"], "Northern Rangers  A b Club /b")
