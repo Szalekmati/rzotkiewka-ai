@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "project": "RZOTKIEWKA AI",
+  "review_date": "2026-11-11",
+  "scope": "Research-only. No approved cross-provider club IDs. No production API data.",
+  "competitions": [
+    {
+      "league_id": 39,
+      "league": "Premier League",
+      "season": 2026,
+      "candidate_aliases": 6,
+      "name_supported_by_official_roster": 6,
+      "mapped_inside_api_to_unique_id": 6,
+      "independently_reviewed_club_ids": 0,
+      "official_roster_url": "https://www.premierleague.com/en/news/4365156/premier-leagues-beginners-guide-all-you-need-to-know",
+      "audit_url": "https://github.com/Szalekmati/rzotkiewka-ai/actions/runs/43068933528"
+    },
+    {
+      "league_id": 140,
+      "league": "LaLiga",
+      "season": 2026,
+      "candidate_aliases": 11,
+      "name_supported_by_official_roster": 11,
+      "mapped_inside_api_to_unique_id": 11,
+      "independently_reviewed_club_ids": 0,
+      "official_roster_url": "https://www.laliga.com/en-US/laliga-easports/clubs",
+      "audit_url": "https://github.com/Szalekmati/rzotkiewka-ai/actions/runs/43068933528"
+    }
+  ],
+  "reviewed_identity_links": [],
+  "release": {
+    "requested": false,
+    "rights_review_approved": false,
+    "rights_review_document_url": null,
+    "forward_time_model_test_approved": false,
+    "forward_time_test_report_url": null,
+    "authorized_by": null,
+    "authorized_on": null,
+    "decision_url": null
+  }
+}
