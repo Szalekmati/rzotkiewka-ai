@@ -14,6 +14,12 @@ Publiczny, eksperymentalny serwis z terminarzem piłkarskim, modelem prawdopodob
 - Oddzielny test historyczny, jednoznacznie oznaczony jako retrospektywny.
 - Fikcyjne typy **DEMO** w `tips.json`; widok planowanego Premium za 19,99 zł miesięcznie.
 
+## Diagnostyka braków wyników w badanych ligach
+
+Raport `league_audit/RAPORT_LIG.md` pokazuje do dziesięciu najstarszych opóźnionych spotkań wraz z identyfikatorem, czasem UTC, **nazwami drużyn** oraz stanem pól wyniku w źródle. Załączony `wyniki_lig.json` zawiera dla pełnej grupy opóźnionych spotkań zliczenie rozłącznych przyczyn: `matchIsFinished=false` z brakiem albo obecnością końcowego wyniku, `matchIsFinished=true` z pustą/niepoprawną listą wyników, z brakiem pozycji `resultTypeID=2`/`Endergebnis` albo z niepoprawnymi punktami. Żaden powód nie oznacza automatycznie, że spotkanie rzeczywiście zostało rozegrane; wymaga to niezależnego źródła.
+
+Dla pustego historycznego sezonu audyt wskazuje możliwość **ręcznego** sprawdzenia endpointu `getavailableleagues/{season}`. Brak meczów pod badanym skrótem nie stanowi dowodu, że ligi w ogóle nie ma lub że można bezpiecznie zastąpić dane alternatywnymi rekordami. Zakres badania jest tylko diagnostyczny; **nie zmienia kryteriów dopuszczenia lig, modeli, archiwum prognoz ani harmonogramów**. Weryfikacja PR uruchamia testy offline i nie odpyta zewnętrznych API.
+
 ## Kontrola czasu meczów w audycie nowych lig
 
 W audycie kandydatów (Premier League, LaLiga, Liga Mistrzów) wymagamy jednoznacznej daty i godziny `matchDateTimeUTC` z podaną strefą (`Z` lub przesunięcie `±HH:MM`). Dat lokalnych bez strefy nie wolno po cichu traktować jako UTC: taka pomyłka mogłaby przesunąć mecz oraz okna porównywania modeli. Niepoprawne daty obniżają kompletność danych w raporcie; nie są naprawiane przez zgadywanie. Kontrole pull request działają bez zapytań do zewnętrznego API, a istniejące zaplanowane audyty pozostają tylko badaniem źródeł: **nie dodają lig do aplikacji ani LAB automatycznie**.
