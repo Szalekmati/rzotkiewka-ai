@@ -55,3 +55,52 @@ w badaniu ligi 140. Nazwa samego `Deportivo` jest niejednoznaczna
 
 Ten dodatkowy dowod nie zatwierdza sam z siebie zadnego konkretnego
 identyfikatora dostawcy ani automatycznej mapy aliasow w produkcji.
+
+## Potwierdzone audyty z 11 listopada 2026
+
+**Pierwszy odczyt:** [GitHub Actions #43068294486](https://github.com/Szalekmati/rzotkiewka-ai/actions/runs/43068294486), 17:27 UTC.
+Z oficjalnymi listami 2026/27 pasowalo 6 z 6 proponowanych aliasow
+Premier League i 10 z 11 aliasow LaLiga (razem 16/17).
+Pozostal jeden przypadek nierozpoznany, bez wykrytych konfliktow nazw.
+
+**Rozszerzenie dowodow:** oficjalny
+[profil RC Deportivo w LaLiga](https://www.laliga.com/es-GB/clubes/rc-deportivo),
+[oficjalne dane klubu](https://www.rcdeportivo.es/es/datos-generales)
+oraz [wyjasnienie nazwy La Coruña/A Coruña z maja 2026](https://www.rcdeportivo.es/es/noticias/preguntas-y-respuestas-referentes-a-la-consulta-vinculante-sobre-la-denominacion-oficial-del-clu).
+Wprowadzono badawcze, jawne pelne formy nazwy `Real Club Deportivo
+de A Coruña` i `Real Club Deportivo de La Coruña`, bez dopuszczenia
+ogolnego `Deportivo` (istnieje tez Deportivo Alaves).
+
+**Drugi odczyt:** [GitHub Actions #43068933528](https://github.com/Szalekmati/rzotkiewka-ai/actions/runs/43068933528), 17:31 UTC.
+Po uwzglednieniu oficjalnego nazewnictwa klubu:
+
+| Metryka | Premier League | LaLiga | Razem |
+|---|---:|---:|---:|
+| Kluby w oficjalnych wykazach 2026/27 | 20 | 20 | 40 |
+| Nazwy klubow OpenFootball rozpoznane wzgledem wykazu | 20 | 20 | 40 |
+| Nazwy klubow API rozpoznane wzgledem wykazu | 20 | 20 | 40 |
+| Kandydaci aliasow nazw | 6 | 11 | 17 |
+| Kandydaci wspierani oficjalna lista nazw | 6 | 11 | **17** |
+| Kandydaci nadal nierozpoznani w badaniu nazw | 0 | 0 | 0 |
+| Konflikty i kolizje nazw z wykazem | 0 | 0 | 0 |
+| Aliasow automatycznie zatwierdzonych do produkcji | 0 | 0 | **0** |
+
+- Testy offline po poprawce: **16/16** zaliczone.
+- Przeprowadzono dwa ograniczone audyty po maksymalnie dwa wywolania
+  `/teams`, razem **4 zapytania** z istniejącego pakietu PRO
+  (odczyt `/status` wykonany osobno).
+  Przed pierwszym testem licznik wskazywal 25/7500, przed drugim 27/7500.
+- **17/17 oznacza trójstronną zgodnosc nazw w badanym spisie**,
+  NIE niezalezny dowod, ze identyfikatory klubow API mozna bezpiecznie
+  laczyc z kazdym rekordem OpenFootball, ani ze model prognozuje trafnie.
+- Same identyfikatory i kompletne listy komercyjnego API nie zostaly
+  zapisane do repozytorium lub opublikowane.
+- Przygotowano tylko wersjonowane referencje do nazw i zrodel,
+  bez produkcyjnej mapy do prognoz.
+- Oba jednorazowe wyzwalacze usunieto. Pozostaje reczny workflow
+  `api_football_official_roster.yml` i offline testy.
+- Historia prognoz, `predictions.json`, LAB 2.1/2.2, modele oraz
+  publiczna strona pozostaly niezmienione.
+- Przed wykorzystaniem premium potrzebne sa dalsze kontrole:
+  konkretne identyfikatory w niezaleznym rejestrze, pelna historia,
+  warunki licencyjne i prospektywny test predykcyjny.
