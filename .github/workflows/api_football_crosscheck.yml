@@ -1,0 +1,64 @@
+name: RZOTKIEWKA - niezalezne porownanie wynikow API i OpenFootball
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'api_football_crosscheck.py'
+      - 'tests/test_api_football_crosscheck.py'
+      - '.github/workflows/api_football_crosscheck.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'api_football_crosscheck.py'
+      - 'tests/test_api_football_crosscheck.py'
+      - '.github/workflows/api_football_crosscheck.yml'
+  workflow_dispatch:
+    inputs:
+      from_date:
+        description: "Data od, rok 2026; dopuszczone do 15 pazdziernika"
+        type: string
+        required: true
+        default: "2026-08-21"
+      to_date:
+        description: "Data do; przedzial maks. 14 dni"
+        type: string
+        required: true
+        default: "2026-08-31"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rzotkiewka-independent-crosscheck-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  offline:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Testy offline porownania
+        run: python -m unittest discover -s tests -p 'test_api_football_crosscheck.py' -v
+
+  compare:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    needs: offline
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Porownanie dwuzrodlowe (maks. 2 zapytania do platnego API)
+        env:
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+          FROM_DATE: ${{ inputs.from_date }}
+          TO_DATE: ${{ inputs.to_date }}
+        run: |
+          python api_football_crosscheck.py --from-date "$FROM_DATE" --to-date "$TO_DATE"
