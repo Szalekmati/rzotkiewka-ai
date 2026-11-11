@@ -14,6 +14,12 @@ Publiczny, eksperymentalny serwis z terminarzem piłkarskim, modelem prawdopodob
 - Oddzielny test historyczny, jednoznacznie oznaczony jako retrospektywny.
 - Fikcyjne typy **DEMO** w `tips.json`; widok planowanego Premium za 19,99 zł miesięcznie.
 
+## OpenFootball CC0 — niezależny archiwalny zbiór do badania, nie prognoz
+
+Dla Premier League i LaLiga znaleźliśmy dwa publiczne pliki wyników sezonu 2025/26 w repozytoriach `openfootball/england` i `openfootball/espana`, które **deklarują licencję CC0 1.0**. Osobny skrypt `openfootball_history_audit.py` pobiera **dwa pliki przypięte do konkretnych commitów** i bada wyłącznie strukturę końcowych wyników: deklarowane 380 spotkań w lidze, rozpoznane wyniki, unikatowe pary gospodarze/goście, 20 zespołów, po 19 meczów każdej drużyny u siebie i na wyjeździe, brak błędnych rezultatów do przerwy. Raporty `league_audit/OPENFOOTBALL_HISTORIA_2025.md` i `openfootball_historia_2025.json` trafiają tylko do załącznika istniejącego workflow audytowego.
+
+**Ograniczenia:** kontrola strukturalna NIE jest niezależną weryfikacją każdej daty i wyniku ani potwierdzeniem aktualności źródła, praw do wszystkich wkładów czy jakości modelu. Nie liczymy nowych prognoz, nie dodajemy lig do produkcji, nie modyfikujemy LAB i nie uruchamiamy płatnych usług. Kolejny krok to porównanie reprezentatywnych meczów z niezależnym wiarygodnym źródłem, ocena pochodzenia danych, a dopiero potem oddzielny adapter i historyczny backtest odseparowany od LAB.
+
 ## Ręczne sprawdzanie historycznych skrótów lig
 
 Dodatkowy skrypt badawczy `league_shortcuts_2025.py` pobiera **tylko jedną listę** `getavailableleagues/2025` OpenLigaDB w ramach istniejącego audytu lig. W raporcie `league_audit/SKROTY_LIG_2025.md` podaje, czy na liście znajdują się historyczne skróty `pl` i `la1`, oraz ewentualne inne podobne nazwy wraz z sezonem i skrótem. Podobieństwa nazw są **kandydatami do ręcznej weryfikacji**, a nie automatyczną zamianą identyfikatora czy dopuszczeniem ligi do modelu.

@@ -9,6 +9,8 @@ on:
       - 'tests/test_league_candidates.py'
       - 'league_shortcuts_2025.py'
       - 'tests/test_league_shortcuts_2025.py'
+      - 'openfootball_history_audit.py'
+      - 'tests/test_openfootball_history_audit.py'
       - 'ucl_deep_audit.py'
       - 'tests/test_ucl_deep_audit.py'
       - '.github/workflows/audyt_nowych_lig.yml'
@@ -19,6 +21,8 @@ on:
       - 'tests/test_league_candidates.py'
       - 'league_shortcuts_2025.py'
       - 'tests/test_league_shortcuts_2025.py'
+      - 'openfootball_history_audit.py'
+      - 'tests/test_openfootball_history_audit.py'
       - 'ucl_deep_audit.py'
       - 'tests/test_ucl_deep_audit.py'
       - '.github/workflows/audyt_nowych_lig.yml'
@@ -50,6 +54,11 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_ucl_deep_audit.py' -v
       - name: Testy spisu identyfikatorow lig 2025 (offline)
         run: python -m unittest discover -s tests -p 'test_league_shortcuts_2025.py' -v
+      - name: Testy niezaleznej historii OpenFootball 2025/26 (offline)
+        run: python -m unittest discover -s tests -p 'test_openfootball_history_audit.py' -v
+      - name: Zbadaj zarchiwizowane wyniki OpenFootball CC0 (tylko odczyt)
+        if: github.event_name != 'pull_request'
+        run: python openfootball_history_audit.py
       - name: Sprawdz historyczne skroty lig 2025 (jeden odczyt API)
         if: github.event_name != 'pull_request'
         run: python league_shortcuts_2025.py
