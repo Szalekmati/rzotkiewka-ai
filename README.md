@@ -18,6 +18,12 @@ Publiczny, eksperymentalny serwis z terminarzem piłkarskim, modelem prawdopodob
 
 W audycie kandydatów (Premier League, LaLiga, Liga Mistrzów) wymagamy jednoznacznej daty i godziny `matchDateTimeUTC` z podaną strefą (`Z` lub przesunięcie `±HH:MM`). Dat lokalnych bez strefy nie wolno po cichu traktować jako UTC: taka pomyłka mogłaby przesunąć mecz oraz okna porównywania modeli. Niepoprawne daty obniżają kompletność danych w raporcie; nie są naprawiane przez zgadywanie. Kontrole pull request działają bez zapytań do zewnętrznego API, a istniejące zaplanowane audyty pozostają tylko badaniem źródeł: **nie dodają lig do aplikacji ani LAB automatycznie**.
 
+## Paszport prognozy — prawdziwe dane wejściowe
+
+Rozwijany **Paszport analizy** w zakładce Darmowe i kartach meczowych pokazuje nie tylko rozkład 1/X/2 i historię prognozy, ale także **wyprzedzenie zapisu przed planowanym początkiem spotkania**, liczbę wyników ligowych i meczów obu drużyn wykorzystanych w zapisanym snapshotcie, szacunki goli oraz możliwe do sprawdzenia identyfikatory meczów wejściowych. To **wyłącznie wartości faktycznie zachowane w zweryfikowanym archiwum** `predictions.json`; brakujące pola są oznaczane jako niedostępne, nie dopisywane. Czas zapisania nie jest niezależnym znacznikiem czasu, a skrót SHA-256 nie dowodzi dokładności źródła. Prognozowane gole to wynik modelu, **nie xG ze strzałów**. Paszport wyraźnie oddziela rekordy modelu 1.3 od niezależnego eksperymentu LAB 2.1/2.2. Nie odtwarzamy nieznanych wag ani powodu historycznej decyzji na podstawie współczesnych danych.
+
+Kontrola jakości GitHub Actions dodatkowo uruchamia test `tests/test_prediction_passport.mjs` bez dostępu do sieci; potwierdza obecność danych wejściowych istniejącego archiwum oraz bezpieczny komunikat, gdy historyczne pola są niedostępne. Zamrożone modele, wyniki, statystyki całej próby i eksport CSV pozostają bez zmian.
+
 ## Katalog dostępnych i planowanych lig
 
 Zakładka **Sporty i ligi** rozdziela rozgrywki z prawdziwie podłączonym źródłem danych od pozycji planowanych. Filtr **„Tylko podłączone ligi”** pokazuje obecnie trzy dostępne terminarze: Bundesliga, 2. Bundesliga i 3. Liga. Filtr współpracuje z wyszukiwaniem i wyborem dyscypliny, można go wyłączyć bez utraty pozostałych pozycji katalogu. Nie włącza nowych API, nie zmienia analizy meczów ani zamrożonych modeli LAB 2.1/2.2. Testy Chromium na małych ekranach sprawdzają, że wybranie dyscypliny bez danych nie powoduje fałszywej deklaracji dostępności.
