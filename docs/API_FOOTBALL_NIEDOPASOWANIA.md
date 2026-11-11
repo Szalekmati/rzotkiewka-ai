@@ -30,3 +30,43 @@ API i nie zapisuje danych dostawcy. Ręczne uruchomienie = co najwyzej
 Nastepny krok po raporcie: zaplanowanie recznej weryfikacji konkretnych
 aliasow i niezaleznej kontrolnej probki z zaufanego aktualnego zrodla,
 bez automatycznego zatwierdzania meczow.
+
+## Wyniki faktycznego uruchomienia, 11.11.2026 (17:01 UTC)
+
+[GitHub Actions — jednorazowa diagnoza](https://github.com/Szalekmati/rzotkiewka-ai/actions/runs/43064068889).
+
+Badano okres 21–31.08.2026. Obie ligi w API i OpenFootball mialy po
+20 (Premier League) oraz po 23 (LaLiga) rekordy. Bazowe dopasowanie
+pozostalo niezmienione: 9 i 4 mecze, wszystkie 13 zgodnych co do wyniku.
+
+| Kryterium | Premier League | LaLiga |
+|---|---:|---:|
+| Dopasowane pary | 9 | 4 |
+| Niedopasowane pary w kazdym zrodle | 11 | 19 |
+| Unikatowe znormalizowane nazwy druzyn na zrodlo | 20 | 20 |
+| Wspolne znormalizowane nazwy druzyn | 14 | 9 |
+| Ta sama para z roznica dat ponad 1 dzien | 0 | 0 |
+| Obie nazwy istnieja w odpowiednich rolach, inna para | 0 | 0 |
+| Tylko nazwa gospodarzy obecna | 5 | 7 |
+| Tylko nazwa gosci obecna | 5 | 7 |
+| Zadna z obu nazw nieobecna w drugim zrodle | 1 | 5 |
+| Niejasne dopasowania | 0 | 0 |
+
+Kategoriom po stronie API odpowiadaja w tej probie identyczne liczniki
+jak po stronie OpenFootball. 9/9 testow offline przeszlo. W ramach
+posiadanego planu PRO wykonano **2 zapytania /fixtures** i odczyt statusu.
+
+**Interpretacja:** dominujacym problemem jest brak dokladnej zgodnosci
+identyfikacji par nazw. Nie jest potwierdzone, czy wynika to tylko z
+aliasow nazw druzyn, odmiennych skladow lig, roznych spotkan czy bledu
+ktoregos zrodla. Nie wolno laczyc klubow wedlug podobienstwa wyniku
+ani uznawac niedopasowanych za falszywe dane.
+
+**Kolejny krok:** sprawdzic recznie i na niezaleznym wiarygodnym zrodle
+tozsamosc druzyn oraz zgodnosc skladów lig i terminarzy 2026/27.
+Nastepnie utworzyc jawna, zweryfikowana mape ID/aliasow z pochodzeniem
+i wersja, przetestowac ja offline i dopiero wtedy ponowic porownanie
+z kontrola przeciekow danych. Nie promowac lig do produkcji bez tego.
+
+Jednorazowy workflow usunieto. Nadal brak zmian w modelu, LAB, stronie,
+`predictions.json` i platnosciach.
