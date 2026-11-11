@@ -39,6 +39,7 @@ SCORE = re.compile(
     r"[ \t]+(?P<away>.+?)[ \t]*$"
 )
 DECLARED = re.compile(r"^# Matches[ \t]+(\d+)[ \t]*$", re.MULTILINE)
+DECLARED_TEAMS = re.compile(r"^# Teams[ \t]+(\d+)[ \t]*$", re.MULTILINE)
 
 
 def source_url(spec):
@@ -83,6 +84,8 @@ def assess_text(text, *, expected_matches=380, expected_teams=20):
         matches.append((a, b, s1, s2))
     meta = DECLARED.search(text)
     declared = int(meta.group(1)) if meta else None
+    team_meta = DECLARED_TEAMS.search(text)
+    declared_teams = int(team_meta.group(1)) if team_meta else None
     home = Counter(x[0] for x in matches)
     away = Counter(x[1] for x in matches)
     teams = set(home) | set(away)
@@ -92,10 +95,12 @@ def assess_text(text, *, expected_matches=380, expected_teams=20):
         for t in teams))
     complete = (len(matches) == expected_matches and
                 declared == expected_matches and
+                declared_teams == expected_teams and
                 len(directed_pairs) == expected_matches and
                 balanced and not invalid)
     return {
         "declared_matches": declared,
+        "declared_teams": declared_teams,
         "parsed_scores": len(matches),
         "teams": len(teams),
         "unique_home_away_pairs": len(directed_pairs),
