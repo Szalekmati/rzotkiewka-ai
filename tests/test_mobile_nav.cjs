@@ -35,7 +35,12 @@ const path = require('node:path');
       }
       // The 18-item catalogue must distinguish actual data from the roadmap.
       await nav.locator('a[href="#sporty"]').click();
+      // Hashchange routing is asynchronous: wait until the SPA reveals the
+      // parent tab before inspecting visibility, not just the DOM node.
+      await page.waitForFunction(() => location.hash === '#sporty' &&
+        !document.getElementById('sporty').hidden, { timeout: 5000 });
       const radar = page.locator('#league-radar');
+      await radar.waitFor({ state: 'visible', timeout: 5000 });
       assert.equal(await radar.isVisible(), true, 'League quality radar must be visible: ' + width);
       assert.equal(await radar.locator('.league-radar-card').count(), 4, 'Four source-quality cards: ' + width);
       assert.match(await radar.innerText(), /DANE NIEWYSTARCZAJĄCE/);
