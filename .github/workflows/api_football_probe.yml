@@ -1,0 +1,58 @@
+name: RZOTKIEWKA - test polaczenia API-FOOTBALL PRO
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "status = test bezplatny; fixtures = jedno pobranie terminarza"
+        type: choice
+        required: true
+        default: status
+        options:
+          - status
+          - fixtures
+      league:
+        description: "ID ligi do testu terminarza (domyslnie Premier League)"
+        required: false
+        default: "39"
+        type: string
+      season:
+        description: "Rok rozpoczecia sezonu"
+        required: false
+        default: "2026"
+        type: string
+      date:
+        description: "Data RRRR-MM-DD (puste: dzis UTC)"
+        required: false
+        default: ""
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rzotkiewka-api-football-probe
+  cancel-in-progress: false
+
+jobs:
+  api-football-probe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 4
+    steps:
+      - name: Pobierz repozytorium
+        uses: actions/checkout@v4
+      - name: Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Testy offline
+        run: python -m unittest discover -s tests -p 'test_api_football_probe.py' -v
+      - name: Sprawdz API-FOOTBALL bez ujawniania klucza
+        env:
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+          MODE: ${{ inputs.mode }}
+          LEAGUE: ${{ inputs.league }}
+          SEASON: ${{ inputs.season }}
+          DATE: ${{ inputs.date }}
+        run: |
+          python api_football_probe.py --mode "$MODE" --league "$LEAGUE" --season "$SEASON" --date "$DATE"
