@@ -14,6 +14,12 @@ Publiczny, eksperymentalny serwis z terminarzem piłkarskim, modelem prawdopodob
 - Oddzielny test historyczny, jednoznacznie oznaczony jako retrospektywny.
 - Fikcyjne typy **DEMO** w `tips.json`; widok planowanego Premium za 19,99 zł miesięcznie.
 
+## Ręczne sprawdzanie historycznych skrótów lig
+
+Dodatkowy skrypt badawczy `league_shortcuts_2025.py` pobiera **tylko jedną listę** `getavailableleagues/2025` OpenLigaDB w ramach istniejącego audytu lig. W raporcie `league_audit/SKROTY_LIG_2025.md` podaje, czy na liście znajdują się historyczne skróty `pl` i `la1`, oraz ewentualne inne podobne nazwy wraz z sezonem i skrótem. Podobieństwa nazw są **kandydatami do ręcznej weryfikacji**, a nie automatyczną zamianą identyfikatora czy dopuszczeniem ligi do modelu.
+
+Pusty wykaz, błąd API lub brak skrótu **nie udowadnia nieistnienia historycznych rozgrywek**. Nawet obecność podobnego wpisu wymaga osobnego pobrania faktycznych wyników i sprawdzenia zgodności ligi, drużyn, terminów, kompletności, licencji i praw do użycia danych. Skrypt przy błędzie raportuje brak możliwości weryfikacji zamiast fikcyjnego „braku ligi”. Testy pull requestów są **offline**; jednokrotne pobranie w audycie `push` i w istniejącym audycie niedzielnym nie dodaje nowego harmonogramu, konta ani płatnej usługi. Brak zmian w produkcyjnych prognozach i zamrożonym LAB 2.1/2.2.
+
 ## Diagnostyka braków wyników w badanych ligach
 
 Raport `league_audit/RAPORT_LIG.md` pokazuje do dziesięciu najstarszych opóźnionych spotkań wraz z identyfikatorem, czasem UTC, **nazwami drużyn** oraz stanem pól wyniku w źródle. Załączony `wyniki_lig.json` zawiera dla pełnej grupy opóźnionych spotkań zliczenie rozłącznych przyczyn: `matchIsFinished=false` z brakiem albo obecnością końcowego wyniku, `matchIsFinished=true` z pustą/niepoprawną listą wyników, z brakiem pozycji `resultTypeID=2`/`Endergebnis` albo z niepoprawnymi punktami. Żaden powód nie oznacza automatycznie, że spotkanie rzeczywiście zostało rozegrane; wymaga to niezależnego źródła.
