@@ -27,6 +27,7 @@ class OpenFootballHistoryTests(unittest.TestCase):
         data = audit.assess_text(GOOD, expected_matches=2, expected_teams=2)
         self.assertTrue(data["structurally_complete"])
         self.assertEqual(data["declared_matches"], 2)
+        self.assertEqual(data["declared_teams"], 2)
         self.assertEqual(data["parsed_scores"], 2)
         self.assertEqual(data["teams"], 2)
         self.assertEqual(data["unique_home_away_pairs"], 2)
@@ -44,6 +45,8 @@ class OpenFootballHistoryTests(unittest.TestCase):
             GOOD.replace("20:00", "25:00"),
             GOOD.replace("# Matches  2", "# Matches  3"),
             GOOD.replace("# Matches  2", "# Games  2"),
+            GOOD.replace("# Teams    2", "# Teams    3"),
+            GOOD.replace("# Teams    2", "# Clubs    2"),
         )
         for case in cases:
             with self.subTest(case=case[-105:]):
