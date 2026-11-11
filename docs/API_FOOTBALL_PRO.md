@@ -21,3 +21,11 @@ modeli. Nie wlacza harmonogramu ani zadnej dodatkowej platnej uslugi.
 API: `https://v3.football.api-sports.io/`, naglowek `x-apisports-key`.
 Nie wykonujemy zapytan po stronie publicznej przegladarki: klucz ma zostac
 tylko w serwerowym GitHub Actions. W razie wycieku natychmiast zmien klucz.
+
+## Pierwszy potwierdzony test — 11 listopada 2026
+
+- [Status PRO: poprawny, 5/5 testow offline](https://github.com/Szalekmati/rzotkiewka-ai/actions/runs/43057357268): plan Pro, limit dzienny 7500.
+- [Jednorazowy test terminarza: sukces](https://github.com/Szalekmati/rzotkiewka-ai/actions/runs/43058045758): Premier League (liga 39), sezon 2026, 2026-11-07, **4 spotkania**.
+- Proba zuzywa jedno zapytanie `/fixtures`; odpowiedzi nie opublikowano i nie zapisano do repo.
+- Jednorazowy workflow usunieto po sukcesie, aby uniknac kolejnych przypadkowych wywolan.
+- Dotychczasowe prognozy, LAB i strona pozostaly niezmienione. Nie oznacza to jeszcze wdrozenia Premier League do prognoz.
