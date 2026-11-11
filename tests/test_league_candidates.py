@@ -247,9 +247,14 @@ class LeagueCandidateAuditTests(unittest.TestCase):
             self.assertIn("Zaległe spotkania sezonu 2026", report)
             self.assertIn("próbka do 10 z 1", report)
             self.assertIn("#202 — ", report)
+            self.assertIn("Home / Away — marked_finished_empty_result_list", report)
+            self.assertIn("Przyczyny według pól źródła", report)
+            self.assertIn("marked_finished_empty_result_list=1", report)
             json_report = json.loads((Path(directory) / "wyniki_lig.json").read_text())
             self.assertEqual(json_report["candidates"][0]["current"]
                              ["overdue_without_result_samples"][0]["match_id"], 202)
+            self.assertEqual(json_report["candidates"][0]["current"]
+                             ["overdue_cause_counts"]["marked_finished_empty_result_list"], 1)
 
 
 if __name__ == "__main__":
