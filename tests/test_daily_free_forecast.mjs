@@ -11,7 +11,7 @@ const begin=source.indexOf('  function warsawDay(');
 const end=source.indexOf('  function renderRanking()',begin);
 assert.ok(begin>0&&end>begin,'Daily forecast function boundaries changed');
 const code=source.slice(begin,end);
-const at=Date.parse('2026-11-11T00:10:00Z'); // 01:10 Warsaw, local day 11 Nov
+const at=Date.parse('2026-11-10T23:10:00Z'); // 00:10 Warsaw on 11 Nov (kickoff still in future)
 
 function match(id,kickoff,{created='2026-11-10T18:00:00Z',status='pending',confidence=.4}={}){
   return {id,snapshot:{league:'bl1',season:2026,home:'Dom',away:id,
