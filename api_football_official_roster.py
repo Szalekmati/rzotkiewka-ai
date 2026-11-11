@@ -46,6 +46,21 @@ OFFICIAL = {
         ),
     },
 }
+
+# A short league label is linked to explicitly documented FULL names of the
+# SAME club, as published by the league and the club itself on 2026-11-11.
+# Source: https://www.laliga.com/es-GB/clubes/rc-deportivo
+# Source: https://www.rcdeportivo.es/es/datos-generales
+# Club explanation: https://www.rcdeportivo.es/es/noticias/preguntas-y-respuestas-referentes-a-la-consulta-vinculante-sobre-la-denominacion-oficial-del-clu
+# This is research-only lexical evidence, never an approved API team mapping.
+OFFICIAL_FULL_NAME_EVIDENCE = {
+    140: {
+        "rc deportivo": (
+            "Real Club Deportivo de A Coruña",
+            "Real Club Deportivo de La Coruña",
+        ),
+    },
+}
 TRAIN_START = date(2026, 8, 21)
 TRAIN_END = date(2026, 8, 31)
 
@@ -59,7 +74,7 @@ def validate_registry(official):
     return normalized
 
 
-def official_pivot(name, official):
+def official_pivot(name, official, full_names=None):
     """Return one official normalized club name, or None / 'ambiguous'.
 
     Exact names take priority. Loose lexical proposals require a unique
@@ -75,16 +90,28 @@ def official_pivot(name, official):
     t = tokens(n)
     if not t:
         return None
-    official_tokens = {s: tokens(s) for s in canonical}
-    freq = Counter(tok for parts in official_tokens.values() for tok in parts)
+    full_names = full_names or {}
+    if any(short not in canonical for short in full_names):
+        raise ValueError("Dowod pelnej nazwy nie wskazuje klubu z listy.")
+    # Count any distinctive token ONCE PER OFFICIAL CLUB, not once per form.
+    official_forms = {
+        name: [tokens(name)] + [tokens(full) for full in full_names.get(name, ())]
+        for name in canonical
+    }
+    freq = Counter(
+        tok for forms in official_forms.values()
+        for tok in set().union(*forms)
+    )
     opts = []
-    for official_name, parts in official_tokens.items():
-        distinctive = {
-            tok for tok in t & parts
-            if len(tok) >= 5 and tok not in GENERIC and freq[tok] == 1
-        }
-        if distinctive and (parts <= t or t <= parts):
-            opts.append(official_name)
+    for official_name, forms in official_forms.items():
+        for parts in forms:
+            distinctive = {
+                tok for tok in t & parts
+                if len(tok) >= 5 and tok not in GENERIC and freq[tok] == 1
+            }
+            if distinctive and (parts <= t or t <= parts):
+                opts.append(official_name)
+                break
     if len(opts) == 1:
         return opts[0]
     if len(opts) > 1:
@@ -92,8 +119,10 @@ def official_pivot(name, official):
     return None
 
 
-def join_teams_to_official(names, official):
-    mapping = {name: official_pivot(name, official) for name in names}
+def join_teams_to_official(names, official, full_names=None):
+    mapping = {
+        name: official_pivot(name, official, full_names) for name in names
+    }
     pivot_counts = Counter(x for x in mapping.values() if x not in (None, "ambiguous"))
     return mapping, {
         "recognized": sum(x not in (None, "ambiguous") for x in mapping.values()),
@@ -109,8 +138,9 @@ def triangulate(source_names, provider_names, league_id):
     validate_registry(official)
     sources = set(source_names)
     api = set(provider_names)
-    src_pivot, src_stats = join_teams_to_official(sources, official)
-    api_pivot, api_stats = join_teams_to_official(api, official)
+    full_names = OFFICIAL_FULL_NAME_EVIDENCE.get(league_id, {})
+    src_pivot, src_stats = join_teams_to_official(sources, official, full_names)
+    api_pivot, api_stats = join_teams_to_official(api, official, full_names)
     proposals, _counts = propose_names(sources, api)
     supported = unresolved = conflicting = 0
     for src, api_name in proposals.items():
