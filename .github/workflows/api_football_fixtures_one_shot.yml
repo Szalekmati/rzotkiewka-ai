@@ -11,7 +11,8 @@ concurrency:
   cancel-in-progress: false
 jobs:
   fixtures-one-shot:
-    if: ${{ github.event.head_commit.message == 'RZOTKIEWKA: jednorazowy test terminarza API-Football 2026-11-07' }}
+    if: >-
+      ${{ github.event.head_commit.message == 'RZOTKIEWKA: poprawiony jednorazowy test terminarza API-Football 2026-11-07' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 4
     steps:
