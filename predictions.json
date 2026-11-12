@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updated_at": "2026-11-08T22:06:35Z",
+  "updated_at": "2026-11-12T18:20:42Z",
   "forecasts": [
     {
       "id": "bl2-2026-83678",
@@ -477,6 +477,177 @@
         ],
         "outcome": "2",
         "graded_at": "2026-11-08T22:06:35Z"
+      }
+    },
+    {
+      "id": "bl2-2026-83697",
+      "snapshot": {
+        "match_id": 83697,
+        "league": "bl2",
+        "season": 2026,
+        "home": "SV Darmstadt 98",
+        "away": "1. FC Heidenheim 1846",
+        "kickoff": "2026-11-20T17:30:00Z",
+        "created_at": "2026-11-12T18:20:42Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.458257,
+          "X": 0.267237,
+          "2": 0.274506
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 99,
+          "draws": 27,
+          "raw_draw_probability": 0.254343,
+          "draw_odds_log_shift": 0.066896
+        },
+        "expected_home_goals": 1.531,
+        "expected_away_goals": 1.126,
+        "league_matches_used": 99,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          83682,
+          83667,
+          83648,
+          83629,
+          83611,
+          83591,
+          83569,
+          83554
+        ],
+        "away_match_ids": [
+          83678,
+          83669,
+          83645,
+          83626,
+          83609,
+          83604,
+          83567,
+          83560
+        ]
+      },
+      "snapshot_sha256": "00134db428c388745a33079f1f06725411866d7204ac55f853bd51b546803890",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl2-2026-83705",
+      "snapshot": {
+        "match_id": 83705,
+        "league": "bl2",
+        "season": 2026,
+        "home": "DSC Arminia Bielefeld",
+        "away": "1. FC Magdeburg",
+        "kickoff": "2026-11-20T17:30:00Z",
+        "created_at": "2026-11-12T18:20:42Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.478902,
+          "X": 0.249427,
+          "2": 0.271671
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 99,
+          "draws": 27,
+          "raw_draw_probability": 0.237114,
+          "draw_odds_log_shift": 0.066896
+        },
+        "expected_home_goals": 1.722,
+        "expected_away_goals": 1.241,
+        "league_matches_used": 99,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          83685,
+          83671,
+          83650,
+          83635,
+          83616,
+          83604,
+          83569,
+          83559
+        ],
+        "away_match_ids": [
+          83686,
+          83667,
+          83659,
+          83630,
+          83617,
+          83606,
+          83587,
+          83556
+        ]
+      },
+      "snapshot_sha256": "b15f39762dae8dde0c26475147132fc212426a946ab7628fe13130460a3208b3",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl3-2026-84883",
+      "snapshot": {
+        "match_id": 84883,
+        "league": "bl3",
+        "season": 2026,
+        "home": "TSV Havelse",
+        "away": "Viktoria Köln",
+        "kickoff": "2026-11-20T18:00:00Z",
+        "created_at": "2026-11-12T18:20:42Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.254874,
+          "X": 0.20886,
+          "2": 0.536266
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 130,
+          "draws": 28,
+          "raw_draw_probability": 0.210672,
+          "draw_odds_log_shift": -0.010926
+        },
+        "expected_home_goals": 1.394,
+        "expected_away_goals": 2.089,
+        "league_matches_used": 130,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          84868,
+          84862,
+          84853,
+          84841,
+          84834,
+          84819,
+          84813,
+          84797
+        ],
+        "away_match_ids": [
+          84870,
+          84855,
+          84845,
+          84836,
+          84831,
+          84817,
+          84809,
+          84802
+        ]
+      },
+      "snapshot_sha256": "7270124f13e371d6ef1a4f204a3706650ff9c26aa52a8ae5f94f6daa86dee5ce",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
       }
     }
   ]
