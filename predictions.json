@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updated_at": "2026-11-12T18:20:42Z",
+  "updated_at": "2026-11-13T01:06:00Z",
   "forecasts": [
     {
       "id": "bl2-2026-83678",
@@ -643,6 +643,63 @@
         ]
       },
       "snapshot_sha256": "7270124f13e371d6ef1a4f204a3706650ff9c26aa52a8ae5f94f6daa86dee5ce",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl1-2026-83237",
+      "snapshot": {
+        "match_id": 83237,
+        "league": "bl1",
+        "season": 2026,
+        "home": "FC Bayern München",
+        "away": "1. FC Köln",
+        "kickoff": "2026-11-20T19:30:00Z",
+        "created_at": "2026-11-13T01:06:00Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.737839,
+          "X": 0.155794,
+          "2": 0.106367
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 81,
+          "draws": 17,
+          "raw_draw_probability": 0.151344,
+          "draw_odds_log_shift": 0.034231
+        },
+        "expected_home_goals": 2.664,
+        "expected_away_goals": 0.93,
+        "league_matches_used": 81,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          83233,
+          83219,
+          83214,
+          83201,
+          83196,
+          83183,
+          83182,
+          83172
+        ],
+        "away_match_ids": [
+          83235,
+          83223,
+          83217,
+          83203,
+          83199,
+          83188,
+          83181,
+          83165
+        ]
+      },
+      "snapshot_sha256": "f402eef8471cb887ff497e074d18f79dfa85c54dbff272c660e1db8cf600201a",
       "settlement": {
         "state": "pending",
         "score": null,
