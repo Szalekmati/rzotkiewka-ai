@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updated_at": "2026-11-13T17:46:15Z",
+  "updated_at": "2026-11-13T23:35:24Z",
   "forecasts": [
     {
       "id": "bl2-2026-83678",
@@ -1555,6 +1555,63 @@
         ]
       },
       "snapshot_sha256": "4f5360dfe7f1a727968f281f62712b2304a58f5ea25387f71dc20cacc04a9655",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl2-2026-83691",
+      "snapshot": {
+        "match_id": 83691,
+        "league": "bl2",
+        "season": 2026,
+        "home": "FC St. Pauli",
+        "away": "VfL Bochum",
+        "kickoff": "2026-11-21T19:30:00Z",
+        "created_at": "2026-11-13T23:35:24Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.431131,
+          "X": 0.269489,
+          "2": 0.29938
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 99,
+          "draws": 27,
+          "raw_draw_probability": 0.256524,
+          "draw_odds_log_shift": 0.066896
+        },
+        "expected_home_goals": 1.482,
+        "expected_away_goals": 1.191,
+        "league_matches_used": 99,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          83686,
+          83664,
+          83648,
+          83627,
+          83608,
+          83607,
+          83565,
+          83559
+        ],
+        "away_match_ids": [
+          83683,
+          83674,
+          83655,
+          83628,
+          83616,
+          83593,
+          83573,
+          83557
+        ]
+      },
+      "snapshot_sha256": "a4cd67ee3dce8b462ef8b042a3bd40b0ad12bfcb73977f11022460cd3d6644ea",
       "settlement": {
         "state": "pending",
         "score": null,
