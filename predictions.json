@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updated_at": "2026-11-14T15:05:52Z",
+  "updated_at": "2026-11-14T20:43:19Z",
   "forecasts": [
     {
       "id": "bl2-2026-83678",
@@ -1897,6 +1897,177 @@
         ]
       },
       "snapshot_sha256": "3080d1e48a0c2305bc751fef914dd6067805158522a36567af92e74997297280",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl3-2026-84881",
+      "snapshot": {
+        "match_id": 84881,
+        "league": "bl3",
+        "season": 2026,
+        "home": "1. FC Saarbrücken",
+        "away": "SV Wehen Wiesbaden",
+        "kickoff": "2026-11-22T15:30:00Z",
+        "created_at": "2026-11-14T20:43:19Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.251801,
+          "X": 0.203489,
+          "2": 0.54471
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 130,
+          "draws": 28,
+          "raw_draw_probability": 0.205266,
+          "draw_odds_log_shift": -0.010926
+        },
+        "expected_home_goals": 1.439,
+        "expected_away_goals": 2.176,
+        "league_matches_used": 130,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          84870,
+          84861,
+          84853,
+          84835,
+          84833,
+          84820,
+          84814,
+          84796
+        ],
+        "away_match_ids": [
+          84868,
+          84859,
+          84849,
+          84838,
+          84829,
+          84818,
+          84808,
+          84801
+        ]
+      },
+      "snapshot_sha256": "5ba3e96724e17d3b01bf1f32411ad8f6a38f7c7df096dafd8ba60e361f9f5c5f",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl1-2026-83243",
+      "snapshot": {
+        "match_id": 83243,
+        "league": "bl1",
+        "season": 2026,
+        "home": "SV Werder Bremen",
+        "away": "Hamburger SV",
+        "kickoff": "2026-11-22T16:30:00Z",
+        "created_at": "2026-11-14T20:43:19Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.654139,
+          "X": 0.185554,
+          "2": 0.160307
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 81,
+          "draws": 17,
+          "raw_draw_probability": 0.180437,
+          "draw_odds_log_shift": 0.034231
+        },
+        "expected_home_goals": 2.419,
+        "expected_away_goals": 1.128,
+        "league_matches_used": 81,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          83230,
+          83225,
+          83216,
+          83207,
+          83192,
+          83189,
+          83181,
+          83171
+        ],
+        "away_match_ids": [
+          83234,
+          83221,
+          83218,
+          83206,
+          83194,
+          83188,
+          83175,
+          83170
+        ]
+      },
+      "snapshot_sha256": "9a02bafecaf907790b9720861058de44744f4c3344f0a54fbc9fef3872a1942a",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl3-2026-84877",
+      "snapshot": {
+        "match_id": 84877,
+        "league": "bl3",
+        "season": 2026,
+        "home": "MSV Duisburg",
+        "away": "Hansa Rostock",
+        "kickoff": "2026-11-22T18:30:00Z",
+        "created_at": "2026-11-14T20:43:19Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.469251,
+          "X": 0.228943,
+          "2": 0.301806
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 130,
+          "draws": 28,
+          "raw_draw_probability": 0.230877,
+          "draw_odds_log_shift": -0.010926
+        },
+        "expected_home_goals": 1.781,
+        "expected_away_goals": 1.389,
+        "league_matches_used": 130,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          84865,
+          84857,
+          84851,
+          84836,
+          84833,
+          84816,
+          84808,
+          84797
+        ],
+        "away_match_ids": [
+          84867,
+          84860,
+          84848,
+          84844,
+          84825,
+          84823,
+          84805,
+          84798
+        ]
+      },
+      "snapshot_sha256": "1f51f6b2be9caf4c75b264c8096753f040dbb5deb04be7627b279b812c4d8ffc",
       "settlement": {
         "state": "pending",
         "score": null,
