@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updated_at": "2026-11-13T23:35:24Z",
+  "updated_at": "2026-11-14T15:05:52Z",
   "forecasts": [
     {
       "id": "bl2-2026-83678",
@@ -1612,6 +1612,291 @@
         ]
       },
       "snapshot_sha256": "a4cd67ee3dce8b462ef8b042a3bd40b0ad12bfcb73977f11022460cd3d6644ea",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl2-2026-83698",
+      "snapshot": {
+        "match_id": 83698,
+        "league": "bl2",
+        "season": 2026,
+        "home": "1. FC Kaiserslautern",
+        "away": "Dynamo Dresden",
+        "kickoff": "2026-11-22T12:30:00Z",
+        "created_at": "2026-11-14T15:05:52Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.514329,
+          "X": 0.263077,
+          "2": 0.222594
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 99,
+          "draws": 27,
+          "raw_draw_probability": 0.250315,
+          "draw_odds_log_shift": 0.066896
+        },
+        "expected_home_goals": 1.599,
+        "expected_away_goals": 0.959,
+        "league_matches_used": 99,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          83688,
+          83668,
+          83652,
+          83628,
+          83609,
+          83595,
+          83587,
+          83554
+        ],
+        "away_match_ids": [
+          83684,
+          83665,
+          83658,
+          83630,
+          83622,
+          83598,
+          83588,
+          83557
+        ]
+      },
+      "snapshot_sha256": "da2016dbaead6ff7f197b0a333db8a11e2ab7e265e768b6c009e46a12e64454a",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl2-2026-83702",
+      "snapshot": {
+        "match_id": 83702,
+        "league": "bl2",
+        "season": 2026,
+        "home": "Karlsruher SC",
+        "away": "VfL Osnabrück",
+        "kickoff": "2026-11-22T12:30:00Z",
+        "created_at": "2026-11-14T15:05:52Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.497234,
+          "X": 0.25572,
+          "2": 0.247046
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 99,
+          "draws": 27,
+          "raw_draw_probability": 0.243197,
+          "draw_odds_log_shift": 0.066896
+        },
+        "expected_home_goals": 1.665,
+        "expected_away_goals": 1.1,
+        "league_matches_used": 99,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          83683,
+          83669,
+          83659,
+          83629,
+          83608,
+          83597,
+          83582,
+          83550
+        ],
+        "away_match_ids": [
+          83688,
+          83663,
+          83661,
+          83635,
+          83622,
+          83600,
+          83589,
+          83561
+        ]
+      },
+      "snapshot_sha256": "565d23a0aca1aa31bbdc21a314ebf3c11ec7be8a5cfd8e61ed5bc2700aebda54",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl2-2026-83706",
+      "snapshot": {
+        "match_id": 83706,
+        "league": "bl2",
+        "season": 2026,
+        "home": "Energie Cottbus",
+        "away": "Hertha BSC",
+        "kickoff": "2026-11-22T12:30:00Z",
+        "created_at": "2026-11-14T15:05:52Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.270632,
+          "X": 0.273097,
+          "2": 0.456271
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 99,
+          "draws": 27,
+          "raw_draw_probability": 0.260021,
+          "draw_odds_log_shift": 0.066896
+        },
+        "expected_home_goals": 1.077,
+        "expected_away_goals": 1.48,
+        "league_matches_used": 99,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          83687,
+          83674,
+          83645,
+          83641,
+          83611,
+          83607,
+          83582,
+          83548
+        ],
+        "away_match_ids": [
+          83681,
+          83668,
+          83650,
+          83632,
+          83613,
+          83598,
+          83589,
+          83556
+        ]
+      },
+      "snapshot_sha256": "7852012d5c16a0ee4300c1f06453b7810681aacc13326727420332443728c14a",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl3-2026-84880",
+      "snapshot": {
+        "match_id": 84880,
+        "league": "bl3",
+        "season": 2026,
+        "home": "VfB Stuttgart II",
+        "away": "FC Ingolstadt 04",
+        "kickoff": "2026-11-22T12:30:00Z",
+        "created_at": "2026-11-14T15:05:52Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.417801,
+          "X": 0.232002,
+          "2": 0.350197
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 130,
+          "draws": 28,
+          "raw_draw_probability": 0.233954,
+          "draw_odds_log_shift": -0.010926
+        },
+        "expected_home_goals": 1.674,
+        "expected_away_goals": 1.516,
+        "league_matches_used": 130,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          84872,
+          84857,
+          84852,
+          84840,
+          84832,
+          84821,
+          84810,
+          84798
+        ],
+        "away_match_ids": [
+          84871,
+          84862,
+          84851,
+          84837,
+          84830,
+          84818,
+          84809,
+          84795
+        ]
+      },
+      "snapshot_sha256": "6fa7a4164e6c2164e380bcf479660757a77c1c31e95da0a2404c53adb6c6c816",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl1-2026-83240",
+      "snapshot": {
+        "match_id": 83240,
+        "league": "bl1",
+        "season": 2026,
+        "home": "FC Augsburg",
+        "away": "1. FSV Mainz 05",
+        "kickoff": "2026-11-22T14:30:00Z",
+        "created_at": "2026-11-14T15:05:52Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.420241,
+          "X": 0.21429,
+          "2": 0.365469
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 81,
+          "draws": 17,
+          "raw_draw_probability": 0.208583,
+          "draw_odds_log_shift": 0.034231
+        },
+        "expected_home_goals": 2.035,
+        "expected_away_goals": 1.893,
+        "league_matches_used": 81,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          83229,
+          83222,
+          83215,
+          83209,
+          83196,
+          83189,
+          83178,
+          83168
+        ],
+        "away_match_ids": [
+          83233,
+          83227,
+          83216,
+          83208,
+          83197,
+          83187,
+          83179,
+          83170
+        ]
+      },
+      "snapshot_sha256": "3080d1e48a0c2305bc751fef914dd6067805158522a36567af92e74997297280",
       "settlement": {
         "state": "pending",
         "score": null,
