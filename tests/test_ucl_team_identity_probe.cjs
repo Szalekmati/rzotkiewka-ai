@@ -38,6 +38,28 @@ test('four foreign UCL fixtures remain blocked even with consistent team ID',()=
   assert.equal(report.excelsiorMatches,4);
   assert.equal(report.targetTeamIds.length,1);
 });
+test('eight Excelsior fixtures across the season use the same suspect ID and never imply Barcelona',()=>{
+  const dates=[
+    '2026-09-09T16:45:00Z','2026-10-13T19:00:00Z',
+    '2026-10-20T19:00:00Z','2026-11-03T20:00:00Z',
+    '2026-11-25T17:45:00Z','2026-12-08T20:00:00Z',
+    '2027-01-20T20:00:00Z','2027-01-27T20:00:00Z'
+  ];
+  const rows=dates.map((when,i)=>{
+    const row=fixture(900+i,356,'Excelsior Rotterdam',2500+i,'Opponent '+i);
+    row.matchDateTimeUTC=when;
+    return row;
+  });
+  const report=inspectTeamIdentity(rows,NOW);
+  assert.equal(report.status,'STOP_FOREIGN_CLUB_LABEL');
+  assert.equal(report.excelsiorMatches,8);
+  assert.equal(report.barcelonaMatches,0);
+  assert.deepEqual(report.targetTeamIds,[{teamId:356,namesSeen:['Excelsior Rotterdam']}]);
+  assert.equal(report.suspectRecords.length,8);
+  assert.equal(report.independentlyVerifiedTeamIds,false);
+  assert.equal(report.publicationAllowed,false);
+});
+
 test('correct-looking Barcelona records still need independent official identity checks',()=>{
   const report=inspectTeamIdentity([fixture(1,12,'FC Barcelona')],NOW);
   assert.equal(report.status,'NEEDS_INDEPENDENT_VERIFICATION');
