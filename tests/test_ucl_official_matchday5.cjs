@@ -89,6 +89,48 @@ test('all upcoming reference includes 72 UEFA matches on seven match dates',()=>
   assert.equal(new Set(allOfficial.map(x=>x.kickoffUtc+'/'+x.home+'/'+x.away)).size,72);
 });
 
+test('the dated reference covers 36 distinct clubs with exactly four remaining matches each',()=>{
+  const {allOfficial}=require('../research/ucl_official_matchday5.js');
+  const appearances=new Map();
+  for(const match of allOfficial){
+    assert.notEqual(match.home,match.away);
+    for(const club of [match.home,match.away]){
+      assert.equal(typeof club,'string');
+      assert.ok(club.trim().length>0);
+      appearances.set(club,(appearances.get(club)||0)+1);
+    }
+  }
+  assert.equal(appearances.size,36);
+  for(const [club,count] of appearances){
+    assert.equal(count,4,club+' should appear in each of MD5-MD8 exactly once');
+  }
+});
+
+test('every club plays once in each official remaining matchday',()=>{
+  const {allOfficial}=require('../research/ucl_official_matchday5.js');
+  const roundByDate={
+    '2026-11-24':5,'2026-11-25':5,
+    '2026-12-08':6,'2026-12-09':6,
+    '2027-01-19':7,'2027-01-20':7,
+    '2027-01-27':8
+  };
+  const clubsByRound=new Map([[5,new Set()],[6,new Set()],[7,new Set()],[8,new Set()]]);
+  for(const match of allOfficial){
+    const date=match.kickoffUtc.slice(0,10);
+    const round=roundByDate[date];
+    assert.ok(round,match.kickoffUtc+' belongs to an unsupported matchday');
+    assert.ok(Number.isFinite(Date.parse(match.kickoffUtc)));
+    assert.equal(new Date(match.kickoffUtc).toISOString(),match.kickoffUtc);
+    const clubs=clubsByRound.get(round);
+    for(const club of [match.home,match.away]){
+      assert.equal(clubs.has(club),false,club+' appears twice in MD'+round);
+      clubs.add(club);
+    }
+  }
+  for(const [round,clubs] of clubsByRound)
+    assert.equal(clubs.size,36,'MD'+round+' must have 36 unique participants');
+});
+
 test('all upcoming fixtures require 72 out of 72 identical official pair/kickoff facts',()=>{
   const {allOfficial,verifyAllUpcoming}=require('../research/ucl_official_matchday5.js');
   const rows=allOfficial.map((item,i)=>({
