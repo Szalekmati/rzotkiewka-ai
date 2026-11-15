@@ -60,6 +60,24 @@ test('duplicated match IDs and home-away pairs block without guessing',()=>{
     row('bl1',101,10004,10003,10002,'2026-12-18T20:00:00Z'));
   assert.equal(buildBundle(secondPair,NOW).ok,false);
 });
+test('club cannot play two different fixtures at the same UTC kickoff',()=>{
+  const doubleBooked=sample();
+  doubleBooked.bl1.push(row('bl1',101,10006,10003,10004,'2026-11-25T20:00:00Z'));
+  assert.equal(buildBundle(doubleBooked,NOW).ok,false);
+  assert.match(buildBundle(doubleBooked,NOW).reason,/double-booked/);
+  const otherKickoff=sample();
+  otherKickoff.bl1.push(row('bl1',101,10006,10003,10004,'2026-11-26T20:00:00Z'));
+  assert.equal(buildBundle(otherKickoff,NOW).ok,true);
+});
+
+test('even non-final result entries on future fixtures cause STOP',()=>{
+  const futurePartial=sample();
+  futurePartial.bl1[1].matchResults=[{resultTypeID:1,pointsTeam1:1,pointsTeam2:0}];
+  const report=buildBundle(futurePartial,NOW);
+  assert.equal(report.ok,false);
+  assert.match(report.reason,/future match already has result data/);
+});
+
 test('bad UTC times, delayed results and future final scores block',()=>{
   const invalid=sample();invalid.bl1[1].matchDateTimeUTC='2026-02-30T20:00:00Z';
   assert.equal(buildBundle(invalid,NOW).ok,false);

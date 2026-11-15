@@ -43,7 +43,7 @@ function validateLeague(code,rows,now){
   if(!Array.isArray(rows)||rows.length<1||rows.length>maxRows)
     throw Error(code+': invalid or empty source list');
   let leagueId=null;
-  const ids=new Set(),slots=new Set(),pairSeason=new Set(),teamNames=new Map(),nameIds=new Map();
+  const ids=new Set(),slots=new Set(),teamTimeSlots=new Set(),pairSeason=new Set(),teamNames=new Map(),nameIds=new Map();
   const fixtures=[];
   for(const [index,row] of rows.entries()){
     const label=code+' row '+(index+1)+': ';
@@ -71,12 +71,23 @@ function validateLeague(code,rows,now){
     const slot=dt.iso+'|'+home.teamId+'|'+away.teamId;
     if(slots.has(slot))throw Error(label+'duplicate fixture slot');
     slots.add(slot);
+    // A club cannot play two fixtures at the exact same UTC kickoff, even
+    // when the opponent and provider's match ID are different.
+    for(const teamId of [home.teamId,away.teamId]){
+      const teamSlot=dt.iso+'|'+teamId;
+      if(teamTimeSlots.has(teamSlot))throw Error(label+'club double-booked at kickoff');
+      teamTimeSlots.add(teamSlot);
+    }
     const orderedPair=home.teamId+'|'+away.teamId;
     if(pairSeason.has(orderedPair))throw Error(label+'repeated home-away fixture this season');
     pairSeason.add(orderedPair);
     if(typeof row.matchIsFinished!=='boolean')throw Error(label+'missing finished flag');
     const final=acceptedFinal(row.matchResults);
     if(row.matchIsFinished!==Boolean(final))throw Error(label+'finished flag / final score conflict');
+    // Any score data attached to a future game is suspicious, including
+    // non-final or in-progress result records with the finished flag false.
+    if(dt.millis>now&&row.matchResults.length!==0)
+      throw Error(label+'future match already has result data');
     if(dt.millis>now&&row.matchIsFinished)throw Error(label+'future match marked finished');
     if(dt.millis<=now-48*3600000&&!row.matchIsFinished)
       throw Error(label+'overdue match without final score');

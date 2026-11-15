@@ -22,6 +22,8 @@ Ostrzeżenie: przykład nie pobiera żadnych danych; ścieżki są przykładowe.
 
 - Wszystkie trzy ligi i sezon 2026, spójny `leagueId` wewnątrz każdej ligi, różne `leagueId` między ligami; brak lub sprzeczność oznacza STOP.
 - ID meczu i klubu, spójne nazwy, jawne UTC, daty lipiec 2026–czerwiec 2027, limit rekordów, brak duplikatów, jedna para gospodarze-goście w sezonie, jawne flagi meczu.
+- Klub nie może mieć dwóch odrębnych spotkań z dokładnie tym samym terminem UTC; różne identyfikatory meczów ani rywali nie omijają tej bramki.
+- Jakikolwiek wpis na liście `matchResults` dotyczący przyszłego spotkania (również wynik cząstkowy) powoduje `STOP`, nawet gdy `matchIsFinished=false`.
 - Zakończony mecz musi mieć jednoznaczny wynik końcowy, przyszły nie może mieć wyniku; spotkanie starsze niż 48 h bez końcowego wyniku blokuje cały zestaw.
 - Co najmniej jedno przyszłe spotkanie każdej ligi, ale to **nie dowodzi kompletności sezonu**.
 - Usuwane są herby, URL-e i zbędne pola surowego źródła; wynik zawiera jedynie przyszłe spotkania, znaczniki pochodzenia i datę odczytu.
