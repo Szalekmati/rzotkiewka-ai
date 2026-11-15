@@ -33,7 +33,7 @@ function compareReferenceTriples(rows) {
   const missing = allOfficial.filter(expected => !available.some(row => equal(row, expected)));
   const extra = available.filter(row => !allOfficial.some(expected => equal(row, expected)));
   const clean = value => typeof value === 'string'
-    ? value.replace(/[\\u0000-\\u001f\\u007f]/g, '').slice(0, 100) : '';
+    ? value.replace(/[\u0000-\u001f\u007f]/g, '').slice(0, 100) : '';
   return {
     missingOfficialCount: missing.length,
     unmatchedSourceCount: extra.length,
