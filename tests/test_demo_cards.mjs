@@ -84,5 +84,5 @@ test('genuine live mode still renders outcome labels and existing calculations',
   h.state.tips = [item, tip('free', 'lost', 'l')];
   h.render();
   assert.equal(h.elements['stat-hit'].textContent, '50,0%');
-  assert.equal(h.elements['stat-profit'].textContent, '0,00 j.');
+  assert.equal(h.elements['stat-profit'].textContent, '-0,50 j.');
 });
