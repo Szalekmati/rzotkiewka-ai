@@ -69,6 +69,7 @@
     const problems = [];
     const ids = new Set();
     const pairs = new Set();
+    const occupiedTeamKickoffs = new Set();
     const teamNames = new Map();
     const teamIds = new Map();
     const forthcoming = [];
@@ -107,6 +108,14 @@
       const pair = when.iso + '/' + homeId + '/' + awayId;
       if (pairs.has(pair)) problems.push(mark + 'powtórzony mecz w tym samym terminie');
       pairs.add(pair);
+      // An individual club cannot play two matches at the same instant.
+      // Normalize time first, so Z and +00:00 cannot bypass this check.
+      for (const teamId of [homeId, awayId]) {
+        const slot = when.iso + '/' + teamId;
+        if (occupiedTeamKickoffs.has(slot))
+          problems.push(mark + 'drużyna ma więcej niż jeden mecz w tym samym terminie');
+        occupiedTeamKickoffs.add(slot);
+      }
       if (typeof raw.matchIsFinished !== 'boolean') {
         problems.push(mark + 'brak jednoznacznego stanu meczu'); continue;
       }

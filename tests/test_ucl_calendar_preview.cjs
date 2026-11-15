@@ -85,6 +85,24 @@ test('duplicate team/date pair under different IDs blocks the entire preview', (
   assert.equal(inspect([upcoming(), second], NOW).ok, false);
 });
 
+test('same club in two simultaneous matches blocks the entire calendar', () => {
+  const other = fixture(930010, '2026-11-25T20:00:00+00:00',
+    'Arsenal FC', 'Bayern München', 21, 30);
+  const report = inspect([past(), upcoming(), other], NOW);
+  assert.equal(report.ok, false);
+  assert.deepEqual(report.upcoming, []);
+  assert.match(report.issues.join(' '), /drużyna ma więcej niż jeden mecz w tym samym terminie/);
+});
+
+test('shared kickoff is allowed for disjoint clubs but remains research only', () => {
+  const other = fixture(930011, '2026-11-25T20:00:00+00:00',
+    'Liverpool FC', 'Bayern München', 31, 30);
+  const report = inspect([past(), upcoming(), other], NOW);
+  assert.equal(report.ok, true);
+  assert.equal(report.upcoming.length, 2);
+  assert.equal(report.productionApproved, false);
+});
+
 test('future score and completed flag block preview', () => {
   assert.equal(inspect([fixture(930001,'2026-11-25T20:00:00Z', 'A', 'B', 1,2,true,true)], NOW).ok,false);
   assert.equal(inspect([fixture(930001,'2026-11-25T20:00:00Z', 'A', 'B', 1,2,false,true)], NOW).ok,false);
