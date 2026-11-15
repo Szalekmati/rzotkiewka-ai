@@ -55,6 +55,7 @@ def evaluate_fixtures(records, league_id, season=SEASON):
         return report
 
     seen_matches, id_to_name, name_to_id = set(), {}, {}
+    seen_fixture_slots, occupied_team_slots = set(), set()
     for position, row in enumerate(records):
         prefix = "fixture " + str(position + 1)
         if not isinstance(row, dict):
@@ -67,12 +68,13 @@ def evaluate_fixtures(records, league_id, season=SEASON):
             seen_matches.add(match_id)
 
         raw_time = row.get("matchDateTimeUTC")
+        kickoff_slot = None
         if not isinstance(raw_time, str) or not ZONED_UTC.fullmatch(raw_time):
             issues.append(prefix + ": UTC kickoff with explicit timezone required")
         else:
             try:
-                from datetime import datetime
-                datetime.fromisoformat(raw_time.replace("Z", "+00:00"))
+                from datetime import datetime, timezone
+                kickoff_slot = datetime.fromisoformat(raw_time.replace("Z", "+00:00")).astimezone(timezone.utc).isoformat()
             except ValueError:
                 issues.append(prefix + ": invalid calendar date")
 
@@ -102,6 +104,18 @@ def evaluate_fixtures(records, league_id, season=SEASON):
                 away_id = team_id
         if home_id is not None and home_id == away_id:
             issues.append(prefix + ": same club on both sides")
+        if kickoff_slot is not None and home_id is not None and away_id is not None:
+            # Different match IDs can still describe the same fixture; both
+            # that duplication and a club playing twice at one instant are unsafe.
+            fixture_slot = (kickoff_slot, home_id, away_id)
+            if fixture_slot in seen_fixture_slots:
+                issues.append(prefix + ": duplicate fixture under a different match ID")
+            seen_fixture_slots.add(fixture_slot)
+            for team_id in {home_id, away_id}:
+                team_slot = (kickoff_slot, team_id)
+                if team_slot in occupied_team_slots:
+                    issues.append(prefix + ": club scheduled more than once at the same kickoff")
+                occupied_team_slots.add(team_slot)
 
     # Suppress repetitive evidence; retain a bounded diagnostic summary.
     report["blocking_reasons"] = list(dict.fromkeys(issues))[:30]

@@ -48,6 +48,25 @@ class CandidateFixtureGateTests(unittest.TestCase):
         self.assertTrue(any("duplicate match ID" in s for s in result["blocking_reasons"]))
         self.assertTrue(any("different names" in s for s in result["blocking_reasons"]))
 
+    def test_distinct_match_ids_cannot_duplicate_same_fixture(self):
+        # Z and +00:00 represent the same instant; different IDs do not
+        # make a duplicated match legitimate.
+        duplicate = fixture(mid=900002, when="2026-11-23T20:00:00+00:00")
+        result = evaluate_fixtures([fixture(), duplicate], 140)
+        self.assertEqual(result["status"], "BLOCKED")
+        self.assertTrue(any("duplicate fixture" in reason for reason in result["blocking_reasons"]))
+        self.assertFalse(result["production_release_allowed"])
+
+    def test_club_cannot_play_two_fixtures_at_one_kickoff(self):
+        other_opponent = fixture(
+            home="Real Madrid", away="Real Betis", home_id=101,
+            away_id=103, mid=900002
+        )
+        result = evaluate_fixtures([fixture(), other_opponent], 140)
+        self.assertEqual(result["status"], "BLOCKED")
+        self.assertTrue(any("club scheduled more than once" in reason
+                            for reason in result["blocking_reasons"]))
+
     def test_invalid_or_naive_kickoff_is_blocked(self):
         for bad in ("2026-11-23T20:00:00", "2026-02-30T20:00:00Z", "tomorrow"):
             with self.subTest(bad=bad):
