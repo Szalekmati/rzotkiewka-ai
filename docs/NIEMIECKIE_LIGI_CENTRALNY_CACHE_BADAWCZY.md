@@ -36,3 +36,30 @@ Ostrzeżenie: przykład nie pobiera żadnych danych; ścieżki są przykładowe.
 - [ ] Osobna decyzja o wdrożeniu po pozytywnym audycie, bez mieszania research z prognozami lub Premium.
 
 **Brak automatycznego przejścia do produkcji.** Zielone testy offline oznaczają jedynie, że testowane reguły kodu działają.
+
+## Jednorazowa kontrola OpenLigaDB (tylko jawne uruchomienie)
+
+Nowy `research/german_live_probe.cjs` jest oddzielnym narzędziem
+diagnostycznym, NIE uruchamianym automatycznie. Wyłącznie po podaniu `--live`
+pobiera jednorazowo sekwencyjnie **dokładnie trzy** odpowiedzi z publicznego
+OpenLigaDB: `bl1/2026`, `bl2/2026`, `bl3/2026`. Między zapytaniami
+czeka co najmniej 1250 ms; nie wykonuje automatycznych ponowień, ma
+14-sekundowy timeout i limit 8 MB na odpowiedź.
+
+```sh
+node research/german_live_probe.cjs --live
+```
+
+Narzędzie wywołuje niezmienioną bramkę `buildBundle`, po czym wypisuje
+tylko **zagregowany raport** (liczba rekordów i nadchodzących meczów
+na ligę, przyczyna STOP i stałe flagi blokady produkcji). Nie zapisuje
+surowych odpowiedzi ani pliku snapshotu. Nie publikuje meczów do
+GitHub Pages, nie uruchamia prognoz lub Premium.
+
+Testy `tests/test_german_live_probe.cjs` używają wyłącznie sztucznych
+odpowiedzi przekazanych przez zamockowany `fetch`; nie wykonują żadnych
+żądań sieciowych w GitHub Actions. Wynik `RESEARCH_ONLY_NO_RELEASE`
+oznacza co najwyżej poprawny odczyt i spójność struktury, **nie**
+niezależną weryfikację wszystkich klubów/terminarzy ani dopuszczenie
+danych do publikacji. Ewentualny błąd lub ograniczenie API oznacza STOP,
+bez obejścia.

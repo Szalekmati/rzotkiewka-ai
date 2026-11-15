@@ -13,6 +13,8 @@ on:
       - 'tests/test_openfootball_history_audit.py'
       - 'ucl_deep_audit.py'
       - 'research/german_fixture_bundle.cjs'
+      - 'research/german_live_probe.cjs'
+      - 'tests/test_german_live_probe.cjs'
       - 'tests/test_german_fixture_bundle.cjs'
       - 'tests/test_ucl_deep_audit.py'
       - '.github/workflows/audyt_nowych_lig.yml'
@@ -27,6 +29,8 @@ on:
       - 'tests/test_openfootball_history_audit.py'
       - 'ucl_deep_audit.py'
       - 'research/german_fixture_bundle.cjs'
+      - 'research/german_live_probe.cjs'
+      - 'tests/test_german_live_probe.cjs'
       - 'tests/test_german_fixture_bundle.cjs'
       - 'tests/test_ucl_deep_audit.py'
       - '.github/workflows/audyt_nowych_lig.yml'
@@ -57,7 +61,7 @@ jobs:
       - name: Testy pogłębionego audytu Ligi Mistrzow (offline)
         run: python -m unittest discover -s tests -p 'test_ucl_deep_audit.py' -v
       - name: Niemieckie ligi - centralny cache badawczy (Node.js, offline)
-        run: node --test tests/test_german_fixture_bundle.cjs
+        run: node --test tests/test_german_fixture_bundle.cjs tests/test_german_live_probe.cjs
       - name: Testy spisu identyfikatorow lig 2025 (offline)
         run: python -m unittest discover -s tests -p 'test_league_shortcuts_2025.py' -v
       - name: Testy niezaleznej historii OpenFootball 2025/26 (offline)
