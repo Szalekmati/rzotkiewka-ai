@@ -71,5 +71,24 @@ class PagesPreviewTests(unittest.TestCase):
                 pages.validate(base)
 
 
+    def test_ci_retains_both_readonly_quality_gates(self):
+        """PR #41 must not erase LAB checks already merged by PR #40."""
+        workflow = (ROOT / ".github/workflows/quality_site.yml").read_text(encoding="utf-8")
+        checks = (
+            "test_lab_readonly_status.py",
+            "test_pages_bundle.py",
+        )
+        for filename in checks:
+            with self.subTest(filename=filename):
+                self.assertEqual(workflow.count(f"      - 'tests/{filename}'"), 2)
+                self.assertEqual(
+                    workflow.count(f"run: python -m unittest discover -s tests -p '{filename}' -v"),
+                    1,
+                )
+        self.assertIn("lab_forward/status_readonly.py", workflow)
+        self.assertIn("tools/prepare_pages_bundle.py", workflow)
+        self.assertIn("      - name: Testy niezmiennosci harmonogramu i modeli LAB", workflow)
+
+
 if __name__ == "__main__":
     unittest.main()
