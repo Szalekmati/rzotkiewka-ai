@@ -8,6 +8,7 @@ predictions, publishing, or automatic promotion happen here.
 import argparse
 import json
 import re
+from datetime import datetime, timezone
 import sys
 from pathlib import Path
 
@@ -17,6 +18,8 @@ from api_football_official_roster import OFFICIAL  # noqa: E402
 from api_football_crosscheck import clean_team  # noqa: E402
 
 SEASON = 2026
+SEASON_START = datetime(2026, 7, 1, tzinfo=timezone.utc)
+SEASON_END = datetime(2027, 7, 1, tzinfo=timezone.utc)
 MAX_FIXTURES = 600
 ZONED_UTC = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|\+00:00)$")
 ALLOWED = frozenset({39, 140})
@@ -73,8 +76,10 @@ def evaluate_fixtures(records, league_id, season=SEASON):
             issues.append(prefix + ": UTC kickoff with explicit timezone required")
         else:
             try:
-                from datetime import datetime, timezone
-                kickoff_slot = datetime.fromisoformat(raw_time.replace("Z", "+00:00")).astimezone(timezone.utc).isoformat()
+                kickoff = datetime.fromisoformat(raw_time.replace("Z", "+00:00")).astimezone(timezone.utc)
+                kickoff_slot = kickoff.isoformat()
+                if not SEASON_START <= kickoff < SEASON_END:
+                    issues.append(prefix + ": kickoff outside 2026/27 season window")
             except ValueError:
                 issues.append(prefix + ": invalid calendar date")
 

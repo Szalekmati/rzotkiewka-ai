@@ -23,6 +23,9 @@ bez API i bez klucza, i weryfikuje:
 - czy badana kandydatura ma przepisany wcześniej oficjalny wykaz 20 klubów na 2026/27
   (aktualnie ID 39 Premier League, ID 140 LaLiga);
 - czy każde spotkanie ma poprawne ID, dwie różne drużyny i jawny czas UTC;
+- czy czas rozpoczęcia należy do konserwatywnego okna sezonu 2026/27
+  (od 1.07.2026 włącznie do 1.07.2027 wyłącznie); mecze spoza
+  okna są blokowane do odrębnej, ręcznej weryfikacji;
 - czy wszystkie nazwy klubów odpowiadają dokładnie (po normalizacji)
   nazwom z wykazu oraz czy nie ma sprzecznych mapowań nazwa ↔ ID;
 - czy brak danych, duplikaty lub obce kluby powodują stan `BLOCKED`.

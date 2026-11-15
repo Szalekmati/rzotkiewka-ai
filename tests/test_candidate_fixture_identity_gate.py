@@ -72,6 +72,16 @@ class CandidateFixtureGateTests(unittest.TestCase):
             with self.subTest(bad=bad):
                 self.assertEqual(evaluate_fixtures([fixture(when=bad)], 140)["status"], "BLOCKED")
 
+    def test_cross_season_kickoffs_are_blocked(self):
+        for when in ("2026-06-30T23:59:59Z", "2027-07-01T00:00:00Z",
+                     "2025-11-23T20:00:00Z"):
+            with self.subTest(when=when):
+                result = evaluate_fixtures([fixture(when=when)], 140)
+                self.assertEqual(result["status"], "BLOCKED")
+                self.assertTrue(any("outside 2026/27 season window" in reason
+                                    for reason in result["blocking_reasons"]))
+                self.assertFalse(result["public_fixture_preview_allowed"])
+
     def test_unregistered_ucl_and_wrong_season_are_blocked(self):
         self.assertEqual(evaluate_fixtures([fixture()], 2)["status"], "BLOCKED")
         self.assertEqual(evaluate_fixtures([fixture()], 140, 2025)["status"], "BLOCKED")
