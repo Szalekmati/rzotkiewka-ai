@@ -17,6 +17,8 @@ on:
       - 'research/ucl_calendar_preview.js'
       - 'research/ucl_official_matchday5.js'
       - 'research/ucl_verify_snapshot.cjs'
+      - 'research/ucl_central_snapshot.cjs'
+      - 'tests/test_ucl_central_snapshot.cjs'
       - 'tests/test_ucl_verify_snapshot.cjs'
       - 'tests/test_ucl_official_matchday5.cjs'
       - 'tests/test_ucl_calendar_preview.cjs'
@@ -37,6 +39,8 @@ on:
       - 'research/ucl_calendar_preview.js'
       - 'research/ucl_official_matchday5.js'
       - 'research/ucl_verify_snapshot.cjs'
+      - 'research/ucl_central_snapshot.cjs'
+      - 'tests/test_ucl_central_snapshot.cjs'
       - 'tests/test_ucl_verify_snapshot.cjs'
       - 'tests/test_ucl_official_matchday5.cjs'
       - 'tests/test_ucl_calendar_preview.cjs'
@@ -69,7 +73,7 @@ jobs:
       - name: Testy pogłębionego audytu Ligi Mistrzow (offline)
         run: python -m unittest discover -s tests -p 'test_ucl_deep_audit.py' -v
       - name: Testy roboczego kalendarza UCL (Node.js, offline)
-        run: node --test tests/test_ucl_calendar_preview.cjs tests/test_ucl_official_matchday5.cjs tests/test_ucl_verify_snapshot.cjs
+        run: node --test tests/test_ucl_calendar_preview.cjs tests/test_ucl_official_matchday5.cjs tests/test_ucl_verify_snapshot.cjs tests/test_ucl_central_snapshot.cjs
       - name: Testy spisu identyfikatorow lig 2025 (offline)
         run: python -m unittest discover -s tests -p 'test_league_shortcuts_2025.py' -v
       - name: Testy niezaleznej historii OpenFootball 2025/26 (offline)

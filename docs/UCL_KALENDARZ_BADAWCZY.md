@@ -101,3 +101,29 @@ porównania danych ze stanem datowanej referencji UEFA i kontrolami technicznymi
 interpretację. Brak praw do redystrybucji i brak niezależnej kontroli ID klubów
 pozostają osobnymi bramkami. Żadne wykonanie narzędzia nie zmienia strony,
 LAB, prognoz, cen ani płatności.
+
+## Prototyp scentralizowanego cache — tylko lokalny, bez sieci
+
+`research/ucl_central_snapshot.cjs` jest prototypem czystej transformacji
+wcześniej pozyskanego pliku JSON w niewielki **snapshot badawczy**, oparty na
+wspólnych bramkach `compareRows` i `UclPreview.inspect`. Nie odczytuje API,
+nie zmienia publicznych danych i nie uruchamia harmonogramów.
+
+```sh
+node research/ucl_central_snapshot.cjs --input /tmp/ucl_2026.json --output /tmp/ucl_research_snapshot.json
+```
+
+Wynik powstaje wyłącznie po zgodności źródła z datowaną referencją UEFA
+(72 pozycji) i kontrolą struktury. Nie nadpisuje pliku wyjściowego. Zawiera
+jedynie wymagane pola meczów bez grafik, URL herbów i surowych wyników.
+Ma jawne `observed_at_utc`, pochodzenie, licencję ODbL, oraz limit świeżości
+6 godzin. Funkcja `inspectResearchSnapshot` wykrywa wygasłe i przypadkowo
+zmienione zestawy; SHA-256 kontroluje spójność, nie poświadcza źródła.
+Każdy wynik ma **`RESEARCH_ONLY`** oraz trzy flagi zakazu publikacji,
+prognoz i Premium. **Nie jest częścią `index.html` i nie może być automatycznie
+udostępniany użytkownikom.**
+
+Testy offline: `node --test tests/test_ucl_central_snapshot.cjs`, także
+w ramach istniejącego audytu PR. Samo CI nie wykonuje odczytu API.
+Do wdrożenia centralnego cache w przyszłości wymagane są osobne decyzje
+dotyczące trybu odświeżania, limitu Actions, praw do danych i rollbacku.
