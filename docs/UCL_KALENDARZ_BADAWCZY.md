@@ -20,6 +20,14 @@
 
 Testy offline: `node --test tests/test_ucl_calendar_preview.cjs`.
 
+## Niezależna kontrola piątej kolejki (nowy etap)
+
+W `research/ucl_official_matchday5.js` znajduje się datowane porównanie **18 par gospodarze–goście oraz godzin UTC** z oficjalnym [terminarzem UEFA 2026/27, opublikowanym 4.11.2026](https://www.uefa.com/uefachampionsleague/news/02a8-2174c9e9019d-f909a77bd77a-1000--2026-27-uefa-champions-league-all-the-league-phase-fixtures-a/). Pary te dotyczą wyłącznie piątej kolejki 24–25 listopada 2026. Istnieją ograniczone aliasy nazw klubów dostawcy, które są propozycjami roboczymi, nie zatwierdzonym powiązaniem ID.
+
+**Warunek wyświetlenia kalendarza:** 18/18 jednoznacznych zgodności dat, godzin i kolejności gospodarze/goście oraz pozytywna kontrola strukturalna całego pobranego zestawu. Jedna niezgodność = STOP i brak wyświetlania. Nie potwierdzamy w ten sposób innych kolejek, identyfikatorów klubów, pełnej aktualności terminarza ani licencji.
+
+Testy offline: `node --test tests/test_ucl_calendar_preview.cjs tests/test_ucl_official_matchday5.cjs`. Testy nie pobierają danych i nie dowodzą rzeczywistej zgodności OpenLigaDB z UEFA. Zmiany terminów na stronie UEFA po 4.11 wymagają ręcznej aktualizacji referencji i sprawdzenia.
+
 ## Warunki zanim Liga Mistrzów trafi na właściwą stronę
 
 1. Potwierdzić pełen oficjalny spis drużyn UCL 2026/27, pary gospodarze/goście, fazy, terminy i ewentualne przesunięcia u UEFA.
