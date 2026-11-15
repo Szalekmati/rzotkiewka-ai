@@ -43,3 +43,11 @@ Przed przełączeniem zapisać poprzednie źródło publikacji (gałąź/katalog
 **Granice tego PR:** tylko kod przygotowania kopii, testy i dokumentacja. Nie zmienia modelu, LAB, archiwum, domeny, aktualnego źródła Pages, harmonogramów, ani kosztów/subskrypcji.
 
 Dokumentacja: https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site
+
+## Aktualizacja po wdrożeniu #40 — 15.11.2026
+
+Monitor LAB z [PR #40](https://github.com/Szalekmati/rzotkiewka-ai/pull/40) jest już scalony z gałęzią `main`. Historyczna gałąź #41 zawierała jego identyczne pliki z wcześniejszej próby integracyjnej. **Przed scaleniem #41 obowiązuje weryfikacja łączna z obecnym `main`**, w szczególności dwa niezależne kroki CI dla monitora LAB i próbnego pakietu Pages, a także brak usunięć wśród plików LAB.
+
+Test `test_ci_retains_both_readonly_quality_gates` chroni oba kroki i filtry CI. Publikacja GitHub Pages będzie wymagała odrębnej decyzji i osobnego planu uwzględniającego aktualność wyświetlanego statusu LAB.
+
+**Nadal nie wdrażamy filtrowanej publikacji Pages**, nie zmieniamy źródła wdrożenia, nie wyłączamy automatycznych LAB i nie obiecujemy oszczędności, dopóki nie zostaną zmierzone po osobno zatwierdzonej migracji.
