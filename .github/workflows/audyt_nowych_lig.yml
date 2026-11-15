@@ -22,6 +22,8 @@ on:
       - 'tests/test_ucl_verify_snapshot.cjs'
       - 'tests/test_ucl_official_matchday5.cjs'
       - 'tests/test_ucl_calendar_preview.cjs'
+      - 'research/ucl_historical_team_id_probe.cjs'
+      - 'tests/test_ucl_historical_team_id_probe.cjs'
       - 'docs/UCL_KALENDARZ_BADAWCZY.md'
       - '.github/workflows/audyt_nowych_lig.yml'
   push:
@@ -44,6 +46,8 @@ on:
       - 'tests/test_ucl_verify_snapshot.cjs'
       - 'tests/test_ucl_official_matchday5.cjs'
       - 'tests/test_ucl_calendar_preview.cjs'
+      - 'research/ucl_historical_team_id_probe.cjs'
+      - 'tests/test_ucl_historical_team_id_probe.cjs'
       - 'docs/UCL_KALENDARZ_BADAWCZY.md'
       - '.github/workflows/audyt_nowych_lig.yml'
   schedule:
@@ -73,7 +77,25 @@ jobs:
       - name: Testy pogłębionego audytu Ligi Mistrzow (offline)
         run: python -m unittest discover -s tests -p 'test_ucl_deep_audit.py' -v
       - name: Testy roboczego kalendarza UCL (Node.js, offline)
-        run: node --test tests/test_ucl_calendar_preview.cjs tests/test_ucl_official_matchday5.cjs tests/test_ucl_verify_snapshot.cjs tests/test_ucl_central_snapshot.cjs tests/test_ucl_team_identity_probe.cjs
+        run: node --test tests/test_ucl_calendar_preview.cjs tests/test_ucl_official_matchday5.cjs tests/test_ucl_verify_snapshot.cjs tests/test_ucl_central_snapshot.cjs tests/test_ucl_team_identity_probe.cjs tests/test_ucl_historical_team_id_probe.cjs
+      # One-time read of previous UCL provider identities, scoped to this
+      # research PR. Remove both live steps after recording the evidence.
+      - name: UCL - historia identyfikatorow Barcelony i Excelsioru (PR 46 only)
+        if: github.event_name == 'pull_request' && github.event.pull_request.number == 46
+        run: |
+          report="$RUNNER_TEMP/ucl_2025_historical_ids.json"
+          code=0
+          node research/ucl_historical_team_id_probe.cjs --live > "$report" || code=$?
+          echo "Historical ID read exit: $code; no current season approval"
+          if test -s "$report"; then cat "$report"; else echo "STOP: no bounded report"; fi
+      - name: UCL - zapisz historie ID tylko dla badania
+        if: always() && github.event_name == 'pull_request' && github.event.pull_request.number == 46
+        uses: actions/upload-artifact@v4
+        with:
+          name: RZOTKIEWKA_UCL_2025_HISTORICAL_ID_RESEARCH_ONLY
+          path: ${{ runner.temp }}/ucl_2025_historical_ids.json
+          if-no-files-found: warn
+          retention-days: 7
       - name: Testy spisu identyfikatorow lig 2025 (offline)
         run: python -m unittest discover -s tests -p 'test_league_shortcuts_2025.py' -v
       - name: Testy niezaleznej historii OpenFootball 2025/26 (offline)
