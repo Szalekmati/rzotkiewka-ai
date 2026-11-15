@@ -9,6 +9,9 @@ const {verifyAllUpcoming} = require('./ucl_official_matchday5.js');
 
 const URL = 'https://api.openligadb.de/getmatchdata/ucl/2026';
 const LIMIT_BYTES = 3_000_000;
+const OFFICIAL_REFERENCE_AS_OF = '2026-11-04';
+// Internal research safeguard: aged references require a new manual UEFA check.
+const REFERENCE_REVIEW_MAX_DAYS = 7;
 
 function compareRows(rows, observedAt) {
   const official = verifyAllUpcoming(rows);
@@ -16,8 +19,19 @@ function compareRows(rows, observedAt) {
   // Reject mixed competition, season or provider league IDs even if pairs
   // match the dated UEFA reference. A shared provider ID is not proof of identity.
   const hasCorrectSourceIdentity = sourceIdentityValid(rows);
-  const matched = official.ok === true && structure.ok === true && hasCorrectSourceIdentity;
+  const observedInstant = Date.parse(observedAt);
+  const referenceInstant = Date.parse(OFFICIAL_REFERENCE_AS_OF + 'T00:00:00Z');
+  const referenceAgeDays = Number.isFinite(observedInstant)
+    ? Math.floor((observedInstant - referenceInstant) / 86400000) : null;
+  const referenceReviewRequired = referenceAgeDays === null ||
+    referenceAgeDays < 0 || referenceAgeDays >= REFERENCE_REVIEW_MAX_DAYS;
+  const matched = official.ok === true && structure.ok === true &&
+    hasCorrectSourceIdentity && !referenceReviewRequired;
   const issues = [
+    ...(referenceReviewRequired ? [
+      'Datowana referencja UEFA ' + OFFICIAL_REFERENCE_AS_OF +
+      ' wymaga ponownej weryfikacji; kontrola badawcza wstrzymana.'
+    ] : []),
     ...(hasCorrectSourceIdentity ? [] : ['Brak lub niezgodność leagueShortcut=ucl / leagueSeason=2026 / leagueId']),
     ...(official.issues || []),
     ...(structure.issues || []),
@@ -28,7 +42,10 @@ function compareRows(rows, observedAt) {
     status: matched ? 'MATCHED_RESEARCH_ONLY' : 'STOP',
     observedAt,
     source: URL,
-    referenceAsOf: '2026-11-04',
+    referenceAsOf: OFFICIAL_REFERENCE_AS_OF,
+    referenceAgeDays,
+    referenceReviewMaxDays: REFERENCE_REVIEW_MAX_DAYS,
+    referenceReviewRequired,
     records: Array.isArray(rows) ? rows.length : null,
     officialCompared: official.checked || 0,
     officialExpected: official.expected || 72,

@@ -7,7 +7,7 @@ const path=require('node:path');
 const {allOfficial}=require('../research/ucl_official_matchday5.js');
 const {buildResearchSnapshot,inspectResearchSnapshot,main,MAX_AGE_MS}=
   require('../research/ucl_central_snapshot.cjs');
-const NOW='2026-11-15T18:00:00Z';
+const NOW='2026-11-08T18:00:00Z';
 function fixtureRows(){
   const clubs=new Map();
   function team(name){
@@ -44,6 +44,14 @@ test('synthetic 72-match snapshot is research only and strips extra fields',()=>
   assert.doesNotMatch(JSON.stringify(snapshot),/teamIconUrl|extraPrivate|logo\.png|matchResults/);
   assert.equal(inspectResearchSnapshot(snapshot,NOW).usable,true);
 });
+test('stale UEFA reference cannot produce even a research-only cache',()=>{
+  const report=buildResearchSnapshot(fixtureRows(),'2026-11-15T18:00:00Z');
+  assert.equal(report.ok,false);
+  assert.equal(report.report.status,'STOP');
+  assert.equal(report.report.referenceAgeDays,11);
+  assert.equal(report.report.referenceReviewRequired,true);
+});
+
 test('missing, extra and incorrect UEFA records cannot create snapshot',()=>{
   const rows=fixtureRows();
   assert.equal(buildResearchSnapshot(rows.slice(1),NOW).ok,false);
@@ -55,11 +63,11 @@ test('missing, extra and incorrect UEFA records cannot create snapshot',()=>{
 });
 test('stale snapshots and changed fixtures fail closed',()=>{
   const doc=buildResearchSnapshot(fixtureRows(),NOW).snapshot;
-  assert.equal(inspectResearchSnapshot(doc,'2026-11-15T23:59:59Z').usable,true);
-  assert.equal(inspectResearchSnapshot(doc,'2026-11-16T00:00:00Z').status,'STALE_OR_FUTURE');
-  assert.equal(inspectResearchSnapshot(doc,'2026-11-15T17:59:59Z').usable,false);
+  assert.equal(inspectResearchSnapshot(doc,'2026-11-08T23:59:59Z').usable,true);
+  assert.equal(inspectResearchSnapshot(doc,'2026-11-09T00:00:00Z').status,'STALE_OR_FUTURE');
+  assert.equal(inspectResearchSnapshot(doc,'2026-11-08T17:59:59Z').usable,false);
   doc.fixtures[0].home='Changed team';
-  assert.equal(inspectResearchSnapshot(doc,'2026-11-15T20:00:00Z').status,'INVALID_SNAPSHOT');
+  assert.equal(inspectResearchSnapshot(doc,'2026-11-08T20:00:00Z').status,'INVALID_SNAPSHOT');
   assert.equal(MAX_AGE_MS,21600000);
 });
 test('CLI writes validated research-only output and refuses overwrite or bad data',async()=>{

@@ -165,3 +165,23 @@ przeglądarki nie jest wzorcem na publiczne wdrożenie dla wielu osób.
 Centralny cache z limitem świeżości, nadzorem kosztów i poprawną atrybucją
 będzie wymagać osobnego projektu i zatwierdzenia; tej gałęzi nie wolno
 scalać ani publikować automatycznie.
+
+## Zabezpieczenie aktualności referencji UEFA (etap badawczy)
+
+Raport `research/ucl_verify_snapshot.cjs` porównuje spotkania z datowanym
+spisem UEFA z **4.11.2026**. Ponieważ terminarze mogą się zmieniać, dodano
+**wewnętrzny, ostrożny limit ponownej weryfikacji: 7 pełnych dni UTC**
+(nie jest to limit narzucony przez UEFA). Po upływie tego okresu lub przy
+błędnym czasie raport daje `STOP`, nawet jeśli wszystkie 72 spotkania nadal
+pasują do starej referencji. Do raportu trafiają
+`referenceAgeDays`, `referenceReviewMaxDays` i
+`referenceReviewRequired`. Z tego samego powodu nie wolno zbudować
+badawczego cache na przestarzałym porównaniu.
+
+Przykład: **15.11.2026 referencja ma 11 dni, więc wynik musi być STOP**
+do ponownego udokumentowanego sprawdzenia oficjalnego wykazu u UEFA.
+Odświeżenie oznacza rzeczywiste porównanie zmian i aktualizację daty
+referencji wraz z testami, **nie** ręczne przestawienie daty w kodzie.
+Nawet `MATCHED_RESEARCH_ONLY` w krótszym oknie nie dopuszcza
+publikacji ani prognoz. Ten limit chroni również przed przypadkowym
+użyciem historycznego raportu jako dowodu aktualności API.

@@ -4,7 +4,8 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const {allOfficial} = require('../research/ucl_official_matchday5.js');
 const {compareRows, fetchLive, main, URL} = require('../research/ucl_verify_snapshot.cjs');
-const NOW = '2026-11-15T18:00:00Z';
+// Use a reference still inside the internal 7-day review window for positive cases.
+const NOW = '2026-11-08T18:00:00Z';
 function sample() {
   const known = new Map();
   const teamId = name => {
@@ -34,6 +35,31 @@ test('valid synthetic fixture comparison is research-only, never release', () =>
   assert.equal(report.predictionsAllowed, false);
   assert.equal(report.premiumAllowed, false);
 });
+test('aged official reference blocks a structurally matching 72-match feed', () => {
+  const report = compareRows(sample(), '2026-11-15T18:00:00Z');
+  assert.equal(report.officialCompared, 72);
+  assert.equal(report.sourceIdentityValid, true);
+  assert.equal(report.structureAccepted, true);
+  assert.equal(report.referenceAgeDays, 11);
+  assert.equal(report.referenceReviewRequired, true);
+  assert.equal(report.status, 'STOP');
+  assert.equal(report.publicationAllowed, false);
+  assert.equal(report.predictionsAllowed, false);
+  assert.match(report.findings.join(' '), /referencja UEFA/i);
+});
+
+test('reference review is required at seven days and for invalid clocks', () => {
+  const accepted = compareRows(sample(), '2026-11-10T23:59:59Z');
+  assert.equal(accepted.status, 'MATCHED_RESEARCH_ONLY');
+  assert.equal(accepted.referenceAgeDays, 6);
+  assert.equal(accepted.referenceReviewRequired, false);
+  for (const when of ['2026-11-11T00:00:00Z', '2026-11-03T23:59:59Z', 'not-a-date']) {
+    const report = compareRows(sample(), when);
+    assert.equal(report.status, 'STOP', when);
+    assert.equal(report.referenceReviewRequired, true, when);
+  }
+});
+
 test('missing, extra and incorrectly dated fixtures block', () => {
   const rows = sample();
   assert.equal(compareRows(rows.slice(1), NOW).status, 'STOP');
