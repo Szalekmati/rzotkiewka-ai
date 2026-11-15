@@ -98,7 +98,7 @@ spójności metadanych, nie niezależne poświadczenie prawdziwości źródła.
 W raporcie: `MATCHED_RESEARCH_ONLY` oznacza poprawność ograniczonego
 porównania danych ze stanem datowanej referencji UEFA i kontrolami technicznymi,
 **nigdy** zgodę na publikację lub prognozy. `STOP` albo błąd odczytu blokują
-interpretację. Brak praw do redystrybucji i brak niezależnej kontroli ID klubów
+interpretację. Niezamknięta kontrola obowiązków licencji ODbL i brak niezależnej kontroli ID klubów
 pozostają osobnymi bramkami. Żadne wykonanie narzędzia nie zmienia strony,
 LAB, prognoz, cen ani płatności.
 
@@ -127,3 +127,41 @@ Testy offline: `node --test tests/test_ucl_central_snapshot.cjs`, także
 w ramach istniejącego audytu PR. Samo CI nie wykonuje odczytu API.
 Do wdrożenia centralnego cache w przyszłości wymagane są osobne decyzje
 dotyczące trybu odświeżania, limitu Actions, praw do danych i rollbacku.
+
+## Licencja i fair use OpenLigaDB — przegląd 15.11.2026
+
+Źródła: [OpenLigaDB — licencja danych](https://www.openligadb.de/en/license)
+(aktualizacja wskazana przez dostawcę: 07.11.2026),
+[OpenLigaDB — regulamin dostępu API](https://www.openligadb.de/en/terms-of-use).
+Angielskie strony to tłumaczenia pomocnicze; według dostawcy wiążący tekst
+jest po niemiecku. Niniejsza notatka nie jest formalną opinią prawną.
+
+**Wniosek:** ODbL 1.0 dopuszcza wykorzystanie danych meczowych OpenLigaDB
+**także w produktach płatnych**. Sama komercyjność naszej przyszłej aplikacji
+nie jest zakazem. Nadal należy zapewnić przypisanie źródła i licencji.
+Przykład widocznej informacji: `Dane: OpenLigaDB (ODbL 1.0)` z odnośnikiem
+w stopce lub sekcji źródeł. Publiczne rozpowszechnianie zmodyfikowanej bazy
+danych może uruchamiać obowiązki share-alike i zakaz nakładania ograniczeń
+technicznych na dalej udostępnianą bazę. Sam widok tabeli w aplikacji dostawca
+opisuje inaczej niż redystrybucję bazy; konkretny sposób publikacji i
+przetwarzania danych trzeba jednak sprawdzić przed wdrożeniem.
+
+Licencja **nie obejmuje** herbów, logo, obrazów pod odnośnikami API ani nie
+znosi praw do nazw i znaków klubów. Treści UEFA i API-FOOTBALL wymagają
+**oddzielnej** oceny praw; nie wolno przenosić na nie warunków OpenLigaDB.
+
+**Fair use i architektura:** zalecany jest centralny cache, nie pobieranie
+pełnego terminarza osobno przez każdy telefon. Według regulaminu:
+- najpierw sprawdzać `getlastchangedate`, a pełne dane pobierać po zmianie;
+- podczas meczów najwyżej raz na 30–60 sekund dla każdej ligi **łącznie**,
+  poza meczami zwykle wystarcza kilka odczytów dziennie;
+- stosować cache, jitter, wykładniczy backoff po HTTP 429/5xx i identyfikujący
+  `User-Agent` z nazwą projektu i kontaktem;
+- obsługiwać awarie, braki i opóźnienia bez wymyślania wyników lub terminów.
+
+Obecny ręczny `ucl_calendar_preview.html` pozostaje **tylko lokalnym,
+niepublikowanym narzędziem badawczym**. Jego bezpośredni odczyt API z
+przeglądarki nie jest wzorcem na publiczne wdrożenie dla wielu osób.
+Centralny cache z limitem świeżości, nadzorem kosztów i poprawną atrybucją
+będzie wymagać osobnego projektu i zatwierdzenia; tej gałęzi nie wolno
+scalać ani publikować automatycznie.
