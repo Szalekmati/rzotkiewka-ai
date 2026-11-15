@@ -922,6 +922,7 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
     };
   }
   function badge(tip) {
+    if (state.mode === 'demo') return ['PRZYKŁAD DEMO',''];
     if (tip.status === 'won') return ['Wygrany ✓','closed'];
     if (tip.status === 'lost') return ['Przegrany ✕','lost'];
     if (tip.status === 'void') return ['Zwrot ↩','closed'];
@@ -937,7 +938,7 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
     card.append(top,title);
     if (tip.tier === 'premium') {
       const lock = el('div','premium-lock');
-      lock.append(el('div','small','TYP PREMIUM — ZABLOKOWANY'),el('strong','Analiza dostępna po uruchomieniu usługi'));
+      lock.append(el('div','small',state.mode === 'demo' ? 'KARTA DEMO · PREMIUM NIEAKTYWNE' : 'TYP PREMIUM — ZABLOKOWANY'),el('strong',state.mode === 'demo' ? 'Fikcyjny przykład analizy' : 'Analiza dostępna po uruchomieniu usługi'));
       const a = el('a','','Sprawdź plan Premium'); a.href = '#premium'; lock.append(a); card.append(lock);
       card.append(el('p','rationale','Typ i kurs nie są udostępniane w publicznym pliku strony.'));
     } else {
@@ -947,7 +948,9 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
       card.append(choice,el('p','rationale',tip.reason || 'Uzasadnienie w przygotowaniu.'));
     }
     const resultName = {upcoming:'Przed meczem',won:'Wygrany',lost:'Przegrany',void:'Zwrot'};
-    const foot = el('div','tip-foot');foot.append(el('span','','RZOTKIEWKA · 18+'),el('span','',resultName[tip.status]));card.append(foot);
+    const foot = el('div','tip-foot');
+    const statusLabel = state.mode === 'demo' ? 'Fikcyjny przykład · nie jest prawdziwym meczem' : resultName[tip.status];
+    foot.append(el('span','','RZOTKIEWKA · 18+'),el('span','',statusLabel));card.append(foot);
     return card;
   }
   function render() {
@@ -956,7 +959,7 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
     if (!tips.length) target.append(el('div','empty','Brak typów w tej kategorii. Dodaj je do pliku tips.json.'));
     else for (const tip of tips) target.append(renderCard(tip));
     $('stat-count').textContent = String(state.tips.length);
-    const ended = state.tips.filter(t => t.tier === 'free' && ['won','lost'].includes(t.status) && t.odds !== null && t.odds >= 1);
+    const ended = state.mode === 'demo' ? [] : state.tips.filter(t => t.tier === 'free' && ['won','lost'].includes(t.status) && t.odds !== null && t.odds >= 1);
     $('stat-hit').textContent = ended.length ? (100 * ended.filter(t => t.status === 'won').length / ended.length).toFixed(1).replace('.',',') + '%' : '—';
     const profit = ended.reduce((sum,t) => sum + (t.status === 'won' ? t.odds - 1 : -1),0);
     $('stat-profit').textContent = ended.length ? `${profit > 0 ? '+' : ''}${profit.toFixed(2).replace('.',',')} j.` : '—';
