@@ -18,7 +18,7 @@ from api_football_crosscheck import clean_team  # noqa: E402
 
 SEASON = 2026
 MAX_FIXTURES = 600
-ZONED_UTC = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$")
+ZONED_UTC = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|\+00:00)$")
 ALLOWED = frozenset({39, 140})
 
 
