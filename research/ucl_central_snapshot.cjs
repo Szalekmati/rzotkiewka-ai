@@ -76,7 +76,7 @@ function inspectResearchSnapshot(doc, observedAt) {
   return {usable:true,status:'RESEARCH_ONLY',ageMinutes:Math.floor((now-stamped)/60000),
     fixtureCount:doc.fixture_count,productionReleaseAllowed:false};
 }
-async function main(args=process.argv.slice(2)) {
+async function main(args=process.argv.slice(2), observedAt=new Date().toISOString()) {
   if(args.length===1 && args[0]==='--help'){
     process.stdout.write('Usage: node research/ucl_central_snapshot.cjs --input existing.json --output local-report.json\n');
     return 0;
@@ -91,7 +91,7 @@ async function main(args=process.argv.slice(2)) {
     if(!inputInfo.isFile() || inputInfo.size>LIMIT_BYTES || inputInfo.size===0)
       throw new Error('Invalid input file');
     const raw=JSON.parse(await fs.readFile(args[1],'utf8'));
-    const result=buildResearchSnapshot(raw,new Date().toISOString());
+    const result=buildResearchSnapshot(raw,observedAt);
     if(!result.ok) {
       process.stderr.write('STOP: source did not pass research gates; no snapshot written\n');
       return 1;

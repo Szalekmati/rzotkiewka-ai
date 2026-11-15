@@ -62,18 +62,23 @@ test('stale snapshots and changed fixtures fail closed',()=>{
   assert.equal(inspectResearchSnapshot(doc,'2026-11-15T20:00:00Z').status,'INVALID_SNAPSHOT');
   assert.equal(MAX_AGE_MS,21600000);
 });
-test('CLI does not overwrite existing files and rejects invalid input without output',async()=>{
+test('CLI writes validated research-only output and refuses overwrite or bad data',async()=>{
   const folder=await fs.mkdtemp(path.join(os.tmpdir(),'rzotkiewka-ucl-cache-'));
   try{
     const input=path.join(folder,'source.json'),output=path.join(folder,'research.json');
     await fs.writeFile(input,JSON.stringify(fixtureRows()));
-    assert.equal(await main(['--input',input,'--output',output]),1);
-    await assert.rejects(fs.stat(output),{code:'ENOENT'});
+    assert.equal(await main(['--input',input,'--output',output],NOW),0);
+    const original=await fs.readFile(output,'utf8');
+    assert.equal(JSON.parse(original).fixture_count,72);
+    assert.equal(JSON.parse(original).production_release_allowed,false);
+    assert.equal(await main(['--input',input,'--output',output],NOW),2);
+    assert.equal(await fs.readFile(output,'utf8'),original);
+    const invalid=path.join(folder,'invalid.json'),rejected=path.join(folder,'rejected.json');
+    await fs.writeFile(invalid,'[]');
+    assert.equal(await main(['--input',invalid,'--output',rejected],NOW),1);
+    await assert.rejects(fs.stat(rejected),{code:'ENOENT'});
     assert.equal(await main([]),2);
     assert.equal(await main(['--help']),0);
-    await fs.writeFile(output,'DO NOT OVERWRITE');
-    assert.equal(await main(['--input',input,'--output',output]),1);
-    assert.equal(await fs.readFile(output,'utf8'),'DO NOT OVERWRITE');
   }finally{
     await fs.rm(folder,{recursive:true,force:true});
   }
