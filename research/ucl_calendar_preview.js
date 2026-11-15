@@ -40,9 +40,12 @@
   // Missing or conflicting provenance must block a research preview.
   // This is only a consistency check; provider fields are not proof of identity.
   function sourceIdentityValid(payload) {
-    return Array.isArray(payload) && payload.length > 0 &&
+    if (!Array.isArray(payload) || payload.length === 0) return false;
+    const providerLeagueId = payload[0] && payload[0].leagueId;
+    return Number.isSafeInteger(providerLeagueId) && providerLeagueId > 0 &&
       payload.every(row => row && typeof row === 'object' && !Array.isArray(row) &&
-        row.leagueShortcut === 'ucl' && row.leagueSeason === 2026);
+        row.leagueShortcut === 'ucl' && row.leagueSeason === 2026 &&
+        row.leagueId === providerLeagueId);
   }
 
   function inspect(payload, nowInput) {
@@ -51,7 +54,7 @@
     if (!Array.isArray(payload) || payload.length === 0 || payload.length > MAX_RECORDS)
       return { ok: false, reason: 'Niepoprawny rozmiar danych źródłowych', issues: [], upcoming: [], total: 0 };
     if (!sourceIdentityValid(payload))
-      return { ok: false, reason: 'Brak lub niezgodność ligi ucl / sezonu 2026 w danych źródła',
+      return { ok: false, reason: 'Brak lub niezgodność ligi ucl / sezonu 2026 / leagueId w danych źródła',
         issues: [], upcoming: [], total: payload.length };
 
     const problems = [];

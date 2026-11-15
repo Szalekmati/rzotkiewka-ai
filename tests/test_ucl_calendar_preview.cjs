@@ -9,7 +9,7 @@ const NOW = '2026-11-15T12:00:00Z';
 function fixture(id, iso, home = 'Arsenal FC', away = 'Inter Milano', homeId = 21, awayId = 22,
                  finished = false, score = false) {
   return {
-    matchID: id, leagueShortcut: 'ucl', leagueSeason: 2026,
+    matchID: id, leagueShortcut: 'ucl', leagueSeason: 2026, leagueId: 2800,
     matchDateTimeUTC: iso, matchIsFinished: finished,
     team1: {teamId: homeId, teamName: home}, team2: {teamId: awayId, teamName: away},
     group: {groupName: 'Liga'},
@@ -54,6 +54,21 @@ test('browser preview blocks a wrong, missing or null competition / season', () 
     assert.deepEqual(report.upcoming, []);
     assert.match(report.reason, /sezonu 2026/);
   }
+});
+
+test('browser preview blocks absent, invalid or mixed provider league IDs', () => {
+  for (const bad of [undefined, null, '2800', 0, -1, false, 1.5]) {
+    const row = upcoming();
+    row.leagueId = bad;
+    assert.equal(sourceIdentityValid([row]), false);
+    assert.equal(inspect([row], NOW).ok, false);
+  }
+  const mixed = [upcoming(), fixture(930005, '2026-12-09T20:00:00Z',
+    'Liverpool', 'Bayern', 77, 78)];
+  mixed[1].leagueId = 2801;
+  assert.equal(sourceIdentityValid(mixed), false);
+  assert.equal(inspect(mixed, NOW).ok, false);
+  assert.equal(sourceIdentityValid([upcoming(), mixed[1]]), false);
 });
 
 test('no real upcoming fixture means no test calendar', () => {

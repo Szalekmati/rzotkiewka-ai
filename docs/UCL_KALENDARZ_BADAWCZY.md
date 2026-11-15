@@ -82,7 +82,11 @@ API w testach CI. Wymaga Node.js 18+.
 
 Każdy rekord musi dodatkowo deklarować `leagueShortcut="ucl"` oraz
 `leagueSeason=2026`. Brak takiego oznaczenia lub inna liga/sezon = `STOP`;
-zgodna para drużyn i data nie zastępują kontroli pochodzenia rekordu.
+Wszystkie rekordy muszą ponadto mieć ten sam dodatni identyfikator
+`leagueId` (liczba całkowita), zgodnie ze schematem OpenLigaDB.
+Niejednolite lub brakujące `leagueId` oznacza `STOP`; sam wspólny
+identyfikator od jednego dostawcy nie jest niezależnym dowodem tożsamości ligi.
+Zgodna para drużyn i data nie zastępują kontroli pochodzenia rekordu.
 Ta sama bramka obowiązuje też w przeglądarkowym podglądzie
 `research/ucl_calendar_preview.html` (wspólny walidator
 `UclPreview.sourceIdentityValid`); testy offline obejmują pola błędne,

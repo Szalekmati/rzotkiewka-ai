@@ -13,12 +13,12 @@ const LIMIT_BYTES = 3_000_000;
 function compareRows(rows, observedAt) {
   const official = verifyAllUpcoming(rows);
   const structure = inspect(rows, observedAt);
-  // Reject payloads from other competitions or seasons even if the names,
-  // dates and UEFA reference happen to match. Missing labels are unknown.
+  // Reject mixed competition, season or provider league IDs even if pairs
+  // match the dated UEFA reference. A shared provider ID is not proof of identity.
   const hasCorrectSourceIdentity = sourceIdentityValid(rows);
   const matched = official.ok === true && structure.ok === true && hasCorrectSourceIdentity;
   const issues = [
-    ...(hasCorrectSourceIdentity ? [] : ['Brak lub niezgodność leagueShortcut=ucl / leagueSeason=2026']),
+    ...(hasCorrectSourceIdentity ? [] : ['Brak lub niezgodność leagueShortcut=ucl / leagueSeason=2026 / leagueId']),
     ...(official.issues || []),
     ...(structure.issues || []),
     ...(structure.ok ? [] : [structure.reason])

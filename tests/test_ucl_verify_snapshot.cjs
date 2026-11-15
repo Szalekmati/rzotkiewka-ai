@@ -13,7 +13,7 @@ function sample() {
   };
   return allOfficial.map((row, i) => ({
     matchID: 700000 + i,
-    leagueShortcut: 'ucl', leagueSeason: 2026,
+    leagueShortcut: 'ucl', leagueSeason: 2026, leagueId: 2800,
     matchDateTimeUTC: row.kickoffUtc,
     team1: {teamId: teamId(row.home), teamName: row.home},
     team2: {teamId: teamId(row.away), teamName: row.away},
@@ -66,6 +66,18 @@ test('wrong or missing league or season metadata blocks an otherwise matching so
     assert.equal(report.sourceIdentityValid, false);
     assert.match(report.findings.join(' '), /leagueShortcut=ucl/);
     assert.equal(report.publicationAllowed, false);
+  }
+});
+
+test('snapshot rejects missing or inconsistent OpenLigaDB league IDs', () => {
+  for (const badId of [undefined, null, '2800', 0, -7, true, 2801]) {
+    const rows = sample();
+    rows[1].leagueId = badId;
+    const report = compareRows(rows, NOW);
+    assert.equal(report.status, 'STOP');
+    assert.equal(report.sourceIdentityValid, false);
+    assert.equal(report.publicationAllowed, false);
+    assert.match(report.findings.join(' '), /leagueId/);
   }
 });
 
