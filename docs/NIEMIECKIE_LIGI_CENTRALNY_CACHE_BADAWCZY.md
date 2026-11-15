@@ -65,3 +65,20 @@ oznacza co najwyżej poprawny odczyt i spójność struktury, **nie**
 niezależną weryfikację wszystkich klubów/terminarzy ani dopuszczenie
 danych do publikacji. Ewentualny błąd lub ograniczenie API oznacza STOP,
 bez obejścia.
+
+## Wynik jednorazowego rzeczywistego audytu OpenLigaDB — 15.11.2026
+
+**Potwierdzenie:** [GitHub Actions #43746591357](https://github.com/Szalekmati/rzotkiewka-ai/actions/runs/43746591357), krok „Jednorazowa kontrola API OpenLigaDB z GitHub - TYLKO PR 47”. **Odczyt wykonany:** 2026-11-15T18:24:50.656Z (19:24 CET), z maszyny GitHub Actions; pobrano **trzy publiczne odpowiedzi**, bez użycia API-Football PRO.
+
+| Kod źródła | Liga | Rekordy źródła 2026/27 | Przyszłe spotkania według źródła |
+|---|---|---:|---:|
+| bl1 | Bundesliga | 306 | 225 |
+| bl2 | 2. Bundesliga | 306 | 207 |
+| bl3 | 3. Liga | 380 | 250 |
+| **Suma** | | **992** | **682** |
+
+**Wynik bramki:** `RESEARCH_ONLY_NO_RELEASE`. Algorytm `buildBundle` potwierdził wstępną spójność metadanych ligi i sezonu, ID, dat, stanów meczu i par spotkań. Odpowiedź nie zawiera w raporcie surowych rekordów, nazw wszystkich drużyn ani pliku cache. Nie weryfikowano każdego meczu z federacją, pełnej kompletności, uprawnień do znaków klubowych lub trafności prognoz.
+
+**Dostępność API:** OpenLigaDB było dostępne z GitHub Actions w chwili odczytu. Wcześniejsze błędy dostępu z innych środowisk nie oznaczały braku płatnego dostępu do odrębnego API-Football.
+
+**Po pomiarze:** celowo usunięto z `.github/workflows/audyt_nowych_lig.yml` jednorazowy krok `--live`. Pozostaje sam moduł diagnostyczny (uruchamiany wyłącznie ręcznie) i symulowane testy offline, bez cyklicznych odczytów przez PR. Nie zmieniono `index.html`, Pages, `lab_forward/`, modeli, prognoz i płatności.

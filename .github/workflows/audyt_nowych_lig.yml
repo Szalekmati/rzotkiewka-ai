@@ -62,9 +62,6 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_ucl_deep_audit.py' -v
       - name: Niemieckie ligi - centralny cache badawczy (Node.js, offline)
         run: node --test tests/test_german_fixture_bundle.cjs tests/test_german_live_probe.cjs
-      - name: Jednorazowa kontrola API OpenLigaDB z GitHub - TYLKO PR 47
-        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.number == 47 && github.head_ref == 'research/german-central-cache-20261115' }}
-        run: node research/german_live_probe.cjs --live
       - name: Testy spisu identyfikatorow lig 2025 (offline)
         run: python -m unittest discover -s tests -p 'test_league_shortcuts_2025.py' -v
       - name: Testy niezaleznej historii OpenFootball 2025/26 (offline)
