@@ -64,6 +64,21 @@ class PairAuditTests(unittest.TestCase):
     def test_no_map_never_counts_as_agreement(self):
         self.assertEqual(audit_pairs([api()], [reference()], {})["agreed"], 0)
 
+    def test_two_api_ids_same_match_are_rejected(self):
+        with self.assertRaises(ValueError):
+            audit_pairs([api(), api(fixture_id=102)], [reference()], APPROVED)
+
+    def test_reference_match_cannot_be_reused_for_two_api_matches(self):
+        with self.assertRaises(ValueError):
+            audit_pairs([api(), api(fixture_id=102,
+                                    kickoff_utc="2026-11-07T20:00:00Z")],
+                        [reference()], APPROVED)
+
+    def test_distinct_matches_with_distinct_reference_records(self):
+        rows = [api(), api(fixture_id=102, kickoff_utc="2026-12-07T15:00:00Z")]
+        refs = [reference(), reference(kickoff_utc="2026-12-07T15:00:00Z")]
+        self.assertEqual(audit_pairs(rows, refs, APPROVED)["agreed"], 2)
+
     def test_no_data_is_not_success(self):
         result = audit_pairs([], [], APPROVED)
         self.assertEqual(result["agreed"], 0)
