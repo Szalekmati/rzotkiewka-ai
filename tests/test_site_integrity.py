@@ -92,6 +92,28 @@ class SiteIntegrity(unittest.TestCase):
         js = "\\n".join(self.page.js)
         self.assertIn("a.setAttribute('aria-current','page')", js)
 
+    def test_lab_published_snapshot_provenance_offline(self):
+        for phrase in (
+            "To kopia pliku opublikowana przez GitHub Pages",
+            "Czas obserwacji nie jest czasem publikacji strony",
+            "function labSnapshotAge(status,now=Date.now())",
+            "badge.textContent='OBSERWACJA >3 H'",
+            "Nowsze skany mogły zajść bez nowej publikacji",
+            "Ostatnia obserwacja w opublikowanym raporcie:",
+        ):
+            with self.subTest(phrase=phrase):
+                self.assertIn(phrase, self.html)
+        node = shutil.which("node")
+        if not node:
+            self.skipTest("Node.js not installed locally; CI requires Node.js")
+        result = subprocess.run(
+            [node, "--test", str(ROOT / "tests/test_lab_published_snapshot.mjs")],
+            capture_output=True, text=True, timeout=25,
+        )
+        self.assertEqual(result.returncode, 0,
+                         "LAB published snapshot regression failed:\n"
+                         + result.stdout + result.stderr)
+
     def test_archival_demo_cards_never_claim_live_or_real_results(self):
         # Fictional examples cannot be passed off as upcoming real matches,
         # wins, losses, premium unlocks, or performance metrics.
