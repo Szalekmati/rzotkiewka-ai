@@ -88,3 +88,32 @@ LAB 2.1/2.2, prognoz i Premium. Żadnych kosztów dodatkowych.
 **Decyzja:** `STOP`; nie tworzyć aliasu Excelsior–Barcelona i nie poprawiać `teamId` ręcznie. Zweryfikować źródłowy identyfikator Barcelony oraz listę uczestników 2026/27 niezależnie, przed ponownym porównaniem 72 meczów.
 
 W repo pozostaje tylko odczytowy moduł `research/ucl_team_identity_probe.cjs` i jego testy offline. Po zapisaniu dowodów usunięto tymczasowy krok sieciowy z workflow PR. Brak skutków dla strony, modeli i Premium.
+
+## Historia UCL 2025/26 — brak Barcelony i obecny Excelsior (15.11.2026)
+
+**Rzeczywisty odczyt (jednorazowy) OpenLigaDB** z
+[GitHub Actions #43754316842](https://github.com/Szalekmati/rzotkiewka-ai/actions/runs/43754316842),
+godz. **19:46 UTC**:
+`https://api.openligadb.de/getmatchdata/ucl/2025`.
+
+- Źródło zwróciło **189 rekordów**, z identyfikatorem ligi `leagueId=4822`.
+- `Excelsior Rotterdam`: **12 wystąpień**, w każdym **`teamId=356`**.
+- Wyszukiwanie ściśle po etykietach `Barcelona` i `FC Barcelona`:
+  **0 wystąpień**. Nie jest to pełne przeszukanie wszystkich możliwych
+  wariantów pisowni ani identyfikatorów klubu.
+- UEFA niezależnie dokumentuje udział **Barcelony** i co najmniej
+  osiem jej spotkań fazy ligowej sezonu 2025/26:
+  [UEFA – wyniki według klubu](https://www.uefa.com/uefachampionsleague/news/029c-1e9a9e46c0e1-d4a19f742eb9-1000--champions-league-league-phase-fixtures-and-results-by-team/).
+- **Wniosek:** zgodność sumarycznych 189 rekordów nie poświadcza jakości
+  obsady klubów ani ich ID. Powtarzające się `356` w sezonach
+  2025/26 i 2026/27 jest dowodem spójności wewnętrznej nazwy Excelsior
+  u dostawcy, **nie jest dowodem poprawnego mapowania Barcelony**.
+  Nie ustalono potwierdzonego identyfikatora Barcelony.
+- W raporcie badawczym brak znanej etykiety Barcelony **lub**
+  pojawienie się Excelsioru wymusza `STOP_IDENTITY_REVIEW`.
+  Nawet inny poprawny technicznie odczyt pozostaje `HISTORICAL_READ_ONLY`
+  bez uprawnień do publikacji, prognoz i Premium.
+
+Historyczny odczyt sieciowy został usunięty z automatycznego workflow
+po zebraniu dowodów. Pozostawiono wyłącznie odczytowy kod badawczy
+i lokalne testy regresyjne; **brak automatycznej korekty drużyn**.

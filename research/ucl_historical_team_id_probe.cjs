@@ -58,11 +58,21 @@ function inspectHistoricalIds(rows,observedAt){
     .reduce((sum,x)=>sum+x.appearances,0);
   const excelsiorMatches=list.filter(x=>x.type==='excelsior')
     .reduce((sum,x)=>sum+x.appearances,0);
-  return {...base,status:'HISTORICAL_READ_ONLY',providerLeagueId:firstId,
+  // UEFA lists Barcelona in UCL 2025/26. A source missing that known
+  // club, or inserting Excelsior, cannot be trusted for team identities.
+  const identityReviewRequired=barcelonaMatches===0||excelsiorMatches>0;
+  return {...base,
+    status:identityReviewRequired?'STOP_IDENTITY_REVIEW':'HISTORICAL_READ_ONLY',
+    providerLeagueId:firstId,
     barcelonaMatches,excelsiorMatches,
+    barcelonaLabelMissing:barcelonaMatches===0,
+    foreignExcelsiorPresent:excelsiorMatches>0,
+    identityReviewRequired,
     historicalNameIds:list,id356NamesSeen:[...namesAt356].sort(),
     independentCurrentSeasonIdVerification:false,
-    reason:'These are 2025 provider identities, not UEFA-confirmed 2026 identities'};
+    reason:identityReviewRequired
+      ? 'Historic UCL feed missing Barcelona label or includes Excelsior; source identity STOP'
+      : 'Historic provider IDs cannot approve 2026 club identity'};
 }
 
 async function fetchHistorical(fetchFn=globalThis.fetch,timeoutMs=14000){
