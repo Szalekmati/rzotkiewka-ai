@@ -12,6 +12,8 @@ on:
       - 'tests/test_daily_free_forecast.mjs'
       - 'tests/test_lab_schedule.py'
       - 'tests/test_lab_diagnostics.py'
+      - 'tests/test_lab_readonly_status.py'
+      - 'lab_forward/status_readonly.py'
       - '.github/workflows/diagnostyka_terminarza_lab.yml'
       - '.github/workflows/test_przedmeczowy.yml'
       - '.github/workflows/quality_site.yml'
@@ -29,6 +31,8 @@ on:
       - 'tests/test_daily_free_forecast.mjs'
       - 'tests/test_lab_schedule.py'
       - 'tests/test_lab_diagnostics.py'
+      - 'tests/test_lab_readonly_status.py'
+      - 'lab_forward/status_readonly.py'
       - '.github/workflows/diagnostyka_terminarza_lab.yml'
       - '.github/workflows/test_przedmeczowy.yml'
       - '.github/workflows/quality_site.yml'
@@ -75,3 +79,5 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_lab_schedule.py' -v
       - name: Testy diagnostyki terminarza LAB (offline)
         run: python -m unittest discover -s tests -p 'test_lab_diagnostics.py' -v
+      - name: Kontrola odczytowa statusu LAB (offline)
+        run: python -m unittest discover -s tests -p 'test_lab_readonly_status.py' -v
