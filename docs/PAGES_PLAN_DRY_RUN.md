@@ -46,8 +46,14 @@ Dokumentacja: https://docs.github.com/en/pages/getting-started-with-github-pages
 
 ## Aktualizacja po wdrożeniu #40 — 15.11.2026
 
-Monitor LAB z [PR #40](https://github.com/Szalekmati/rzotkiewka-ai/pull/40) jest już scalony z gałęzią `main`. Konfliktowy PR #41 powstał przed scaleniem monitora i zawierał jego kopię. Ta nowa gałąź powstaje bezpośrednio na aktualnym `main`, więc zachowuje monitor LAB bez powielania jego zmian. **Przed scaleniem #41 obowiązuje weryfikacja łączna z obecnym `main`**, w szczególności dwa niezależne kroki CI dla monitora LAB i próbnego pakietu Pages, a także brak usunięć wśród plików LAB.
+Monitor LAB z [PR #40](https://github.com/Szalekmati/rzotkiewka-ai/pull/40) jest już scalony z gałęzią `main`. Konfliktowy PR #41 powstał przed scaleniem monitora i zawierał jego kopię. Ta nowa gałąź powstaje bezpośrednio na aktualnym `main`, więc zachowuje monitor LAB bez powielania jego zmian. **Przed scaleniem #42 obowiązuje weryfikacja łączna z obecnym `main`**, w szczególności dwa niezależne kroki CI dla monitora LAB i próbnego pakietu Pages, a także brak usunięć wśród plików LAB.
 
 Test `test_ci_retains_both_readonly_quality_gates` chroni oba kroki i filtry CI. Publikacja GitHub Pages będzie wymagała odrębnej decyzji i osobnego planu uwzględniającego aktualność wyświetlanego statusu LAB.
 
 **Nadal nie wdrażamy filtrowanej publikacji Pages**, nie zmieniamy źródła wdrożenia, nie wyłączamy automatycznych LAB i nie obiecujemy oszczędności, dopóki nie zostaną zmierzone po osobno zatwierdzonej migracji.
+
+## Aktualizacja po wdrożeniu #43 — 15.11.2026
+
+[PR #43](https://github.com/Szalekmati/rzotkiewka-ai/pull/43) zmienił widoczny panel LAB: opisuje **wiek obserwacji w opublikowanym pliku**, nie bieżącą pracę harmonogramu ani dokładną godzinę publikacji GitHub Pages. Test nowej poprawki #42 wymaga zachowania komunikatu i helpera `labSnapshotAge` z #43 zarówno w `index.html`, jak i w lokalnym podglądzie. Nie wolno pomylić wieku zapisu z wiekiem publikacji ani utraty świeżości z awarią skanera.
+
+**To nadal nie jest gotowy mechanizm ograniczania publikacji.** Projekt źródła publikacji z filtrowaniem wymaga osobnej oceny ustawień Pages, zachowania własnej domeny i HTTPS, polityki świeżości statusu oraz możliwości rollback. Włączenie musi zostać zatwierdzone osobno.
