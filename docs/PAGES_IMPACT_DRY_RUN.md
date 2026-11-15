@@ -21,7 +21,7 @@ Wyniki symulacji:
 
 - PUBLISH_CANDIDATE: zasób witryny (HTML, predictions.json, tips.json, ledger/config LAB, CNAME) lub raport/status LAB w domyślnej, bezpiecznej polityce aktualności
 - SKIP_CANDIDATE_STALE_LAB: tylko gdy symulacja jawnie dopuszcza nieaktualny opublikowany raport/status LAB; panel #43 może ostrzegać o wieku, ale nie odzyskuje aktualnych danych
-- SKIP_CANDIDATE_TECHNICAL: tylko zmiany pod tests/, docs/ lub tools/, bez zmian ośmiu publicznych plików, w hipotetycznym docelowym pakiecie
+- SKIP_CANDIDATE_TECHNICAL: wyłącznie nieszkodliwe zmiany testów, dokumentów i narzędzi, które nie zmieniają danych ani sposobu pakowania strony; zmiana tools/prepare_pages_bundle.py to PUBLISH_CANDIDATE, bo zmienia budowanie pakietu
 - REVIEW_UNKNOWN: nieznana ścieżka lub jakikolwiek workflow .github/workflows/. Nie zgadywać i nie pomijać automatycznie.
 
 Narzędzie bierze wyłącznie ręcznie przekazaną listę ścieżek. NIE wykonuje wdrożenia, żadnych modyfikacji, żądań sieciowych lub odczytów GitHub. Nie mierzy oszczędności. Nie stanowi mechanizmu do automatycznego podjęcia decyzji o publikacji.
