@@ -601,7 +601,7 @@ button:disabled{opacity:.55;cursor:wait}
       <div class="lab-automation-head"><strong id="lab-automation-heading">⏱ Automatyzacja eksperymentu</strong><span id="lab-run-badge" class="lab-run-badge">SPRAWDZANIE</span></div>
       <p id="lab-run-detail" role="status" aria-live="polite">Sprawdzanie ostatniego zapisanego uruchomienia LAB…</p>
       <a id="lab-run-direct" href="https://github.com/Szalekmati/rzotkiewka-ai/actions/workflows/test_przedmeczowy.yml" target="_blank" rel="noopener noreferrer" hidden>↗ Zobacz to konkretne uruchomienie na GitHubie</a>
-      <p class="lab-automation-foot">Własny harmonogram LAB i wyzwalanie zapasowe po pomyślnym automatycznym zadaniu głównym mogą zostać opóźnione lub pominięte. Ten status pochodzi z zapisanego pliku, nie z bieżącej listy zadań GitHub. Brak prognoz może także oznaczać, że nie ma jeszcze meczów w oknie 162–168 godzin.</p>
+      <p class="lab-automation-foot">Własny harmonogram LAB i wyzwalanie zapasowe po pomyślnym automatycznym zadaniu głównym mogą zostać opóźnione lub pominięte. To kopia pliku opublikowana przez GitHub Pages, nie bieżący stan GitHub Actions. Czas obserwacji nie jest czasem publikacji strony; odświeżenie przeglądarki nie wymusza nowej publikacji. Ostrzeżenia o wieku danych zależą od zegara urządzenia i nie dowodzą zatrzymania LAB. Brak prognoz może także oznaczać, że nie ma meczów w oknie 162–168 godzin.</p>
       <a href="https://github.com/Szalekmati/rzotkiewka-ai/actions/workflows/test_przedmeczowy.yml" target="_blank" rel="noopener noreferrer">Sprawdź uruchomienia LAB w GitHub Actions ↗</a>
     </aside>
     <div class="lab-metrics"><div><strong id="lab-pairs">—</strong><span>Zapisane pary prognoz</span></div><div><strong id="lab-settled">—</strong><span>Rozliczone pary</span></div><div><strong id="lab-errors">—</strong><span>Zgłoszone błędy pobierania</span></div></div>
@@ -2511,6 +2511,15 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
     }
     $('lab-comparison').hidden=false;
   }
+  function labSnapshotAge(status,now=Date.now()){
+    // Age of the OBSERVATION saved inside a published file, NOT of a live GitHub run.
+    if(status?.schema!==1||typeof status.observed_at!=='string'||
+       !/(?:Z|[+-]\d{2}:\d{2})$/.test(status.observed_at))throw new Error('Brak wiarygodnej daty obserwacji');
+    const at=Date.parse(status.observed_at),hours=(now-at)/3600000;
+    if(!Number.isFinite(at)||!Number.isFinite(hours)||hours < -5/60)throw new Error('Błędna data statusu');
+    const ageHours=Math.max(0,hours);
+    return {at,ageHours,isOld:ageHours>3};
+  }
   async function loadLabAutomation(signal){
     const badge=$('lab-run-badge'),detail=$('lab-run-detail'),direct=$('lab-run-direct');
     direct.hidden=true;
@@ -2521,8 +2530,7 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
       const res=await fetch('./lab_forward/run_status.json?t='+Math.floor(Date.now()/60000),{cache:'no-store',signal});
       if(!res.ok)throw new Error('Nie można odczytać statusu');
       const status=await res.json();
-      const at=Date.parse(status.observed_at),ageHours=(Date.now()-at)/3600000;
-      if(!Number.isFinite(at)||!Number.isFinite(ageHours)||ageHours<0)throw new Error('Błędna data statusu');
+      const {at,isOld}=labSnapshotAge(status);
       const backup=status.event==='workflow_run'&&status.upstream_event==='schedule';
       const automatic=status.event==='schedule'||backup;
       const event=backup?'automatyczne (zapasowe po zadaniu głównym)'
@@ -2535,25 +2543,29 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
         direct.href='https://github.com/Szalekmati/rzotkiewka-ai/actions/runs/'+runId;
         direct.hidden=false;
       }
-      // A green manual run cannot prove that cron is being delivered.
-      if(ageHours>3||status.observation_outcome!=='success'){
+      // This badge describes only the last PUBLISHED observation, never live availability.
+      if(status.observation_outcome!=='success'){
         badge.classList.add('warning');
-        badge.textContent='WYMAGA KONTROLI';
+        badge.textContent='ZAPIS Z PROBLEMEM';
+      }else if(isOld){
+        badge.classList.add('warning');
+        badge.textContent='OBSERWACJA >3 H';
       }else if(automatic){
         badge.classList.add('automatic');
-        badge.textContent='OSTATNIO AUTOMATYCZNIE';
+        badge.textContent='ZAPIS AUTOMATYCZNY';
       }else{
         badge.classList.add('manual');
-        badge.textContent='OSTATNIO RĘCZNIE';
+        badge.textContent='ZAPIS RĘCZNY';
       }
-      detail.textContent='Ostatni zapis: '+observed+' (czas polski); uruchomienie '+event+', '+outcome
-        +'. '+(ageHours>3?'Minęły ponad 3 godziny — potwierdź w GitHub Actions, czy harmonogram pracuje.':
-               automatic?'To potwierdza ostatnie automatyczne uruchomienie, nie gwarantuje kolejnych.':
-               'Udany test ręczny nie potwierdza działania harmonogramu.');
+      detail.textContent='Ostatnia obserwacja w opublikowanym pliku: '+observed+' (czas polski); uruchomienie '+event+', '+outcome
+        +'. Data obserwacji nie jest datą publikacji strony. '
+        +(isOld?'Ostatni widoczny zapis ma ponad 3 godziny według zegara urządzenia. Nowsze skany mogły zajść bez nowej publikacji — sprawdź GitHub Actions.':
+          automatic?'Zapis potwierdza przeszłe uruchomienie automatyczne, ale nie bieżący stan harmonogramu.':
+          'Udany test ręczny nie potwierdza działania harmonogramu.');
     }catch{
       badge.classList.add('warning');
       badge.textContent='BRAK POTWIERDZENIA';
-      detail.textContent='Nie można odczytać ostatniego statusu automatyzacji. Nie oznacza to, że eksperyment został uruchomiony; sprawdź GitHub Actions.';
+      detail.textContent='Brak wiarygodnej obserwacji w opublikowanym pliku. Nie można na tej podstawie potwierdzić ani wykluczyć nowszych uruchomień — sprawdź GitHub Actions.';
     }
   }
   async function loadLab(){
@@ -2584,8 +2596,8 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
       $('lab-pairs').textContent=String(data.pairs);$('lab-settled').textContent=String(data.settled);$('lab-errors').textContent=String(data.errors);
       const age=Date.now()-Date.parse(data.time);
       const stale=age>8*60*60*1000;
-      $('lab-status').textContent=(data.errors?'Raport zgłasza problemy z pobieraniem danych. Sprawdź pełny raport poniżej.':data.pairs===0?'Brak zapisanych par prognoz w tym raporcie. Okno zapisu wynosi 162–168 h; sam raport nie podaje przyczyny braku zapisów.':data.settled===0?'Prognozy zostały zapisane. Czekamy na zakończenie meczów i ich rozliczenie.':'Są już rozliczone pary prognoz. Wyniki obu wersji znajdziesz w pełnym raporcie.')+(stale?' Uwaga: ostatnia obserwacja ma ponad 8 godzin. Sprawdź uruchomienia testów.':'');
-      $('lab-updated').textContent='Ostatnia obserwacja: '+new Date(data.time).toLocaleString('pl-PL',{timeZone:'Europe/Warsaw'})+' (czas polski).';
+      $('lab-status').textContent=(data.errors?'Raport zgłasza problemy z pobieraniem danych. Sprawdź pełny raport poniżej.':data.pairs===0?'Brak zapisanych par prognoz w tym raporcie. Okno zapisu wynosi 162–168 h; sam raport nie podaje przyczyny braku zapisów.':data.settled===0?'Prognozy zostały zapisane. Czekamy na zakończenie meczów i ich rozliczenie.':'Są już rozliczone pary prognoz. Wyniki obu wersji znajdziesz w pełnym raporcie.')+(stale?' Uwaga: obserwacja w opublikowanym raporcie ma ponad 8 godzin według zegara urządzenia. To nie dowodzi, że LAB nie wykonał nowszych skanów; sprawdź GitHub Actions.':'');
+      $('lab-updated').textContent='Ostatnia obserwacja w opublikowanym raporcie: '+new Date(data.time).toLocaleString('pl-PL',{timeZone:'Europe/Warsaw'})+' (czas polski; nie data publikacji strony).';
       $('lab-progress').hidden=true;
       $('lab-progress-note').textContent='Raport LAB dotyczy osobnego eksperymentu. Nie jest wynikiem skuteczności rankingu na tej stronie.';
       try{
