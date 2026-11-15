@@ -90,6 +90,21 @@ test('future score and completed flag block preview', () => {
   assert.equal(inspect([fixture(930001,'2026-11-25T20:00:00Z', 'A', 'B', 1,2,false,true)], NOW).ok,false);
 });
 
+test('future fixtures with interim scores are rejected even without a final-score marker', () => {
+  for (const interim of [
+    {resultTypeID: 1, pointsTeam1: 1, pointsTeam2: 0, resultName: 'Halbzeitergebnis'},
+    {resultTypeID: 3, pointsTeam1: 0, pointsTeam2: 0, resultName: 'Unknown stage'},
+    {resultTypeID: 1, pointsTeam1: null, pointsTeam2: null}
+  ]) {
+    const row = upcoming();
+    row.matchResults = [interim];
+    const report = inspect([past(), row], NOW);
+    assert.equal(report.ok, false, JSON.stringify(interim));
+    assert.deepEqual(report.upcoming, []);
+    assert.match(report.issues.join(' '), /przyszły mecz ma wynik lub flagę zakończenia/);
+  }
+});
+
 test('invalid result collection shape blocks all fixtures including future ones', () => {
   for (const invalid of [null, undefined, '[]', {}, 1, [null], [false], ['1-0'], [[]]]) {
     const row = upcoming();

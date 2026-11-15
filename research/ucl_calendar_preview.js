@@ -129,7 +129,9 @@
         continue;
       }
       if (when.timestamp > now) {
-        if (raw.matchIsFinished || finalScore.present) {
+        // A match in the future cannot have even a halftime/interim score.
+        // Treat any result rows as suspect, regardless of the resultTypeID.
+        if (raw.matchIsFinished || raw.matchResults.length > 0) {
           problems.push(mark + 'przyszły mecz ma wynik lub flagę zakończenia');
           continue;
         }
