@@ -14,7 +14,7 @@
 
 1. Pobierz lub sklonuj gałąź `research/ucl-calendar-review-20261115`.
 2. Otwórz `research/ucl_calendar_preview.html` w przeglądarce, zachowując znajdujący się obok `ucl_calendar_preview.js`.
-3. Kliknij `Pobierz terminarz badawczy`; nie włączaj żadnych usług płatnych. Jeżeli Safari zablokuje odczyt przez CORS przy `file://`, możesz uruchomić lokalnie z katalogu repozytorium `python3 -m http.server 8000` i otworzyć `http://localhost:8000/research/ucl_calendar_preview.html`. To lokalny podgląd, nie publiczny serwer; zakończ `Control-C`.
+3. Kliknij `Pobierz terminarz badawczy`; nie włączaj żadnych usług płatnych. Jeżeli Safari zablokuje odczyt przez CORS przy `file://`, możesz uruchomić lokalnie z katalogu repozytorium `python3 -m http.server 8000 --bind 127.0.0.1` i otworzyć `http://localhost:8000/research/ucl_calendar_preview.html`. To lokalny podgląd, nie publiczny serwer; zakończ `Control-C`.
 
 **Uwaga:** dostępność API z danej przeglądarki nie jest jeszcze potwierdzona. Jeżeli odczyt się nie powiedzie, strona zgłosi STOP; nie używaj plików z fikcyjnymi wynikami jako zamiennika.
 
