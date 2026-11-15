@@ -90,6 +90,24 @@ test('future score and completed flag block preview', () => {
   assert.equal(inspect([fixture(930001,'2026-11-25T20:00:00Z', 'A', 'B', 1,2,false,true)], NOW).ok,false);
 });
 
+test('invalid result collection shape blocks all fixtures including future ones', () => {
+  for (const invalid of [null, undefined, '[]', {}, 1, [null], [false], ['1-0'], [[]]]) {
+    const row = upcoming();
+    row.matchResults = invalid;
+    const report = inspect([past(), row], NOW);
+    assert.equal(report.ok, false, JSON.stringify(invalid));
+    assert.deepEqual(report.upcoming, []);
+    assert.match(report.issues.join(' '), /nieprawidłowa lista wyników/);
+  }
+});
+
+test('a valid empty results list is permitted for a future unplayed fixture only', () => {
+  const report = inspect([past(), upcoming()], NOW);
+  assert.equal(report.ok, true);
+  assert.equal(report.upcoming.length, 1);
+  assert.equal(report.productionApproved, false);
+});
+
 test('a final-score marker without two valid numeric goals cannot approve the preview', () => {
   for (const [home, away] of [[null, 1], [-1, 0], ['2', 1], [2.5, 1], [1, undefined]]) {
     const row = past();

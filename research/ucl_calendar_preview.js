@@ -110,6 +110,11 @@
       if (typeof raw.matchIsFinished !== 'boolean') {
         problems.push(mark + 'brak jednoznacznego stanu meczu'); continue;
       }
+      if (!Array.isArray(raw.matchResults) || raw.matchResults.some(item =>
+        !item || typeof item !== 'object' || Array.isArray(item))) {
+        problems.push(mark + 'nieprawidłowa lista wyników');
+        continue;
+      }
       const finalScore = inspectFinalScore(raw.matchResults);
       if (finalScore.present && !finalScore.valid) {
         problems.push(mark + 'nieprawidłowy lub sprzeczny wynik końcowy');
