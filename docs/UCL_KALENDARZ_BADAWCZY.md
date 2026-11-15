@@ -28,6 +28,26 @@ W `research/ucl_official_matchday5.js` znajduje się datowane porównanie **18 p
 
 Testy offline: `node --test tests/test_ucl_calendar_preview.cjs tests/test_ucl_official_matchday5.cjs`. Testy nie pobierają danych i nie dowodzą rzeczywistej zgodności OpenLigaDB z UEFA. Zmiany terminów na stronie UEFA po 4.11 wymagają ręcznej aktualizacji referencji i sprawdzenia.
 
+## Rozszerzenie: 72 spotkania kolejek 5–8
+
+Dodatkowo przepisano z **tego samego, datowanego 4.11.2026 wykazu UEFA** wszystkie
+72 pary i godziny meczów końcowych czterech kolejek fazy ligowej:
+24–25 listopada (18), 8–9 grudnia (18), 19–20 stycznia (18) i 27 stycznia (18).
+Dane odniesienia są w `research/ucl_official_matchday5.js`
+(nazwa pliku jest historyczna: zapis kolejek 5–8).
+Interfejs `research/ucl_calendar_preview.html` wymaga teraz zgodności
+**72/72 par i terminów**; nawet jeden brak = brak pokazywanego terminarza.
+Sprawdzenie nadal nie obejmuje pełnych wyników zakończonych meczów,
+weryfikacji ID drużyn z UEFA, przesunięć terminów po dacie referencyjnej
+ani praw do wykorzystania danych.
+
+Testy offline obejmują rozkład 72 par, brak jednego meczu, zmianę godziny
+i zamianę gospodarza/gościa w innym terminie. **Symulowane dane w testach
+nie dowodzą, że prawdziwa odpowiedź OpenLigaDB przechodzi tę bramkę.**
+Adres API nie był jeszcze skutecznie odczytany i porównany z tego środowiska.
+Przed zatwierdzeniem potrzebny jest audyt rzeczywistego pobrania oraz
+aktualnego terminarza UEFA.
+
 ## Warunki zanim Liga Mistrzów trafi na właściwą stronę
 
 1. Potwierdzić pełen oficjalny spis drużyn UCL 2026/27, pary gospodarze/goście, fazy, terminy i ewentualne przesunięcia u UEFA.
