@@ -82,10 +82,11 @@ def assess_text(text, *, expected_matches=380, expected_teams=20):
             invalid.append("invalid_score_or_team")
             continue
         matches.append((a, b, s1, s2))
-    meta = DECLARED.search(text)
-    declared = int(meta.group(1)) if meta else None
-    team_meta = DECLARED_TEAMS.search(text)
-    declared_teams = int(team_meta.group(1)) if team_meta else None
+    # Reject missing or duplicate header declarations, even if values agree.
+    match_headers = DECLARED.findall(text)
+    team_headers = DECLARED_TEAMS.findall(text)
+    declared = int(match_headers[0]) if len(match_headers) == 1 else None
+    declared_teams = int(team_headers[0]) if len(team_headers) == 1 else None
     home = Counter(x[0] for x in matches)
     away = Counter(x[1] for x in matches)
     teams = set(home) | set(away)
