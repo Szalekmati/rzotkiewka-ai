@@ -60,6 +60,36 @@ test('reference review is required at seven days and for invalid clocks', () => 
   }
 });
 
+test('diagnostic counts missing UEFA pair and unmatched source without guessing identity', () => {
+  const rows = sample();
+  rows[0].team1.teamName = 'Unknown Team Label';
+  const report = compareRows(rows, NOW);
+  assert.equal(report.status, 'STOP');
+  assert.equal(report.missingOfficialCount, 1);
+  assert.equal(report.unmatchedSourceCount, 1);
+  assert.equal(report.missingOfficialExamples[0].home, allOfficial[0].home);
+  assert.equal(report.unmatchedSourceExamples[0].home, 'Unknown Team Label');
+  assert.equal(report.publicationAllowed, false);
+});
+
+test('exact kickoff mismatch is listed separately from missing names', () => {
+  const rows = sample();
+  rows[0].matchDateTimeUTC = '2026-11-24T17:46:00Z';
+  const report = compareRows(rows, NOW);
+  assert.equal(report.status, 'STOP');
+  assert.equal(report.missingOfficialCount, 1);
+  assert.equal(report.unmatchedSourceCount, 1);
+  assert.equal(report.unmatchedSourceExamples[0].kickoffUtc, '2026-11-24T17:46:00Z');
+});
+
+test('matching synthetic reference contains no unmatched public fixture metadata', () => {
+  const report = compareRows(sample(), NOW);
+  assert.equal(report.missingOfficialCount, 0);
+  assert.equal(report.unmatchedSourceCount, 0);
+  assert.deepEqual(report.missingOfficialExamples, []);
+  assert.deepEqual(report.unmatchedSourceExamples, []);
+});
+
 test('missing, extra and incorrectly dated fixtures block', () => {
   const rows = sample();
   assert.equal(compareRows(rows.slice(1), NOW).status, 'STOP');
