@@ -75,3 +75,16 @@ zaakceptowanym odpowiednikiem oficjalnego spotkania.
 
 Wersja badawcza pozostaje oddzielona od `main`, `index.html`,
 LAB 2.1/2.2, prognoz i Premium. Żadnych kosztów dodatkowych.
+
+## Ustalenie identyfikatora źródłowego — 15.11.2026, 19:37 UTC
+
+**Jednorazowy odczyt OpenLigaDB, tylko do badań:** [GitHub Actions #43753477790](https://github.com/Szalekmati/rzotkiewka-ai/actions/runs/43753477790), krok `UCL - zbadaj jawne identyfikatory Excelsioru i Barcelony`. Zwrócono 144 mecze UCL 2026/27.
+
+- `Excelsior Rotterdam` występuje **8 razy** i we wszystkich tych wierszach ma **`teamId: 356`**.
+- W źródłowym sezonie nie występują etykiety `Barcelona` ani `FC Barcelona`: **0** rekordów z tymi nazwami.
+- Wśród ośmiu meczów Excelsioru są **4 przyszłe**, które datowana referencja UEFA przypisuje Barcelonie. **4 wcześniejsze** spotkania z Excelsiorem (9.09, 13.10, 20.10 i 3.11) wymagają **osobnej** weryfikacji u UEFA; nie stwierdzamy ich zgodności na podstawie samego ID.
+- Nie ma podstaw do uznania `356` za poprawny identyfikator Barcelony. To **spójna wewnętrznie, ale nieweryfikowana wobec UEFA identyfikacja dostawcy**. Brak dowodu, czy przyczyną jest błędna obsada ligi, powiązanie klubu, czy źródłowa zmiana danych.
+
+**Decyzja:** `STOP`; nie tworzyć aliasu Excelsior–Barcelona i nie poprawiać `teamId` ręcznie. Zweryfikować źródłowy identyfikator Barcelony oraz listę uczestników 2026/27 niezależnie, przed ponownym porównaniem 72 meczów.
+
+W repo pozostaje tylko odczytowy moduł `research/ucl_team_identity_probe.cjs` i jego testy offline. Po zapisaniu dowodów usunięto tymczasowy krok sieciowy z workflow PR. Brak skutków dla strony, modeli i Premium.
