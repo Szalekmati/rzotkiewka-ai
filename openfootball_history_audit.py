@@ -39,6 +39,7 @@ SCORE = re.compile(
     r"[ \t]+(?P<away>.+?)[ \t]*$"
 )
 DECLARED = re.compile(r"^# Matches[ \t]+(\d+)[ \t]*$", re.MULTILINE)
+DECLARED_TEAMS = re.compile(r"^# Teams[ \t]+(\d+)[ \t]*$", re.MULTILINE)
 
 
 def source_url(spec):
@@ -81,8 +82,11 @@ def assess_text(text, *, expected_matches=380, expected_teams=20):
             invalid.append("invalid_score_or_team")
             continue
         matches.append((a, b, s1, s2))
-    meta = DECLARED.search(text)
-    declared = int(meta.group(1)) if meta else None
+    # Reject missing or duplicate header declarations, even if values agree.
+    match_headers = DECLARED.findall(text)
+    team_headers = DECLARED_TEAMS.findall(text)
+    declared = int(match_headers[0]) if len(match_headers) == 1 else None
+    declared_teams = int(team_headers[0]) if len(team_headers) == 1 else None
     home = Counter(x[0] for x in matches)
     away = Counter(x[1] for x in matches)
     teams = set(home) | set(away)
@@ -92,10 +96,12 @@ def assess_text(text, *, expected_matches=380, expected_teams=20):
         for t in teams))
     complete = (len(matches) == expected_matches and
                 declared == expected_matches and
+                declared_teams == expected_teams and
                 len(directed_pairs) == expected_matches and
                 balanced and not invalid)
     return {
         "declared_matches": declared,
+        "declared_teams": declared_teams,
         "parsed_scores": len(matches),
         "teams": len(teams),
         "unique_home_away_pairs": len(directed_pairs),
