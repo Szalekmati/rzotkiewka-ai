@@ -60,6 +60,30 @@ test('reference review is required at seven days and for invalid clocks', () => 
   }
 });
 
+test('a foreign club replacing Barcelona in four upcoming games is NEVER auto-aliased', () => {
+  const rows = sample();
+  let replacements = 0;
+  for (const row of rows) {
+    for (const side of ['team1','team2']) {
+      if (row[side].teamName === 'Barcelona') {
+        row[side].teamName = 'Excelsior Rotterdam';
+        replacements++;
+      }
+    }
+  }
+  assert.equal(replacements, 4);
+  const report = compareRows(rows, NOW);
+  assert.equal(report.structureAccepted, true);
+  assert.equal(report.sourceIdentityValid, true);
+  assert.equal(report.officialCompared, 68);
+  assert.equal(report.missingOfficialCount, 4);
+  assert.equal(report.unmatchedSourceCount, 4);
+  assert.equal(report.status, 'STOP');
+  assert.equal(report.publicationAllowed, false);
+  assert.equal(report.predictionsAllowed, false);
+  assert.equal(report.premiumAllowed, false);
+});
+
 test('diagnostic counts missing UEFA pair and unmatched source without guessing identity', () => {
   const rows = sample();
   rows[0].team1.teamName = 'Unknown Team Label';

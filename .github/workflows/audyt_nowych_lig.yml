@@ -74,31 +74,6 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_ucl_deep_audit.py' -v
       - name: Testy roboczego kalendarza UCL (Node.js, offline)
         run: node --test tests/test_ucl_calendar_preview.cjs tests/test_ucl_official_matchday5.cjs tests/test_ucl_verify_snapshot.cjs tests/test_ucl_central_snapshot.cjs
-      # Single audit attempt for this research PR. No private keys, schedule,
-      # production writes, or automatic release. Do not interpret CI success
-      # as source approval: stale UEFA reference must still report STOP.
-      - name: UCL 2026/27 - sprawdz rzeczywiste API (tylko PR 46, odczyt)
-        if: github.event_name == 'pull_request' && github.event.pull_request.number == 46
-        run: |
-          report="$RUNNER_TEMP/rzotkiewka_ucl_live_report.json"
-          status=0
-          node research/ucl_verify_snapshot.cjs --live > "$report" || status=$?
-          echo "UCL evidence only, no publication. Auditor exit code: $status"
-          if test -s "$report"; then
-            cat "$report"
-          else
-            echo "STOP: no structured report produced; API may be unreachable"
-          fi
-          # Fail-closed information is inside the report; a STOP is not a
-          # failure of the CI harness, but is NEVER a release approval.
-      - name: Zapisz raport rzeczywistego audytu UCL (tylko PR 46)
-        if: always() && github.event_name == 'pull_request' && github.event.pull_request.number == 46
-        uses: actions/upload-artifact@v4
-        with:
-          name: RZOTKIEWKA_UCL_READONLY_REAL_SOURCE_RESEARCH_ONLY
-          path: ${{ runner.temp }}/rzotkiewka_ucl_live_report.json
-          if-no-files-found: warn
-          retention-days: 7
       - name: Testy spisu identyfikatorow lig 2025 (offline)
         run: python -m unittest discover -s tests -p 'test_league_shortcuts_2025.py' -v
       - name: Testy niezaleznej historii OpenFootball 2025/26 (offline)

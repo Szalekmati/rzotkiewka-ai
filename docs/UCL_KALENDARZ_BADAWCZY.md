@@ -185,3 +185,35 @@ referencji wraz z testami, **nie** ręczne przestawienie daty w kodzie.
 Nawet `MATCHED_RESEARCH_ONLY` w krótszym oknie nie dopuszcza
 publikacji ani prognoz. Ten limit chroni również przed przypadkowym
 użyciem historycznego raportu jako dowodu aktualności API.
+
+## Rzeczywisty audyt 72 terminarzy — wykryta niezgodność (15.11.2026)
+
+**Odczyt OpenLigaDB z GitHub Actions:** [wykonanie #43752242775](https://github.com/Szalekmati/rzotkiewka-ai/actions/runs/43752242775)
+([raport JSON](https://github.com/Szalekmati/rzotkiewka-ai/actions/runs/43752242775/artifacts/14176364474), czas 19:24 UTC).
+**Źródło:** OpenLigaDB, ODbL 1.0. Porównanie odnosi się do
+[oficjalnego wykazu UEFA z 4.11.2026](https://www.uefa.com/uefachampionsleague/news/02a8-2174c9e9019d-f909a77bd77a-1000--2026-27-uefa-champions-league-all-the-league-phase-fixtures-a/).
+
+- W odpowiedzi: **144 rekordy, 72 przyszłe**; kontrola struktury i metadanych ligi pozytywna.
+- **49/72 par i godzin** z datowanej referencji UEFA dopasowano wprost.
+  **23/72** nie dopasowano do zapisanej listy; tyle samo nadmiarowych
+  pozycji po stronie źródła względem ścisłej referencji.
+- **Cztery poważne niezgodności nazw/tożsamości:** OpenLigaDB zwróciło
+  `Excelsior Rotterdam` w spotkaniach, dla których UEFA podaje
+  `Barcelona` — **25.11 Sabah–Barcelona, 8.12 Barcelona–Manchester City,
+  20.01 Sporting CP–Barcelona, 27.01 Barcelona–Como**.
+  Tego **nie wolno naprawiać aliasem** `Excelsior Rotterdam → Barcelona`.
+  Niezależnie zbadać identyfikator źródłowy, pochodzenie i korekty feedu.
+- Pozostałe **19** niedopasowań wygląda na różne etykiety nazw
+  (`FC Arsenal`, `AS Rom`, `Paris St. Germain`, `Fenerbahçe SK`,
+  `FC Liverpool` itd.). Są to **kandydaci** do ręcznego sprawdzenia,
+  a nie zatwierdzone aliasy ani mapowania ID drużyn.
+
+**Werdykt: STOP.** Dodatkowo referencja z 4.11 przekroczyła
+ostrożny 7-dniowy limit ponownej weryfikacji. Samo pomyślne CI lub 49
+zgodnych meczów nie daje zgody na publikację terminarza, prognozy lub Premium.
+
+Odczyt bez kluczy był jednorazową diagnostyką PR #46. Po zapisaniu
+wyników usunięto tymczasowy krok sieciowy z workflow PR, żeby nie odpytywać
+źródła przy każdej aktualizacji gałęzi. Do następnego odczytu potrzebny
+jest osobny, kontrolowany audyt; nie uruchamiać go automatycznie ani
+przez przeglądarki użytkowników.
