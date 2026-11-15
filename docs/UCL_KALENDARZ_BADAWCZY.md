@@ -65,3 +65,24 @@ aktualnego terminarza UEFA.
 Ostatni referencyjny audyt repozytorium z **15.11.2026**: [GitHub Actions #43722236393](https://github.com/Szalekmati/rzotkiewka-ai/actions/runs/43722236393), UCL 2026/27: 144 rekordy (72 zapisane wyniki, 72 przyszłe); status **DO RĘCZNEJ OCENY**. Ten wynik jest punktem odniesienia, a nie gwarancją identycznego wyniku przy kolejnym pobraniu.
 
 **Nie zmieniono:** produkcyjnego `index.html`, `predictions.json`, `tips.json`, `lab_forward/`, harmonogramów LAB, ustawień Pages, domeny i integracji płatnych.
+
+## Ręczne porównanie rzeczywistego snapshotu bez publikacji
+
+Dodano `research/ucl_verify_snapshot.cjs` — samodzielny, odczytowy raport
+wywoływany **wyłącznie na żądanie**, bez nowego harmonogramu i bez odpytywania
+API w testach CI. Wymaga Node.js 18+.
+
+- `node research/ucl_verify_snapshot.cjs --file /sciezka/do/istniejacego_snapshotu.json`
+  — porównanie już istniejącego lokalnego JSON, bez internetu.
+- `node research/ucl_verify_snapshot.cjs --live` — **jawny**, pojedynczy odczyt
+  publicznego OpenLigaDB `/getmatchdata/ucl/2026`, timeout 14 s, limit 3 MB,
+  bez zapisywania surowych danych do repozytorium i bez kluczy API.
+- `node --test tests/test_ucl_verify_snapshot.cjs` — testy offline na danych
+  syntetycznych, włączone do istniejącego CI audytu nowych lig.
+
+W raporcie: `MATCHED_RESEARCH_ONLY` oznacza poprawność ograniczonego
+porównania danych ze stanem datowanej referencji UEFA i kontrolami technicznymi,
+**nigdy** zgodę na publikację lub prognozy. `STOP` albo błąd odczytu blokują
+interpretację. Brak praw do redystrybucji i brak niezależnej kontroli ID klubów
+pozostają osobnymi bramkami. Żadne wykonanie narzędzia nie zmienia strony,
+LAB, prognoz, cen ani płatności.
