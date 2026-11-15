@@ -101,6 +101,24 @@ test('a final-score marker without two valid numeric goals cannot approve the pr
   }
 });
 
+test('a recently completed fixture must have a valid final score', () => {
+  const row = fixture(930012, '2026-11-15T11:00:00Z', 'Celtic', 'Real Madrid',
+    23, 24, true, false);
+  const report = inspect([row, upcoming()], NOW);
+  assert.equal(report.ok, false);
+  assert.deepEqual(report.upcoming, []);
+  assert.match(report.issues.join(' '), /mecz zakończony bez poprawnego wyniku końcowego/);
+});
+
+test('an unfinished recent fixture cannot already have a final score', () => {
+  const row = fixture(930013, '2026-11-15T11:00:00Z', 'Celtic', 'Real Madrid',
+    23, 24, false, true);
+  const report = inspect([row, upcoming()], NOW);
+  assert.equal(report.ok, false);
+  assert.deepEqual(report.upcoming, []);
+  assert.match(report.issues.join(' '), /wynik końcowy przy niezakończonym meczu/);
+});
+
 test('contradictory final-score records block the complete test calendar', () => {
   const row = past();
   row.matchResults.push({resultTypeID: 2, pointsTeam1: 0, pointsTeam2: 0});

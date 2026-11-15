@@ -115,6 +115,14 @@
         problems.push(mark + 'nieprawidłowy lub sprzeczny wynik końcowy');
         continue;
       }
+      if (raw.matchIsFinished && !finalScore.valid) {
+        problems.push(mark + 'mecz zakończony bez poprawnego wyniku końcowego');
+        continue;
+      }
+      if (!raw.matchIsFinished && finalScore.present) {
+        problems.push(mark + 'wynik końcowy przy niezakończonym meczu');
+        continue;
+      }
       if (when.timestamp > now) {
         if (raw.matchIsFinished || finalScore.present) {
           problems.push(mark + 'przyszły mecz ma wynik lub flagę zakończenia');
