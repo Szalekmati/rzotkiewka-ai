@@ -120,7 +120,8 @@ test('every club plays once in each official remaining matchday',()=>{
     const round=roundByDate[date];
     assert.ok(round,match.kickoffUtc+' belongs to an unsupported matchday');
     assert.ok(Number.isFinite(Date.parse(match.kickoffUtc)));
-    assert.equal(new Date(match.kickoffUtc).toISOString(),match.kickoffUtc);
+    assert.match(match.kickoffUtc, /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/);
+    assert.equal(new Date(match.kickoffUtc).toISOString().replace(/\.000Z$/, 'Z'),match.kickoffUtc);
     const clubs=clubsByRound.get(round);
     for(const club of [match.home,match.away]){
       assert.equal(clubs.has(club),false,club+' appears twice in MD'+round);
