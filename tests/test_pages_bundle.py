@@ -72,7 +72,7 @@ class PagesPreviewTests(unittest.TestCase):
 
 
     def test_ci_retains_both_readonly_quality_gates(self):
-        """PR #41 must not erase LAB checks already merged by PR #40."""
+        """PR #42 must not erase LAB checks already merged by PR #40."""
         workflow = (ROOT / ".github/workflows/quality_site.yml").read_text(encoding="utf-8")
         checks = (
             "test_lab_readonly_status.py",
@@ -88,6 +88,24 @@ class PagesPreviewTests(unittest.TestCase):
         self.assertIn("lab_forward/status_readonly.py", workflow)
         self.assertIn("tools/prepare_pages_bundle.py", workflow)
         self.assertIn("      - name: Testy niezmiennosci harmonogramu i modeli LAB", workflow)
+
+
+    def test_preview_preserves_published_lab_observation_notices(self):
+        """Pages preview must retain the truthful LAB freshness UI from PR #43."""
+        original = (ROOT / "index.html").read_text(encoding="utf-8")
+        for text in (
+            "Czas obserwacji nie jest czasem publikacji strony",
+            "function labSnapshotAge(status,now=Date.now())",
+            "Nowsze skany mogły zajść bez nowej publikacji",
+            "Ostatnia obserwacja w opublikowanym raporcie:",
+        ):
+            with self.subTest(text=text):
+                self.assertIn(text, original)
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp) / "pages-preview"
+            pages.stage(output)
+            self.assertEqual((output / "index.html").read_bytes(),
+                             (ROOT / "index.html").read_bytes())
 
 
 if __name__ == "__main__":
