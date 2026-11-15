@@ -80,6 +80,10 @@ API w testach CI. Wymaga Node.js 18+.
 - `node --test tests/test_ucl_verify_snapshot.cjs` — testy offline na danych
   syntetycznych, włączone do istniejącego CI audytu nowych lig.
 
+Każdy rekord musi dodatkowo deklarować `leagueShortcut="ucl"` oraz
+`leagueSeason=2026`. Brak takiego oznaczenia lub inna liga/sezon = `STOP`;
+zgodna para drużyn i data nie zastępują kontroli pochodzenia rekordu.
+
 W raporcie: `MATCHED_RESEARCH_ONLY` oznacza poprawność ograniczonego
 porównania danych ze stanem datowanej referencji UEFA i kontrolami technicznymi,
 **nigdy** zgodę na publikację lub prognozy. `STOP` albo błąd odczytu blokują

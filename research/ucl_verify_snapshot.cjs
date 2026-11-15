@@ -13,8 +13,15 @@ const LIMIT_BYTES = 3_000_000;
 function compareRows(rows, observedAt) {
   const official = verifyAllUpcoming(rows);
   const structure = inspect(rows, observedAt);
-  const matched = official.ok === true && structure.ok === true;
+  // Reject payloads from other competitions or seasons even if the names,
+  // dates and UEFA reference happen to match. Missing labels are unknown.
+  const sourceIdentityValid = Array.isArray(rows) && rows.length > 0 &&
+    rows.every(row => row && typeof row === 'object' &&
+      !Array.isArray(row) && row.leagueShortcut === 'ucl' &&
+      row.leagueSeason === 2026);
+  const matched = official.ok === true && structure.ok === true && sourceIdentityValid;
   const issues = [
+    ...(sourceIdentityValid ? [] : ['Brak lub niezgodność leagueShortcut=ucl / leagueSeason=2026']),
     ...(official.issues || []),
     ...(structure.issues || []),
     ...(structure.ok ? [] : [structure.reason])
@@ -29,6 +36,7 @@ function compareRows(rows, observedAt) {
     officialCompared: official.checked || 0,
     officialExpected: official.expected || 72,
     structureAccepted: structure.ok === true,
+    sourceIdentityValid,
     scheduledFuture: structure.ok ? structure.upcoming.length : null,
     findings: issues.slice(0, 10),
     totalFindings: Math.max(issues.length, official.issueCount || 0, structure.issueCount || 0),

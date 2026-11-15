@@ -13,6 +13,7 @@ function sample() {
   };
   return allOfficial.map((row, i) => ({
     matchID: 700000 + i,
+    leagueShortcut: 'ucl', leagueSeason: 2026,
     matchDateTimeUTC: row.kickoffUtc,
     team1: {teamId: teamId(row.home), teamName: row.home},
     team2: {teamId: teamId(row.away), teamName: row.away},
@@ -27,6 +28,7 @@ test('valid synthetic fixture comparison is research-only, never release', () =>
   assert.equal(report.officialCompared, 72);
   assert.equal(report.officialExpected, 72);
   assert.equal(report.structureAccepted, true);
+  assert.equal(report.sourceIdentityValid, true);
   assert.equal(report.scheduledFuture, 72);
   assert.equal(report.publicationAllowed, false);
   assert.equal(report.predictionsAllowed, false);
@@ -50,6 +52,23 @@ test('duplicated ID and contradiction in club identity block', () => {
   second[1].team1.teamId = second[0].team1.teamId;
   assert.equal(compareRows(second, NOW).status, 'STOP');
 });
+test('wrong or missing league or season metadata blocks an otherwise matching source', () => {
+  for (const change of [
+    row => { row.leagueShortcut = 'la1'; },
+    row => { row.leagueSeason = 2025; },
+    row => { delete row.leagueShortcut; },
+    row => { delete row.leagueSeason; }
+  ]) {
+    const rows = sample();
+    change(rows[0]);
+    const report = compareRows(rows, NOW);
+    assert.equal(report.status, 'STOP');
+    assert.equal(report.sourceIdentityValid, false);
+    assert.match(report.findings.join(' '), /leagueShortcut=ucl/);
+    assert.equal(report.publicationAllowed, false);
+  }
+});
+
 test('no input and malformed input never approve publication', () => {
   for (const rows of [null, {}, [], 'bad']) {
     const report = compareRows(rows, NOW);
