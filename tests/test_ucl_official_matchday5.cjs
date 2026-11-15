@@ -68,6 +68,19 @@ test('name comparison permits only predeclared variants and accents, never loose
   assert.equal(matchName('Manchester United U21','Manchester United'),false);
   assert.equal(norm('Atlético de Madrid'),'atletico de madrid');
 });
+test('newly observed live-provider labels remain unapproved candidate aliases',()=>{
+  const candidates=[
+    ['FC Arsenal','Arsenal'],
+    ['AS Rom','Roma'],
+    ['Paris St. Germain','Paris Saint-Germain'],
+    ['FC Liverpool','Liverpool'],
+    ['Fenerbahçe SK','Fenerbahçe']
+  ];
+  for(const [provider,officialName] of candidates)
+    assert.equal(matchName(provider,officialName),false,provider+' requires independent verification');
+  // Foreign club replacement is never an acceptable alias.
+  assert.equal(matchName('Excelsior Rotterdam','Barcelona'),false);
+});
 test('wrong source type is blocked',()=>{
   for(const value of [null,{},'',false])assert.equal(verify(value).ok,false);
 });
