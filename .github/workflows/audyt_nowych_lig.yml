@@ -74,24 +74,6 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_ucl_deep_audit.py' -v
       - name: Testy roboczego kalendarza UCL (Node.js, offline)
         run: node --test tests/test_ucl_calendar_preview.cjs tests/test_ucl_official_matchday5.cjs tests/test_ucl_verify_snapshot.cjs tests/test_ucl_central_snapshot.cjs tests/test_ucl_team_identity_probe.cjs
-      # One-time controlled diagnostic at PR 46. Only public UCL GET; never release.
-      # Remove this live step immediately after recording its evidence.
-      - name: UCL - zbadaj jawne identyfikatory Excelsioru i Barcelony (tylko PR 46)
-        if: github.event_name == 'pull_request' && github.event.pull_request.number == 46
-        run: |
-          result="$RUNNER_TEMP/ucl_team_identity_research.json"
-          status=0
-          node research/ucl_team_identity_probe.cjs --live > "$result" || status=$?
-          echo "UCL ID research audit exit: $status (STOP is expected; NOT a release)"
-          if test -s "$result"; then cat "$result"; else echo "STOP: no source report"; fi
-      - name: UCL - raport identyfikatorow do audytu, nie do produkcji
-        if: always() && github.event_name == 'pull_request' && github.event.pull_request.number == 46
-        uses: actions/upload-artifact@v4
-        with:
-          name: RZOTKIEWKA_UCL_TEAM_ID_RESEARCH_ONLY
-          path: ${{ runner.temp }}/ucl_team_identity_research.json
-          if-no-files-found: warn
-          retention-days: 7
       - name: Testy spisu identyfikatorow lig 2025 (offline)
         run: python -m unittest discover -s tests -p 'test_league_shortcuts_2025.py' -v
       - name: Testy niezaleznej historii OpenFootball 2025/26 (offline)
