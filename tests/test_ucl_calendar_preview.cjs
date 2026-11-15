@@ -90,6 +90,34 @@ test('future score and completed flag block preview', () => {
   assert.equal(inspect([fixture(930001,'2026-11-25T20:00:00Z', 'A', 'B', 1,2,false,true)], NOW).ok,false);
 });
 
+test('a final-score marker without two valid numeric goals cannot approve the preview', () => {
+  for (const [home, away] of [[null, 1], [-1, 0], ['2', 1], [2.5, 1], [1, undefined]]) {
+    const row = past();
+    row.matchResults = [{resultTypeID: 2, pointsTeam1: home, pointsTeam2: away}];
+    const report = inspect([row, upcoming()], NOW);
+    assert.equal(report.ok, false, JSON.stringify([home, away]));
+    assert.deepEqual(report.upcoming, []);
+    assert.match(report.issues.join(' '), /nieprawidłowy lub sprzeczny wynik końcowy/);
+  }
+});
+
+test('contradictory final-score records block the complete test calendar', () => {
+  const row = past();
+  row.matchResults.push({resultTypeID: 2, pointsTeam1: 0, pointsTeam2: 0});
+  const report = inspect([row, upcoming()], NOW);
+  assert.equal(report.ok, false);
+  assert.deepEqual(report.upcoming, []);
+});
+
+test('a genuine integer 0-0 final result is structurally accepted, still research only', () => {
+  const row = past();
+  row.matchResults = [{resultTypeID: 2, pointsTeam1: 0, pointsTeam2: 0}];
+  const report = inspect([row, upcoming()], NOW);
+  assert.equal(report.ok, true);
+  assert.equal(report.finishedWithScore, 1);
+  assert.equal(report.productionApproved, false);
+});
+
 test('unresolved old score blocks preview', () => {
   const overdue = fixture(930003, '2026-11-01T20:00:00Z', 'Liverpool', 'Bayern', 40,41);
   assert.equal(inspect([upcoming(), overdue], NOW).ok, false);

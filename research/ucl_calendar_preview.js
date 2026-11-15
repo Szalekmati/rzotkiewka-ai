@@ -30,10 +30,19 @@
     return { timestamp, iso };
   }
 
-  function finalScorePresent(results) {
-    if (!Array.isArray(results)) return false;
-    return results.some(row => row && typeof row === 'object' &&
+  // A final-score marker alone is not proof of a valid football result.
+  // Reject missing, noninteger, negative or conflicting final scores.
+  function inspectFinalScore(results) {
+    if (!Array.isArray(results)) return { present: false, valid: false };
+    const finals = results.filter(row => row && typeof row === 'object' && !Array.isArray(row) &&
       (row.resultTypeID === 2 || /endergebnis/i.test(String(row.resultName || ''))));
+    if (!finals.length) return { present: false, valid: false };
+    const first = finals[0];
+    const valid = finals.every(row =>
+      Number.isSafeInteger(row.pointsTeam1) && row.pointsTeam1 >= 0 &&
+      Number.isSafeInteger(row.pointsTeam2) && row.pointsTeam2 >= 0 &&
+      row.pointsTeam1 === first.pointsTeam1 && row.pointsTeam2 === first.pointsTeam2);
+    return { present: true, valid };
   }
 
   // OpenLigaDB's Match schema has nullable leagueShortcut/leagueSeason.
@@ -101,17 +110,21 @@
       if (typeof raw.matchIsFinished !== 'boolean') {
         problems.push(mark + 'brak jednoznacznego stanu meczu'); continue;
       }
-      const finalPresent = finalScorePresent(raw.matchResults);
+      const finalScore = inspectFinalScore(raw.matchResults);
+      if (finalScore.present && !finalScore.valid) {
+        problems.push(mark + 'nieprawidłowy lub sprzeczny wynik końcowy');
+        continue;
+      }
       if (when.timestamp > now) {
-        if (raw.matchIsFinished || finalPresent) {
+        if (raw.matchIsFinished || finalScore.present) {
           problems.push(mark + 'przyszły mecz ma wynik lub flagę zakończenia');
           continue;
         }
         const phase = raw.group && safeText(raw.group.groupName, 80);
         forthcoming.push({ id, kickoff: when.iso, home: homeName, away: awayName, phase: phase || 'Faza niepotwierdzona' });
       } else {
-        if (raw.matchIsFinished && finalPresent) finishedWithScore++;
-        if (when.timestamp < now - 48 * 3600000 && (!raw.matchIsFinished || !finalPresent))
+        if (raw.matchIsFinished && finalScore.valid) finishedWithScore++;
+        if (when.timestamp < now - 48 * 3600000 && (!raw.matchIsFinished || !finalScore.valid))
           problems.push(mark + 'zaległy wynik powyżej 48 godzin');
       }
     }
