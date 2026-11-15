@@ -45,7 +45,7 @@ footer a { color:#cbf4ad }
 <div class="header"><div class="mark" aria-hidden="true">🫜</div><div><div class="label">RZOTKIEWKA AI · Laboratorium rozgrywek</div><h1>⚽ Liga Mistrzów UEFA</h1><div class="muted">Sezon 2026/27 · niezależny podgląd roboczy</div></div></div>
 <div class="warning" role="note"><strong>TYLKO BADANIA — NIEOPUBLIKOWANE I NIEZWERYFIKOWANE.</strong>
 Terminarz pochodzi z danych społecznościowych OpenLigaDB. Kontrola techniczna nie potwierdza, że każdy mecz, klub i termin zgadza się z UEFA. Brak prognoz 1X2, kursów, typów i płatności. Ta strona nie jest produkcyjną RZOTKIEWKĄ.</div>
-<p class="muted">Dane pobieramy dopiero po kliknięciu. Jeśli źródło zgłosi niespójność, <strong>nie wyświetlimy terminarza</strong>. Daty pokazujemy w czasie polskim (Europe/Warsaw), a grupowanie miesięcy jest według UTC.</p>
+<p class="muted">Dane pobieramy dopiero po kliknięciu. Jeśli źródło zgłosi niespójność albo pary i terminy z 24–25 listopada nie zgadzają się z datowanym wykazem UEFA, <strong>nie wyświetlimy terminarza</strong>. Daty pokazujemy w czasie polskim (Europe/Warsaw), a grupowanie miesięcy jest według UTC.</p>
 <div class="controls">
 <button id="load" type="button">Pobierz terminarz badawczy</button>
 <label for="month">Miesiąc (UTC)
@@ -70,6 +70,7 @@ Terminarz pochodzi z danych społecznościowych OpenLigaDB. Kontrola techniczna 
 Brak afiliacji z UEFA.
 </footer>
 </main>
+<script src="./ucl_official_matchday5.js"></script>
 <script src="./ucl_calendar_preview.js"></script>
 <script>
 (() => {
@@ -124,6 +125,14 @@ Brak afiliacji z UEFA.
       const length = Number(response.headers.get('content-length') || '0');
       if (length > 3_000_000) throw new Error('Za duża odpowiedź serwera');
       const rows = await response.json();
+      const officialCheck = UclOfficialMatchday5.verify(rows);
+      if (!officialCheck.ok) {
+        $('status').textContent = 'STOP: Brak pełnej zgodności z 18 spotkaniami UEFA (kolejka 5, zapis z 4.11.2026). Dopasowano ' +
+          officialCheck.checked + '/18. Nie pokazujemy terminarza.';
+        for (const issue of officialCheck.issues || []) $('issues').append(textNode('li','',issue));
+        $('issues').hidden = !(officialCheck.issues && officialCheck.issues.length);
+        return;
+      }
       const report = UclPreview.inspect(rows, new Date().toISOString());
       if (!report.ok) {
         $('status').textContent = 'STOP: ' + report.reason + '. Brak publikacji terminarza.';
@@ -140,7 +149,7 @@ Brak afiliacji z UEFA.
       }
       $('month').disabled = false;
       $('results').hidden = false;
-      $('status').textContent = 'Odczyt poprawny strukturalnie. Weryfikacja niezależna: BRAK. ' +
+      $('status').textContent = 'Odczyt strukturalny OK; kontrola 18/18 par i godzin kolejki 5 względem zapisu UEFA z 4.11.2026 OK. Pełen sezon i ID klubów nadal NIEZWERYFIKOWANE. ' +
         'Pobrano lokalnie ' + polish.format(new Date()) + '.';
       display();
     } catch (error) {
