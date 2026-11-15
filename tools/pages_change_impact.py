@@ -17,6 +17,7 @@ LAB_OBSERVATIONS = frozenset((
     "lab_forward/run_status.json", "lab_forward/RAPORT.md",
 ))
 ESSENTIAL_PUBLIC = frozenset(PUBLIC_FILES) - LAB_OBSERVATIONS
+BUILD_INPUTS = frozenset(("tools/prepare_pages_bundle.py",))
 NONPUBLIC_PREFIXES = ("tests/", "docs/", "tools/")
 
 
@@ -43,13 +44,14 @@ def classify(paths, *, allow_stale_lab=False):
     checked = _checked_paths(paths)
     essential = [p for p in checked if p in ESSENTIAL_PUBLIC]
     observations = [p for p in checked if p in LAB_OBSERVATIONS]
+    build_inputs = [p for p in checked if p in BUILD_INPUTS]
     technical = [p for p in checked if p.startswith(NONPUBLIC_PREFIXES)]
     unknown = [p for p in checked if p not in ESSENTIAL_PUBLIC
-               and p not in LAB_OBSERVATIONS
+               and p not in LAB_OBSERVATIONS and p not in BUILD_INPUTS
                and not p.startswith(NONPUBLIC_PREFIXES)]
     if unknown:
         decision = "REVIEW_UNKNOWN"
-    elif essential:
+    elif essential or build_inputs:
         decision = "PUBLISH_CANDIDATE"
     elif observations and not allow_stale_lab:
         decision = "PUBLISH_CANDIDATE"
@@ -64,6 +66,7 @@ def classify(paths, *, allow_stale_lab=False):
         "allow_stale_lab": bool(allow_stale_lab),
         "changed_files": checked,
         "essential_public": essential,
+        "build_inputs": build_inputs,
         "lab_observations": observations,
         "technical_only": technical,
         "unknown": unknown,
