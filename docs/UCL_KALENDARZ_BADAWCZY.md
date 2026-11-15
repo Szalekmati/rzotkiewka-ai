@@ -37,6 +37,12 @@ Dane odniesienia są w `research/ucl_official_matchday5.js`
 (nazwa pliku jest historyczna: zapis kolejek 5–8).
 Interfejs `research/ucl_calendar_preview.html` wymaga teraz zgodności
 **72/72 par i terminów**; nawet jeden brak = brak pokazywanego terminarza.
+Dodatkowa bramka blokuje także **każdy nadprogramowy mecz źródła po
+4 listopada 2026**, którego pary gospodarzy/gości i godzin nie ma w tych
+72 pozycjach. Samo 72/72 nie może już przepuścić nieznanej karty.
+Dotyczy to również przyszłych faz pucharowych — podgląd fazy ligowej
+musi wtedy zgłosić STOP aż do przygotowania nowej, oddzielnie zweryfikowanej
+referencji; nie wolno automatycznie uznać tych meczów za potwierdzone.
 Sprawdzenie nadal nie obejmuje pełnych wyników zakończonych meczów,
 weryfikacji ID drużyn z UEFA, przesunięć terminów po dacie referencyjnej
 ani praw do wykorzystania danych.

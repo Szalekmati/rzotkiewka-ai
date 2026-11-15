@@ -124,6 +124,47 @@ test('all upcoming fixtures require 72 out of 72 identical official pair/kickoff
   assert.equal(verifyAllUpcoming(swapped).ok,false);
 });
 
+test('the full UEFA gate rejects extra unlisted fixtures even when the required 72 are present',()=>{
+  const {allOfficial,verifyAllUpcoming}=require('../research/ucl_official_matchday5.js');
+  const rows=allOfficial.map((item,i)=>({
+    matchID:400000+i,matchDateTimeUTC:item.kickoffUtc,
+    team1:{teamId:2000+i*2,teamName:item.home},
+    team2:{teamId:2001+i*2,teamName:item.away},
+    matchIsFinished:false,matchResults:[]
+  }));
+  const unlisted={matchID:777777,matchDateTimeUTC:'2026-11-20T20:00:00Z',
+    team1:{teamId:9000,teamName:'Unlisted FC'},
+    team2:{teamId:9001,teamName:'Another Unlisted FC'},
+    matchIsFinished:false,matchResults:[]};
+  const result=verifyAllUpcoming([...rows,unlisted]);
+  assert.equal(result.ok,false);
+  assert.equal(result.checked,72);
+  assert.equal(result.unlistedMatches,1);
+  assert.match(result.issues.join(' '),/Niezatwierdzony mecz/);
+  assert.equal(result.predictionsAllowed,false);
+});
+
+test('unknown later knockout matches remain blocked until separately reviewed',()=>{
+  const {allOfficial,verifyAllUpcoming}=require('../research/ucl_official_matchday5.js');
+  const rows=allOfficial.map((item,i)=>({
+    matchID:500000+i,matchDateTimeUTC:item.kickoffUtc,
+    team1:{teamId:3000+i*2,teamName:item.home},
+    team2:{teamId:3001+i*2,teamName:item.away},
+    matchIsFinished:false,matchResults:[]
+  }));
+  const unknown={matchID:888888,matchDateTimeUTC:'2027-02-17T20:00:00Z',
+    team1:{teamId:9900,teamName:'Unlisted FC'},
+    team2:{teamId:9901,teamName:'Another Unlisted FC'},
+    matchIsFinished:false,matchResults:[]};
+  assert.equal(verifyAllUpcoming([...rows,unknown]).ok,false);
+  // Completed matches before 5 November are outside this reference scope.
+  rows.push({matchID:888889,matchDateTimeUTC:'2026-11-04T20:00:00Z',
+    team1:{teamId:9930,teamName:'Prior Round Club'},
+    team2:{teamId:9931,teamName:'Different Club'},
+    matchIsFinished:true,matchResults:[]});
+  assert.equal(verifyAllUpcoming(rows).ok,true);
+});
+
 test('page must enforce official check before showing any source fixtures',()=>{
   const html=fs.readFileSync(path.join(__dirname,'../research/ucl_calendar_preview.html'),'utf8');
   assert.match(html,/src="\.\/ucl_official_matchday5\.js"/);

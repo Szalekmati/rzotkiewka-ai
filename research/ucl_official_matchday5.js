@@ -182,7 +182,30 @@
   }
   function verify(payload) { return verifySet(payload,official,'matchday5-only'); }
   function verifyAllUpcoming(payload) {
-    return verifySet(payload,allOfficial,'league-phase-matchdays-5-to-8-only');
+    const base=verifySet(payload,allOfficial,'league-phase-matchdays-5-to-8-only');
+    if(!base.ok || !Array.isArray(payload)) return base;
+    // The reference covers the league-phase schedule following MD4 on 4 Nov.
+    // Checking 72 expected matches alone is unsafe: an unlisted extra fixture
+    // could still be displayed as if UEFA had confirmed it.
+    const afterMd4=Date.parse('2026-11-05T00:00:00Z');
+    const unlisted=[];
+    for(const row of payload){
+      if(!row || typeof row!=='object') continue; // Structural audit rejects malformed rows.
+      const kickoff=typeof row.matchDateTimeUTC==='string'?Date.parse(row.matchDateTimeUTC):NaN;
+      if(!Number.isFinite(kickoff) || kickoff<afterMd4) continue;
+      const officialFixture=allOfficial.some(item=>
+        kickoff===Date.parse(item.kickoffUtc) &&
+        row.team1 && row.team2 &&
+        matchName(row.team1.teamName,item.home) &&
+        matchName(row.team2.teamName,item.away));
+      if(!officialFixture) unlisted.push('Niezatwierdzony mecz po 4.11.2026: '+String(row.matchID??'bez ID'));
+    }
+    if(!unlisted.length) return base;
+    return {
+      ...base,ok:false,issues:unlisted.slice(0,10),
+      issueCount:unlisted.length,unlistedMatches:unlisted.length,
+      checked:base.checked
+    };
   }
   return Object.freeze({official,officialRemaining,allOfficial,verify,verifyAllUpcoming,norm,matchName});
 });
