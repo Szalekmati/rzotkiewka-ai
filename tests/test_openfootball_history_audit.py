@@ -47,6 +47,10 @@ class OpenFootballHistoryTests(unittest.TestCase):
             GOOD.replace("# Matches  2", "# Games  2"),
             GOOD.replace("# Teams    2", "# Teams    3"),
             GOOD.replace("# Teams    2", "# Clubs    2"),
+            GOOD.replace("# Teams    2", "# Teams    2\\n# Teams    2"),
+            GOOD.replace("# Teams    2", "# Teams    2\\n# Teams    3"),
+            GOOD.replace("# Matches  2", "# Matches  2\\n# Matches  2"),
+            GOOD.replace("# Matches  2", "# Matches  2\\n# Matches  3"),
         )
         for case in cases:
             with self.subTest(case=case[-105:]):
