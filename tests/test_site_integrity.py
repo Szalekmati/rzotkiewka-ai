@@ -92,6 +92,27 @@ class SiteIntegrity(unittest.TestCase):
         js = "\\n".join(self.page.js)
         self.assertIn("a.setAttribute('aria-current','page')", js)
 
+    def test_archival_demo_cards_never_claim_live_or_real_results(self):
+        # Fictional examples cannot be passed off as upcoming real matches,
+        # wins, losses, premium unlocks, or performance metrics.
+        self.assertIn("if (state.mode === 'demo') return ['PRZYKŁAD DEMO',''];", self.html)
+        self.assertIn("state.mode === 'demo' ? 'KARTA DEMO · PREMIUM NIEAKTYWNE'", self.html)
+        self.assertIn("Fikcyjny przykład · nie jest prawdziwym meczem", self.html)
+        self.assertIn("const ended = state.mode === 'demo' ? [] :", self.html)
+
+    def test_demo_cards_runtime_offline(self):
+        node = shutil.which("node")
+        if not node:
+            self.skipTest("Node.js not installed locally; CI requires Node.js")
+        result = subprocess.run(
+            [node, "--test", str(ROOT / "tests/test_demo_cards.mjs")],
+            capture_output=True, text=True, timeout=25,
+        )
+        self.assertEqual(
+            result.returncode, 0,
+            "DEMO runtime regression failed:\\n" + result.stdout + result.stderr,
+        )
+
     def test_free_daily_forecast_only_from_verified_upcoming_records(self):
         self.assertIn('id="free-daily-forecast"', self.html)
         self.assertIn('aria-label="Darmowa analiza dnia"', self.html)

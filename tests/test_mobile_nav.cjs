@@ -3,11 +3,26 @@ const { chromium } = require('playwright');
 const assert = require('node:assert/strict');
 const { pathToFileURL } = require('node:url');
 const path = require('node:path');
+const fs = require('node:fs');
 (async () => {
+  const demoData = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'tips.json'), 'utf8'));
+  assert.equal(demoData.mode, 'demo', 'Mobile smoke requires checked-in DEMO fixtures');
   const browser = await chromium.launch({ headless: true, args: ['--no-sandbox'] });
   try {
     for (const width of [320, 360, 390, 720]) {
       const page = await browser.newPage({ viewport: { width, height: 740 }, deviceScaleFactor: 1 });
+      await page.addInitScript(payload => {
+        const original = window.fetch.bind(window);
+        window.fetch = (input, init) => {
+          const url = typeof input === 'string' ? input : input?.url;
+          if (url === './tips.json') {
+            return Promise.resolve(new Response(JSON.stringify(payload), {
+              status: 200, headers: { 'content-type': 'application/json' }
+            }));
+          }
+          return original(input, init);
+        };
+      }, demoData);
       await page.goto(pathToFileURL(path.join(__dirname, '..', 'index.html')).href, { waitUntil: 'domcontentloaded' });
       const nav = page.locator('nav.mobile-nav');
       assert.equal(await nav.isVisible(), true, 'Mobile navigation missing at ' + width);
@@ -63,6 +78,26 @@ const path = require('node:path');
       assert.equal(await page.locator('#sport-list .competition-status.active').count(), 0);
       await page.locator('#sport-filters button').first().click();
       assert.equal(await cards.count(), 18, 'Reset must restore full catalogue: ' + width);
+      // Verify actual mobile DOM labels using only checked-in DEMO fixtures;
+      // the file:// test stays offline and never publishes fictional outcomes.
+      await nav.locator('a[href="#wiecej"]').click();
+      await page.waitForFunction(() => location.hash === '#wiecej' &&
+        !document.getElementById('wiecej').hidden, { timeout: 5000 });
+      await page.locator('#wiecej a[href="#typy"]').click();
+      await page.waitForFunction(() => location.hash === '#typy' &&
+        !document.getElementById('typy').hidden, { timeout: 5000 });
+      await page.waitForFunction(() => document.getElementById('data-message')
+        ?.textContent.includes('TRYB DEMO'), { timeout: 5000 });
+      assert.equal(await page.locator('#tips-list article.tip').count(),
+        demoData.tips.length, 'Missing actual DEMO cards: ' + width);
+      const visibleCards = await page.locator('#tips-list').innerText();
+      assert.match(visibleCards, /PRZYKŁAD DEMO/);
+      assert.match(visibleCards, /Fikcyjny przykład · nie jest prawdziwym meczem/);
+      assert.match(visibleCards, /KARTA DEMO · PREMIUM NIEAKTYWNE/);
+      assert.match(visibleCards, /Fikcyjny przykład analizy/);
+      assert.doesNotMatch(visibleCards, /Przed meczem|Wygrany ✓|Przegrany ✕|Zwrot ↩/);
+      assert.equal(await page.locator('#stat-hit').innerText(), '—');
+      assert.equal(await page.locator('#stat-profit').innerText(), '—');
       await page.screenshot({ path: 'mobile-nav-' + width + '.png' });
       await page.close();
     }
