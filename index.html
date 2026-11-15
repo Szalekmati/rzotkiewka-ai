@@ -2561,7 +2561,7 @@ Wyniki: results.json, predictions_comparison.json, RAPORT.md. Pełne parametry k
         +'. Data obserwacji nie jest datą publikacji strony. '
         +(isOld?'Ostatni widoczny zapis ma ponad 3 godziny według zegara urządzenia. Nowsze skany mogły zajść bez nowej publikacji — sprawdź GitHub Actions.':
           automatic?'Zapis potwierdza przeszłe uruchomienie automatyczne, ale nie bieżący stan harmonogramu.':
-          'Ręczny test nie potwierdza działania harmonogramu.');
+          'Udany test ręczny nie potwierdza działania harmonogramu.');
     }catch{
       badge.classList.add('warning');
       badge.textContent='BRAK POTWIERDZENIA';
