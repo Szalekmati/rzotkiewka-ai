@@ -152,6 +152,10 @@ class PagesPreviewTests(unittest.TestCase):
         self.assertEqual(classify(
             ["CNAME"], allow_stale_lab=True)["decision"], "PUBLISH_CANDIDATE")
         self.assertEqual(classify(
+            ["tools/prepare_pages_bundle.py"])["decision"], "PUBLISH_CANDIDATE")
+        self.assertEqual(classify(
+            ["tools/prepare_pages_bundle.py"])["build_inputs"], ["tools/prepare_pages_bundle.py"])
+        self.assertEqual(classify(
             ["tests/test_pages_bundle.py", "docs/PAGES_IMPACT_DRY_RUN.md"]
         )["decision"], "SKIP_CANDIDATE_TECHNICAL")
         self.assertEqual(classify(
