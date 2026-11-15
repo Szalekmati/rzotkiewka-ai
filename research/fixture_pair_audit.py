@@ -54,6 +54,7 @@ def audit_pairs(api_rows, independent_rows, approved_team_ids, *, max_hours=24):
         raise ValueError("two API team ids map to same canonical team")
 
     seen_api = set()
+    seen_match_identity = set()
     validated_api = []
     for row in api_rows:
         if not isinstance(row, dict):
@@ -68,11 +69,15 @@ def audit_pairs(api_rows, independent_rows, approved_team_ids, *, max_hours=24):
         if identity in seen_api:
             raise ValueError("duplicate API fixture identifier")
         seen_api.add(identity)
-        validated_api.append((league, season, _utc(row.get("kickoff_utc")),
-                              home, away, _score(row)))
+        kickoff = _utc(row.get("kickoff_utc"))
+        match_identity = (league, season, home, away, kickoff)
+        if match_identity in seen_match_identity:
+            raise ValueError("same scheduled match has multiple fixture ids")
+        seen_match_identity.add(match_identity)
+        validated_api.append((league, season, kickoff, home, away, _score(row)))
 
     indexed = {}
-    for row in independent_rows:
+    for reference_index, row in enumerate(independent_rows):
         if not isinstance(row, dict):
             raise ValueError("malformed independent record")
         league, season = row.get("league_id"), row.get("season")
@@ -82,11 +87,12 @@ def audit_pairs(api_rows, independent_rows, approved_team_ids, *, max_hours=24):
         if not isinstance(home, str) or not isinstance(away, str) or not home.strip() or not away.strip() or home == away:
             raise ValueError("invalid reference teams")
         key = (league, season, home, away)
-        indexed.setdefault(key, []).append((_utc(row.get("kickoff_utc")), _score(row)))
+        indexed.setdefault(key, []).append((reference_index, _utc(row.get("kickoff_utc")), _score(row)))
 
     counts = Counter(api_records=len(validated_api), reference_records=len(independent_rows),
                      agreed=0, different_score=0, different_date=0, not_found=0,
                      ambiguous=0, unmapped_team=0)
+    used_reference_records = set()
     for league, season, kickoff, home, away, goals in validated_api:
         if home not in approved_team_ids or away not in approved_team_ids:
             counts["unmapped_team"] += 1
@@ -95,14 +101,19 @@ def audit_pairs(api_rows, independent_rows, approved_team_ids, *, max_hours=24):
         if not candidates:
             counts["not_found"] += 1
             continue
-        near = [(date, score) for date, score in candidates
+        near = [(reference_index, date, score) for reference_index, date, score in candidates
                 if abs((date - kickoff).total_seconds()) <= max_hours * 3600]
         if not near:
             counts["different_date"] += 1
         elif len(near) > 1:
             counts["ambiguous"] += 1
-        elif near[0][1] != goals:
-            counts["different_score"] += 1
         else:
-            counts["agreed"] += 1
+            reference_index, _, reference_score = near[0]
+            if reference_index in used_reference_records:
+                raise ValueError("one independent match was reused for multiple fixtures")
+            used_reference_records.add(reference_index)
+            if reference_score != goals:
+                counts["different_score"] += 1
+            else:
+                counts["agreed"] += 1
     return dict(counts)
