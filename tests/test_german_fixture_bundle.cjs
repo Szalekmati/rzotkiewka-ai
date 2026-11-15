@@ -64,13 +64,14 @@ test('bad UTC times, delayed results and future final scores block',()=>{
   const invalid=sample();invalid.bl1[1].matchDateTimeUTC='2026-02-30T20:00:00Z';
   assert.equal(buildBundle(invalid,NOW).ok,false);
   const missing=sample();missing.bl1[0].matchIsFinished=false;missing.bl1[0].matchResults=[];
+  missing.bl1[0].matchDateTimeUTC='2026-11-12T15:00:00Z'; // more than 48h overdue
   assert.equal(buildBundle(missing,NOW).ok,false);
   const future=sample();future.bl1[1].matchIsFinished=true;
   future.bl1[1].matchResults=[{resultTypeID:2,pointsTeam1:1,pointsTeam2:0}];
   assert.equal(buildBundle(future,NOW).ok,false);
 });
 test('stale, future and modified bundles are not usable',()=>{
-  const doc=buildBundle(sample(),NOW).snapshot;
+  const doc=JSON.parse(JSON.stringify(buildBundle(sample(),NOW).snapshot));
   assert.equal(ttl,21600000);
   assert.equal(inspectBundle(doc,'2026-11-15T23:59:59Z').usable,true);
   assert.equal(inspectBundle(doc,'2026-11-16T00:00:00Z').status,'STALE_OR_FUTURE');
