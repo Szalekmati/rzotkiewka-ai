@@ -67,6 +67,21 @@ class CandidateFixtureGateTests(unittest.TestCase):
         self.assertTrue(any("club scheduled more than once" in reason
                             for reason in result["blocking_reasons"]))
 
+    def test_same_home_away_pair_on_different_dates_is_blocked(self):
+        second = fixture(mid=900003, when="2027-02-23T20:00:00Z")
+        result = evaluate_fixtures([fixture(), second], 140)
+        self.assertEqual(result["status"], "BLOCKED")
+        self.assertTrue(any("repeated home-away pairing" in s
+                            for s in result["blocking_reasons"]))
+        self.assertFalse(result["predictions_allowed"])
+
+    def test_reverse_home_away_fixture_at_later_date_is_not_duplicate(self):
+        reverse = fixture("FC Barcelona", "Real Madrid", home_id=102,
+                          away_id=101, mid=900003, when="2027-02-23T20:00:00Z")
+        result = evaluate_fixtures([fixture(), reverse], 140)
+        self.assertEqual(result["status"], "NAMES_CONSISTENT_NEEDS_INDEPENDENT_REVIEW")
+        self.assertFalse(result["public_fixture_preview_allowed"])
+
     def test_invalid_or_naive_kickoff_is_blocked(self):
         for bad in ("2026-11-23T20:00:00", "2026-02-30T20:00:00Z", "tomorrow"):
             with self.subTest(bad=bad):

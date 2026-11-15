@@ -59,6 +59,7 @@ def evaluate_fixtures(records, league_id, season=SEASON):
 
     seen_matches, id_to_name, name_to_id = set(), {}, {}
     seen_fixture_slots, occupied_team_slots = set(), set()
+    seen_season_home_away = set()
     for position, row in enumerate(records):
         prefix = "fixture " + str(position + 1)
         if not isinstance(row, dict):
@@ -109,6 +110,13 @@ def evaluate_fixtures(records, league_id, season=SEASON):
                 away_id = team_id
         if home_id is not None and home_id == away_id:
             issues.append(prefix + ": same club on both sides")
+        if home_id is not None and away_id is not None and home_id != away_id:
+            # Each ordered home/away pair meets once per domestic league season.
+            # A rescheduled match must not appear as a second live fixture.
+            home_away = (home_id, away_id)
+            if home_away in seen_season_home_away:
+                issues.append(prefix + ": repeated home-away pairing in the same season")
+            seen_season_home_away.add(home_away)
         if kickoff_slot is not None and home_id is not None and away_id is not None:
             # Different match IDs can still describe the same fixture; both
             # that duplication and a club playing twice at one instant are unsafe.

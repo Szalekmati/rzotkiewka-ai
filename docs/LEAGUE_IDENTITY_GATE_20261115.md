@@ -28,6 +28,9 @@ bez API i bez klucza, i weryfikuje:
   okna są blokowane do odrębnej, ręcznej weryfikacji;
 - czy wszystkie nazwy klubów odpowiadają dokładnie (po normalizacji)
   nazwom z wykazu oraz czy nie ma sprzecznych mapowań nazwa ↔ ID;
+- czy ta sama para gospodarze–goście nie występuje ponownie w sezonie
+  pod innym ID lub terminem (w tych ligach rozgrywa się jeden mecz danej
+  pary w tej kolejności; mecz rewanżowy z odwróconymi gospodarzami jest dozwolony);
 - czy brak danych, duplikaty lub obce kluby powodują stan `BLOCKED`.
 
 Przykładowa kontrola **lokalnie**, gdy mamy uprzednio pozyskany plik:
