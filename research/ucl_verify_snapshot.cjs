@@ -4,7 +4,7 @@
 // No network access on import; "--live" must be explicitly requested.
 // Never permits publication, predictions, or changes to production files.
 const fs = require('node:fs/promises');
-const {inspect} = require('./ucl_calendar_preview.js');
+const {inspect, sourceIdentityValid} = require('./ucl_calendar_preview.js');
 const {verifyAllUpcoming} = require('./ucl_official_matchday5.js');
 
 const URL = 'https://api.openligadb.de/getmatchdata/ucl/2026';
@@ -15,13 +15,10 @@ function compareRows(rows, observedAt) {
   const structure = inspect(rows, observedAt);
   // Reject payloads from other competitions or seasons even if the names,
   // dates and UEFA reference happen to match. Missing labels are unknown.
-  const sourceIdentityValid = Array.isArray(rows) && rows.length > 0 &&
-    rows.every(row => row && typeof row === 'object' &&
-      !Array.isArray(row) && row.leagueShortcut === 'ucl' &&
-      row.leagueSeason === 2026);
-  const matched = official.ok === true && structure.ok === true && sourceIdentityValid;
+  const hasCorrectSourceIdentity = sourceIdentityValid(rows);
+  const matched = official.ok === true && structure.ok === true && hasCorrectSourceIdentity;
   const issues = [
-    ...(sourceIdentityValid ? [] : ['Brak lub niezgodność leagueShortcut=ucl / leagueSeason=2026']),
+    ...(hasCorrectSourceIdentity ? [] : ['Brak lub niezgodność leagueShortcut=ucl / leagueSeason=2026']),
     ...(official.issues || []),
     ...(structure.issues || []),
     ...(structure.ok ? [] : [structure.reason])
@@ -36,7 +33,7 @@ function compareRows(rows, observedAt) {
     officialCompared: official.checked || 0,
     officialExpected: official.expected || 72,
     structureAccepted: structure.ok === true,
-    sourceIdentityValid,
+    sourceIdentityValid: hasCorrectSourceIdentity,
     scheduledFuture: structure.ok ? structure.upcoming.length : null,
     findings: issues.slice(0, 10),
     totalFindings: Math.max(issues.length, official.issueCount || 0, structure.issueCount || 0),

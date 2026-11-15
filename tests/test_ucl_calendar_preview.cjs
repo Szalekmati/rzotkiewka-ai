@@ -3,13 +3,14 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const {inspect, monthOptions, byMonth} = require('../research/ucl_calendar_preview.js');
+const {inspect, sourceIdentityValid, monthOptions, byMonth} = require('../research/ucl_calendar_preview.js');
 const NOW = '2026-11-15T12:00:00Z';
 
 function fixture(id, iso, home = 'Arsenal FC', away = 'Inter Milano', homeId = 21, awayId = 22,
                  finished = false, score = false) {
   return {
-    matchID: id, matchDateTimeUTC: iso, matchIsFinished: finished,
+    matchID: id, leagueShortcut: 'ucl', leagueSeason: 2026,
+    matchDateTimeUTC: iso, matchIsFinished: finished,
     team1: {teamId: homeId, teamName: home}, team2: {teamId: awayId, teamName: away},
     group: {groupName: 'Liga'},
     matchResults: score ? [{resultTypeID:2, pointsTeam1:2, pointsTeam2:1}] : []
@@ -33,6 +34,26 @@ test('future fixtures are only research and never production-approved', () => {
 test('empty, not-array and oversized payloads fail closed', () => {
   for (const data of [null, {}, [], Array.from({length:261}, (_,i)=>fixture(i+1,'2026-11-25T20:00:00Z'))])
     assert.equal(inspect(data, NOW).ok, false);
+});
+
+test('browser preview blocks a wrong, missing or null competition / season', () => {
+  assert.equal(sourceIdentityValid([upcoming()]), true);
+  for (const change of [
+    row => { row.leagueShortcut = 'la1'; },
+    row => { row.leagueSeason = 2025; },
+    row => { row.leagueShortcut = null; },
+    row => { row.leagueSeason = null; },
+    row => { delete row.leagueShortcut; },
+    row => { delete row.leagueSeason; }
+  ]) {
+    const row = upcoming();
+    change(row);
+    const report = inspect([row], NOW);
+    assert.equal(sourceIdentityValid([row]), false);
+    assert.equal(report.ok, false);
+    assert.deepEqual(report.upcoming, []);
+    assert.match(report.reason, /sezonu 2026/);
+  }
 });
 
 test('no real upcoming fixture means no test calendar', () => {

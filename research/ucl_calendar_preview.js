@@ -36,11 +36,23 @@
       (row.resultTypeID === 2 || /endergebnis/i.test(String(row.resultName || ''))));
   }
 
+  // OpenLigaDB's Match schema has nullable leagueShortcut/leagueSeason.
+  // Missing or conflicting provenance must block a research preview.
+  // This is only a consistency check; provider fields are not proof of identity.
+  function sourceIdentityValid(payload) {
+    return Array.isArray(payload) && payload.length > 0 &&
+      payload.every(row => row && typeof row === 'object' && !Array.isArray(row) &&
+        row.leagueShortcut === 'ucl' && row.leagueSeason === 2026);
+  }
+
   function inspect(payload, nowInput) {
     const now = Date.parse(nowInput);
     if (!Number.isFinite(now)) return { ok: false, reason: 'Nieprawidłowy czas kontroli', issues: [], upcoming: [], total: 0 };
     if (!Array.isArray(payload) || payload.length === 0 || payload.length > MAX_RECORDS)
       return { ok: false, reason: 'Niepoprawny rozmiar danych źródłowych', issues: [], upcoming: [], total: 0 };
+    if (!sourceIdentityValid(payload))
+      return { ok: false, reason: 'Brak lub niezgodność ligi ucl / sezonu 2026 w danych źródła',
+        issues: [], upcoming: [], total: payload.length };
 
     const problems = [];
     const ids = new Set();
@@ -119,5 +131,5 @@
   function byMonth(records, month) {
     return month === 'all' ? records.slice() : records.filter(row => monthKey(row) === month);
   }
-  return Object.freeze({ inspect, monthOptions, byMonth });
+  return Object.freeze({ inspect, sourceIdentityValid, monthOptions, byMonth });
 });

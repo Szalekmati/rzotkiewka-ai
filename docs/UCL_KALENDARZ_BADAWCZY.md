@@ -83,6 +83,13 @@ API w testach CI. Wymaga Node.js 18+.
 Każdy rekord musi dodatkowo deklarować `leagueShortcut="ucl"` oraz
 `leagueSeason=2026`. Brak takiego oznaczenia lub inna liga/sezon = `STOP`;
 zgodna para drużyn i data nie zastępują kontroli pochodzenia rekordu.
+Ta sama bramka obowiązuje też w przeglądarkowym podglądzie
+`research/ucl_calendar_preview.html` (wspólny walidator
+`UclPreview.sourceIdentityValid`); testy offline obejmują pola błędne,
+puste i nieobecne. Schemat OpenLigaDB dopuszcza wartości null, dlatego
+rzeczywiste dane bez jednoznacznego oznaczenia zostaną celowo
+zatrzymane, bez zgadywania na podstawie adresu URL. Jest to kontrola
+spójności metadanych, nie niezależne poświadczenie prawdziwości źródła.
 
 W raporcie: `MATCHED_RESEARCH_ONLY` oznacza poprawność ograniczonego
 porównania danych ze stanem datowanej referencji UEFA i kontrolami technicznymi,
