@@ -1,12 +1,12 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-16T02:22:35+00:00",
-  "event": "schedule",
-  "upstream_event": null,
-  "upstream_run_id": null,
-  "run_id": "43791729493",
+  "observed_at": "2026-11-16T06:31:40+00:00",
+  "event": "workflow_run",
+  "upstream_event": "schedule",
+  "upstream_run_id": "43817250443",
+  "run_id": "43817302509",
   "run_attempt": "1",
-  "source_commit": "5cdd905577e52a8d2a4a6e255de3b96ab9df8503",
+  "source_commit": "e7abba4b61b28d4a5b9cb5b4bc6f76fbd51e007c",
   "observation_outcome": "success",
   "planned_cron_utc": "37 * * * *"
 }
