@@ -202,6 +202,19 @@ class ReleaseGateTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             inspect(r)
 
+    def test_partial_id_reviews_explicitly_report_incomplete_coverage(self):
+        r = self.registry()
+        r["competitions"][0]["independently_reviewed_club_ids"] = 1
+        r["reviewed_identity_links"] = [{
+            "league_id": 39, "season": 2026, "source_team_name": "Arsenal",
+            "official_club_name": "Arsenal", "provider_team_id": 123456,
+            "independent_identity_url": "https://example.org/clubs/arsenal",
+            "reviewed_by": "synthetic reviewer", "reviewed_on": "2026-11-11"
+        }]
+        outcome = inspect(r)
+        self.assertFalse(outcome["production_release_allowed"])
+        self.assertTrue(any("1/17" in reason for reason in outcome["blocked_reasons"]))
+
     def test_all_evidence_flags_cannot_override_final_release_gate(self):
         r = self.registry()
         r["competitions"][0]["independently_reviewed_club_ids"] = 1
@@ -220,8 +233,8 @@ class ReleaseGateTests(unittest.TestCase):
             "authorized_by": "human reviewer", "authorized_on": "2026-11-11",
             "decision_url": "https://example.com/release-decision",
         })
-        result = inspect(r)
-        self.assertFalse(result["production_release_allowed"])
+        with self.assertRaisesRegex(ValueError, "niepelna kontrola ID"):
+            inspect(r)
 
 
 if __name__ == "__main__":
