@@ -108,9 +108,14 @@ def audit_pairs(api_rows, independent_rows, approved_team_ids, *, max_hours=24):
         elif len(near) > 1:
             counts["ambiguous"] += 1
         else:
-            reference_index, _, reference_score = near[0]
+            reference_index, reference_date, reference_score = near[0]
             if reference_index in used_reference_records:
                 raise ValueError("one independent match was reused for multiple fixtures")
+            # The matching window is only for locating possible candidates.
+            # A differing kickoff, even with identical score, cannot establish agreement.
+            if reference_date != kickoff:
+                counts["different_date"] += 1
+                continue
             used_reference_records.add(reference_index)
             if reference_score != goals:
                 counts["different_score"] += 1
