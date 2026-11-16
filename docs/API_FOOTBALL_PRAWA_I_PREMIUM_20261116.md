@@ -44,3 +44,29 @@ W `data/identity_release_registry.json` pozostawiamy `rights_review_approved=fal
 4. Czy istnieje osobna umowa lub oficjalne pisemne potwierdzenie dopuszczalnego modelu Premium?
 
 **Nie zmieniamy:** `main`, strony, `predictions.json`, `lab_forward/`, modeli ani kluczy. Dalsza kontrola praw i ID jest konieczna **przed** planowaniem wdrożenia nowych lig.
+
+## Gotowe zapytanie do API-Football — po angielsku, NIE WYSŁANO (16.11.2026)
+
+**Kanał:** po zalogowaniu w https://dashboard.api-football.com → Support / Chat (Smartsupp). Oficjalne warunki wskazują dostępność czatu dla płatnych użytkowników od poniedziałku do piątku, **07:00–16:00 UTC**, bez gwarantowanego czasu odpowiedzi. Regulamin wspomina także kontakt e-mail, lecz nie weryfikowaliśmy konkretnego adresu; nie należy go zgadywać.
+
+**Subject: Commercial use clarification — RZOTKIEWKA AI subscription-based football predictions**
+
+Hello API-Football Support,
+
+I use your PRO plan and am developing **RZOTKIEWKA AI**, a Poland-based football analytics website. We plan to offer some free pre-match predictions and, later, a subscription (initially around PLN 19.90/month) for our own AI-generated match probabilities, 1/X/2 predictions and explanations. We do **not** plan to resell your raw API feed, provide API access to our subscribers or operate a bookmaker. We are interested in Bundesliga, Premier League and LaLiga.
+
+Before launching any paid features, could you please clarify the following **in writing**, referring to your current Terms of Service where possible?
+
+1. May we use API-Football data **internally as model inputs** to create and publish **our own original predictions and derived analyses**, including both free previews and paid subscriptions, without sharing raw API responses?
+2. Which individual match details may appear alongside those predictions (team/competition names, kickoff times, final scores, selected statistics or lineups)? What are the rules for attribution, caching, retaining historical data and displaying them to paying users?
+3. Your terms say that API-Football does **not grant publication rights to competition data**. Which permissions would we need to seek from the relevant leagues/rights holders, particularly for Bundesliga, Premier League and LaLiga? Can you clarify what API-Football does and does not authorize?
+4. Can we display **plain-text team and league names** without logos or photographs, and what extra permissions would be required for logos or other branding?
+5. Do you offer any separate contractual permission for this business model, or can you confirm which parts of our planned use are allowed under the existing PRO subscription?
+
+We would appreciate a written reply and links to the relevant terms or rights-holder contacts. We will not treat your response as a license for third-party rights you do not own.
+
+Thank you,
+RZOTKIEWKA AI project
+
+**Stan komunikacji:** `DRAFT_NOT_SENT`. Nie udostępniano kluczy, haseł ani danych konta. Wysłanie przez użytkownika z panelu dostawcy i ewentualne pisemne potwierdzenie są wymagane przed zmianą `rights_review_approved` lub uruchomieniem Premium. Zweryfikowany regulamin: https://www.api-football.com/terms.
+
