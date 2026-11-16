@@ -11,6 +11,8 @@ import json
 from pathlib import Path
 from urllib.parse import urlparse
 
+from api_football_official_roster import OFFICIAL
+
 DEFAULT_REGISTRY = Path(__file__).resolve().parent / "data" / "identity_release_registry.json"
 BLOCKED_PROOF_HOSTS = ("api-football.com", "api-sports.io", "github.com", "githubusercontent.com")
 
@@ -83,6 +85,11 @@ def inspect(registry):
         _count(group["independently_reviewed_club_ids"], min(name_count, internally_linked))
         _https(group["official_roster_url"])
         _https(group["audit_url"])
+        official = OFFICIAL.get(league_id)
+        expected_season = f"{season}/{(season + 1) % 100:02d}"
+        if (not official or official["season"] != expected_season or
+                group["official_roster_url"] != official["url"]):
+            raise ValueError("Brak odpowiedniego oficjalnego wykazu ligi/sezonu.")
         groups[key] = group
 
     records = registry["reviewed_identity_links"]
@@ -91,6 +98,7 @@ def inspect(registry):
     by_competition = Counter()
     seen_source = set()
     seen_provider_id = set()
+    seen_official_club = set()
     for link in records:
         _required(link, ("league_id", "season", "source_team_name",
                          "official_club_name", "provider_team_id",
@@ -105,12 +113,18 @@ def inspect(registry):
         if _date(link["reviewed_on"]) > _date(registry["review_date"]):
             raise ValueError("Dowod jest z przyszlosci wobec rejestru.")
         _https(link["independent_identity_url"], independent=True)
+        official_name = link["official_club_name"].strip()
+        if official_name not in OFFICIAL[key[0]]["clubs"]:
+            raise ValueError("Klub spoza oficjalnego wykazu ligi i sezonu.")
         source = (key, link["source_team_name"].strip().casefold())
         provider = (key, link["provider_team_id"])
-        if source in seen_source or provider in seen_provider_id:
-            raise ValueError("Powtorzony klub albo provider ID w tej samej lidze.")
+        official_club = (key, official_name)
+        if (source in seen_source or provider in seen_provider_id or
+                official_club in seen_official_club):
+            raise ValueError("Powtorzony klub, oficjalna nazwa albo ID w lidze.")
         seen_source.add(source)
         seen_provider_id.add(provider)
+        seen_official_club.add(official_club)
         by_competition[key] += 1
     for key, group in groups.items():
         if by_competition[key] != group["independently_reviewed_club_ids"]:
