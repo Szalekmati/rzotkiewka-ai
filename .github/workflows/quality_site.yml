@@ -13,6 +13,8 @@ on:
       - 'tests/test_lab_schedule.py'
       - 'tests/test_lab_diagnostics.py'
       - 'tests/test_lab_readonly_status.py'
+      - 'tools/candidate_fixture_identity_gate.py'
+      - 'tests/test_candidate_fixture_identity_gate.py'
       - 'tools/prepare_pages_bundle.py'
       - 'tests/test_pages_bundle.py'
       - 'docs/PAGES_PLAN_DRY_RUN.md'
@@ -35,6 +37,8 @@ on:
       - 'tests/test_lab_schedule.py'
       - 'tests/test_lab_diagnostics.py'
       - 'tests/test_lab_readonly_status.py'
+      - 'tools/candidate_fixture_identity_gate.py'
+      - 'tests/test_candidate_fixture_identity_gate.py'
       - 'tools/prepare_pages_bundle.py'
       - 'tests/test_pages_bundle.py'
       - 'docs/PAGES_PLAN_DRY_RUN.md'
@@ -87,5 +91,7 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_lab_diagnostics.py' -v
       - name: Kontrola odczytowa statusu LAB (offline)
         run: python -m unittest discover -s tests -p 'test_lab_readonly_status.py' -v
+      - name: Kontrola tozsamosci kandydatow nowych lig (offline)
+        run: python -m unittest discover -s tests -p 'test_candidate_fixture_identity_gate.py' -v
       - name: Sprawdz pakiet podgladowy Pages (bez publikacji)
         run: python -m unittest discover -s tests -p 'test_pages_bundle.py' -v
