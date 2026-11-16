@@ -85,5 +85,22 @@ class PairAuditTests(unittest.TestCase):
         self.assertEqual(result["api_records"], 0)
 
 
+    def test_identical_score_one_hour_shift_cannot_agree(self):
+        result = audit_pairs([api()], [reference(kickoff_utc="2026-11-07T16:00:00Z")], APPROVED)
+        self.assertEqual(result["agreed"], 0)
+        self.assertEqual(result["different_date"], 1)
+
+    def test_identical_score_one_minute_shift_cannot_agree(self):
+        result = audit_pairs([api()], [reference(kickoff_utc="2026-11-07T15:01:00Z")], APPROVED)
+        self.assertEqual(result["agreed"], 0)
+        self.assertEqual(result["different_date"], 1)
+
+    def test_date_mismatch_takes_priority_over_score_mismatch(self):
+        result = audit_pairs([api()], [reference(kickoff_utc="2026-11-07T16:00:00Z", away_goals=0)], APPROVED)
+        self.assertEqual(result["different_date"], 1)
+        self.assertEqual(result["different_score"], 0)
+        self.assertEqual(result["agreed"], 0)
+
+
 if __name__ == "__main__":
     unittest.main()
