@@ -6,6 +6,7 @@ from pathlib import Path
 import unittest
 
 from club_identity_release_gate import inspect, DEFAULT_REGISTRY
+from api_football_official_roster import OFFICIAL
 
 
 class ReleaseGateTests(unittest.TestCase):
@@ -20,6 +21,7 @@ class ReleaseGateTests(unittest.TestCase):
         r = inspect(self.registry())
         self.assertEqual(r["checked_competitions"], 2)
         self.assertEqual(r["name_supported_alias_candidates"], 17)
+        self.assertEqual(r["submitted_identity_link_entries"], 0)
         self.assertEqual(r["independently_verified_id_links"], 0)
         self.assertFalse(r["production_release_allowed"])
         self.assertGreaterEqual(len(r["blocked_reasons"]), 3)
@@ -102,7 +104,9 @@ class ReleaseGateTests(unittest.TestCase):
             "reviewed_by": "human reviewer", "reviewed_on": "2026-11-11"
         }]
         result = inspect(r)
-        self.assertEqual(result["independently_verified_id_links"], 1)
+        self.assertEqual(result["submitted_identity_link_entries"], 1)
+        self.assertEqual(result["independently_verified_id_links"], 0)
+        self.assertTrue(any("wpisy ID sa deklaracjami" in x for x in result["blocked_reasons"]))
         self.assertFalse(result["production_release_allowed"])
 
     def test_unknown_official_club_is_rejected(self):
@@ -236,6 +240,42 @@ class ReleaseGateTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "niepelna kontrola ID"):
             inspect(r)
 
+
+    def test_full_17_submitted_urls_still_does_not_verify_provider_ids(self):
+        """A syntactically complete register must never become verified proof."""
+        r = self.registry()
+        for competition in r["competitions"]:
+            league_id = competition["league_id"]
+            season = competition["season"]
+            count = competition["candidate_aliases"]
+            competition["independently_reviewed_club_ids"] = count
+            for index, official_name in enumerate(sorted(OFFICIAL[league_id]["clubs"])[:count], 1):
+                r["reviewed_identity_links"].append({
+                    "league_id": league_id, "season": season,
+                    "source_team_name": f"synthetic-{league_id}-{index}",
+                    "official_club_name": official_name,
+                    "provider_team_id": league_id * 10000 + index,
+                    "independent_identity_url": f"https://example.org/clubs/{league_id}-{index}",
+                    "reviewed_by": "synthetic", "reviewed_on": "2026-11-11"
+                })
+
+        result = inspect(r)
+        self.assertEqual(result["submitted_identity_link_entries"], 17)
+        self.assertEqual(result["independently_verified_id_links"], 0)
+        self.assertFalse(result["production_release_allowed"])
+        self.assertTrue(any("brak niezaleznie zweryfikowanej tresci dowodow" in reason
+                            for reason in result["blocked_reasons"]))
+
+        r["release"].update({
+            "requested": True, "rights_review_approved": True,
+            "rights_review_document_url": "https://example.org/rights",
+            "forward_time_model_test_approved": True,
+            "forward_time_test_report_url": "https://example.org/forward-test",
+            "authorized_by": "synthetic", "authorized_on": "2026-11-11",
+            "decision_url": "https://example.org/release-decision",
+        })
+        with self.assertRaisesRegex(ValueError, "brak niezaleznie zweryfikowanej tresci dowodow"):
+            inspect(r)
 
 if __name__ == "__main__":
     unittest.main()
