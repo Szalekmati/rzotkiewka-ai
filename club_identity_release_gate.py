@@ -47,6 +47,23 @@ def _https(value, independent=False):
     return value
 
 
+def _club_identity_proof_url(value, official_roster_url):
+    """Reject generic directory URLs; this never verifies a team ID by itself."""
+    _https(value, independent=True)
+    submitted = urlparse(value)
+    official = urlparse(official_roster_url)
+    path = submitted.path.rstrip("/").casefold()
+    official_path = official.path.rstrip("/").casefold()
+    generic_paths = {"/", "", "/clubs", "/en/clubs", "/en-us/laliga-easports/clubs",
+                     "/en/laliga-easports/clubs"}
+    if (path in generic_paths or
+            (submitted.hostname or "").casefold() == (official.hostname or "").casefold()
+            and path == official_path):
+        raise ValueError("Wymagany indywidualny dowod dotyczacy konkretnego klubu.")
+    # A plausible link is not independent verification of a provider team ID.
+    return value
+
+
 def _count(value, maximum=None):
     if type(value) is not int or value < 0 or (maximum is not None and value > maximum):
         raise ValueError("Nieprawidlowa liczba zweryfikowanych klubow.")
@@ -112,7 +129,7 @@ def inspect(registry):
             raise ValueError("Brak jednoznacznej nazwy, ID lub osoby weryfikujacej.")
         if _date(link["reviewed_on"]) > _date(registry["review_date"]):
             raise ValueError("Dowod jest z przyszlosci wobec rejestru.")
-        _https(link["independent_identity_url"], independent=True)
+        _club_identity_proof_url(link["independent_identity_url"], groups[key]["official_roster_url"])
         official_name = link["official_club_name"].strip()
         if official_name not in OFFICIAL[key[0]]["clubs"]:
             raise ValueError("Klub spoza oficjalnego wykazu ligi i sezonu.")
