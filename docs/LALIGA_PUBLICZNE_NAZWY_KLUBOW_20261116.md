@@ -16,7 +16,7 @@ Wydobyto unikatowe nazwy klubów z publicznych rekordów archiwum bez kopiowania
 - Archiwum OpenFootball: **20 unikatowych nazw**.
 - Oficjalna lista: **20 unikatowych klubów**.
 - Zgodność ścisła po podstawowej normalizacji: **13/20**.
-- Różne warianty bez ścisłej zgodności: **7/20**. *Żaden z nich nie jest automatycznie zatwierdzony ani produkcyjnym aliasem.*
+- Różne warianty bez ścisłej zgodności: **7/20**. Wszystkie siedem ma teraz odrębny dowód publicznego nazewnictwa w tabeli niżej; żaden nie został automatycznie zatwierdzony ani nie jest produkcyjnym aliasem.
 - Niezależnie zweryfikowane `provider_team_id` (LaLiga): **0/11** kandydatów API-Football. Odrębne **11** zgłoszeń API nie jest tożsame z poniższymi siedmioma wariantami publicznych nazw.
 
 ### Nazwy 13/20 dopasowane bez dodatkowych reguł
@@ -37,25 +37,27 @@ Wydobyto unikatowe nazwy klubów z publicznych rekordów archiwum bez kopiowania
 | Valencia CF | Valencia CF |
 | Villarreal CF | Villarreal CF |
 
-### Siedem **propozycji** do ręcznego potwierdzenia
+### Wynik dodatkowego odczytu oficjalnych źródeł: siedem wariantów (16.11.2026)
 
-W drugiej kolumnie podano wyłącznie orientacyjną nazwę oficjalną na podstawie podobieństwa słownego i składu rozgrywek. **Nie weryfikowano oficjalnego potwierdzenia wariantu ani team ID.** Kolumna nie jest zatwierdzonym słownikiem.
+W pierwszej kontroli **13/20** nazw było dokładnie zgodnych po podstawowej normalizacji, a **7/20** wymagało osobnej weryfikacji. Dodatkowo sprawdzono **każdą z tych siedmiu par** w publicznych profilach LaLiga lub własnych komunikatach klubów. Oficjalne źródła **wspierają tożsamość nazw tych samych klubów** w siedmiu przypadkach; nie oznacza to dopuszczenia aliasów API ani mapy identyfikatorów `provider_team_id`.
 
-| Wariant OpenFootball | Możliwa oficjalna nazwa do sprawdzenia | Status |
-| --- | --- | --- |
-| Club Atlético de Madrid | Atlético de Madrid | DO WERYFIKACJI — niezatwierdzona propozycja nazw |
-| Rayo Vallecano de Madrid | Rayo Vallecano | DO WERYFIKACJI — niezatwierdzona propozycja nazw |
-| RC Celta de Vigo | Celta | DO WERYFIKACJI — niezatwierdzona propozycja nazw |
-| RC Deportivo La Coruña | RC Deportivo | DO WERYFIKACJI — niezatwierdzona propozycja nazw |
-| Real Betis Balompié | Real Betis | DO WERYFIKACJI — niezatwierdzona propozycja nazw |
-| Real Racing Club de Santander | R. Racing Club | DO WERYFIKACJI — niezatwierdzona propozycja nazw |
-| Real Sociedad de Fútbol | Real Sociedad | DO WERYFIKACJI — niezatwierdzona propozycja nazw |
+| Wariant w archiwum OpenFootball | Nazwa ligowa | Potwierdzenie nazewnictwa w źródle klubu / LaLiga | Ocena |
+| --- | --- | --- | --- |
+| Club Atlético de Madrid | Atlético de Madrid | [Profil LaLiga](https://www.laliga.com/clubes/atletico-de-madrid) i [nota prawna klubu](https://www.atleticodemadrid.com/atm/aviso-legal) podają pełną nazwę Club Atlético de Madrid | Wariant nazwy wsparty publicznie |
+| Rayo Vallecano de Madrid | Rayo Vallecano | [Profil LaLiga](https://www.laliga.com/clubes/rayo-vallecano) łączy etykietę Rayo Vallecano z pełnym Rayo Vallecano de Madrid SAD | Wariant nazwy wsparty publicznie |
+| RC Celta de Vigo | Celta | [Oficjalna informacja klubu o rebrandingu](https://rccelta.es/en/club/actualidad/celta-presents-its-new-brand-more-essence-more-identity-more-ours/) wymienia Celta, Real Club Celta, Celta de Vigo i RC Celta jako akceptowane formy; [nota prawna](https://rccelta.es/en/aviso-legal/) podaje Real Club Celta de Vigo | Wariant nazwy wsparty publicznie |
+| RC Deportivo La Coruña | RC Deportivo | [Profil LaLiga](https://www.laliga.com/clubes/rc-deportivo) wskazuje Real Club Deportivo de A Coruña; [decyzja klubu z 23.06.2026](https://www.rcdeportivo.es/es/noticias/la-junta-general-extraordinaria-del-rc-deportivo-aprueba-la-adecuacion-de-su-denominacion-social) wyjaśnia zmianę La Coruña → A Coruña | Wariant historyczny wsparty publicznie |
+| Real Betis Balompié | Real Betis | [Profil LaLiga](https://www.laliga.com/clubes/real-betis) pokazuje etykietę Real Betis i pełną nazwę Real Betis Balompié SAD | Wariant nazwy wsparty publicznie |
+| Real Racing Club de Santander | R. Racing Club | [Profil LaLiga](https://www.laliga.com/clubes/r-racing-club) łączy skrót R. Racing Club z Real Racing Club de Santander; [strona klubu](https://www.realracingclub.es/el-club) podaje pełną nazwę | Wariant nazwy wsparty publicznie |
+| Real Sociedad de Fútbol | Real Sociedad | [Profil LaLiga](https://www.laliga.com/clubes/real-sociedad) pokazuje obie formy; [oficjalna informacja prawna](https://www.realsociedad.eus/es/i/te-escuchamos/aviso-legal) podaje pełną nazwę | Wariant nazwy wsparty publicznie |
+
+**Podsumowanie tylko dla publicznych nazw:** 13/20 zgodne wprost po podstawowej normalizacji, pozostałe 7/20 wspierane odrębnymi stronami klubów/ligi. **Żaden z siedmiu wpisów nie jest aliasem wdrożonym do aplikacji ani potwierdzeniem identyfikatorów API.** Wciąż **0/11** niezależnie zweryfikowanych map ID w LaLiga i **0/17** w dwóch badanych ligach.
 
 ### Ryzyka szczególne
 
-- `RC Deportivo La Coruña` wymaga osobnego odczytu oficjalnych źródeł klubu i ligi, bo w wykazie jest również `Deportivo Alavés`. Nigdy nie mapować samego `Deportivo` bez dodatkowego kontekstu.
-- `Real Racing Club de Santander` i `R. Racing Club` nie powinny być łączone na podstawie samych skrótów `R.` / `Real`.
-- Każda z siedmiu pozycji wymaga strony konkretnego klubu lub oficjalnego potwierdzenia wariantu. Dopiero potem można uznać *zgodność nazw*, **nadal nie tożsamość konkretnego API provider ID**.
+- `RC Deportivo La Coruña` ma publicznie udokumentowaną zmianę nazwy na `A Coruña`, ale w tej samej lidze występuje także `Deportivo Alavés`. Nigdy nie mapować samego `Deportivo` bez dodatkowego kontekstu.
+- `Real Racing Club de Santander` i `R. Racing Club` zostały powiązane przez konkretne źródła klubu i ligi, a nie przez same skróty `R.` / `Real`.
+- Każdy z siedmiu wariantów ma odsyłacz do konkretnego oficjalnego źródła **dla nazwy**. **Żadne z tych źródeł nie weryfikuje konkretnego team ID API-Football**. Brak prawa do autozatwierdzania mapy `provider_team_id`.
 - Zgodność 20 uczestników w dwóch listach nie potwierdza poprawności terminarzy, końcowych wyników, licencji ani skuteczności prognoz. Znane problemy feedu `la1/2026` (kluby z innych lig) pozostają niezamknięte.
 
 **Bramka produkcji: STOP.** Bez wpisu do zatwierdzonych map ID, bez zmiany `data/identity_release_registry.json`, bez `release.requested`, bez zmian w `main`, Pages, prognozach, LAB i kosztach.
