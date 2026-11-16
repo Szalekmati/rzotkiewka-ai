@@ -81,3 +81,9 @@ Nowe ligi nie są dodawane automatycznie do silników lub LAB.
 Modele LAB 2.1/2.2, archiwum prognoz oraz metryki jakości są niezależne
 od audytu licencji i nowych lig. Żaden raport wstępny nie oznacza automatycznej
 zgody na produkcyjne prognozowanie czy pobieranie opłat.
+
+## 6. API-Football — prawa do prezentacji danych a Premium (kontrola 16.11.2026)
+
+**Osobny aktualny przegląd:** [API-Football — prawa i plan Premium](API_FOOTBALL_PRAWA_I_PREMIUM_20261116.md). Regulamin dostawcy https://www.api-football.com/terms pozwala tworzyć aplikacje, ale wskazuje, że sam dostęp do API **nie udziela automatycznie praw do publikowania danych rozgrywek**. Nie wolno bez zgody odsprzedawać dostarczonego feedu; prawa organizatorów i logotypów wymagają osobnej oceny. Własne prognozy modelu, widoczne statystyki, wyniki, hurtowa redystrybucja i grafiki to **różne scenariusze użytkowania**, których nie należy utożsamiać.
+
+**Decyzja:** `rights_review_approved=false` dla Premier League/LaLiga; nie uruchamiać komercyjnej publikacji nowych danych przed wyjaśnieniem licencji. Archiwa OpenFootball `england` i `espana` zawierają osobne deklaracje CC0 w przypiętych commitach — nie przenoszą tej licencji na rekordy API-Football. Dokumentacja ma charakter techniczny i wymaga oceny prawnej przed uruchomieniem Premium.
