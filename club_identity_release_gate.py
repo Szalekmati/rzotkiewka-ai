@@ -2,6 +2,8 @@
 
 Audit success and officially supported team NAMES are not verified team IDs,
 commercial redistribution permission, or forward-time prediction validation.
+This script only checks the structure of submitted evidence; it cannot
+independently verify remote-page contents or provider ID claims.
 This script never retrieves API data or modifies production files.
 """
 import argparse
@@ -162,7 +164,11 @@ def inspect(registry):
     reasons = []
     expected_identity_links = sum(g["candidate_aliases"] for g in competitions)
     if not records:
-        reasons.append("brak indywidualnych, niezaleznie zweryfikowanych ID")
+        reasons.append("brak zgloszonych indywidualnych map ID")
+    else:
+        # A plausible HTTPS address and reviewer name do not verify remote content.
+        # This offline gate only validates the declaration's structure.
+        reasons.append("wpisy ID sa deklaracjami; brak niezaleznie zweryfikowanej tresci dowodow")
     if len(records) != expected_identity_links:
         reasons.append(
             f"niepelna kontrola ID: {len(records)}/{expected_identity_links} kandydatow"
@@ -188,7 +194,8 @@ def inspect(registry):
     return {
         "checked_competitions": len(competitions),
         "name_supported_alias_candidates": sum(g["name_supported_by_official_roster"] for g in competitions),
-        "independently_verified_id_links": len(records),
+        "submitted_identity_link_entries": len(records),
+        "independently_verified_id_links": 0,  # No external evidence is checked here.
         "production_release_allowed": False,  # REQUIRES A SEPARATE, REVIEWED RELEASE IMPLEMENTATION.
         "blocked_reasons": reasons,
     }
@@ -206,7 +213,8 @@ def main():
         print("RZOTKIEWKA - kontrola rejestru tozsamosci: SCHEMAT_OK")
         print(f"Ligi: {result['checked_competitions']}; "
               f"oficjalnie wspierane kandydatury nazw: {result['name_supported_alias_candidates']}; "
-              f"niezaleznie zweryfikowane mapy ID: {result['independently_verified_id_links']}.")
+              f"zgloszone wpisy map ID: {result['submitted_identity_link_entries']}; "
+              f"faktycznie potwierdzone przez te bramke ID: {result['independently_verified_id_links']}.")
         print("PRODUKCJA NOWYCH LIG: ZABLOKOWANA. "
               "Zielone testy kodu NIE oznaczaja zatwierdzenia danych.")
         for reason in result["blocked_reasons"]:
