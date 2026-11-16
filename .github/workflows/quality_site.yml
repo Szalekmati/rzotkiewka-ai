@@ -16,6 +16,11 @@ on:
       - 'tools/prepare_pages_bundle.py'
       - 'tests/test_pages_bundle.py'
       - 'docs/PAGES_PLAN_DRY_RUN.md'
+      - 'docs/PAGES_IMPACT_DRY_RUN.md'
+      - 'docs/PAGES_ACTIONS_CANDIDATE.yml'
+      - 'docs/PAGES_ACTIONS_MIGRATION.md'
+      - 'tests/test_pages_actions_candidate.py'
+      - 'tools/pages_change_impact.py'
       - 'lab_forward/status_readonly.py'
       - '.github/workflows/diagnostyka_terminarza_lab.yml'
       - '.github/workflows/test_przedmeczowy.yml'
@@ -38,6 +43,11 @@ on:
       - 'tools/prepare_pages_bundle.py'
       - 'tests/test_pages_bundle.py'
       - 'docs/PAGES_PLAN_DRY_RUN.md'
+      - 'docs/PAGES_IMPACT_DRY_RUN.md'
+      - 'docs/PAGES_ACTIONS_CANDIDATE.yml'
+      - 'docs/PAGES_ACTIONS_MIGRATION.md'
+      - 'tests/test_pages_actions_candidate.py'
+      - 'tools/pages_change_impact.py'
       - 'lab_forward/status_readonly.py'
       - '.github/workflows/diagnostyka_terminarza_lab.yml'
       - '.github/workflows/test_przedmeczowy.yml'
@@ -89,3 +99,5 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_lab_readonly_status.py' -v
       - name: Sprawdz pakiet podgladowy Pages (bez publikacji)
         run: python -m unittest discover -s tests -p 'test_pages_bundle.py' -v
+      - name: Testy nieaktywnego wariantu Pages Actions (bez publikacji)
+        run: python -m unittest discover -s tests -p 'test_pages_actions_candidate.py' -v

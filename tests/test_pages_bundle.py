@@ -108,5 +108,60 @@ class PagesPreviewTests(unittest.TestCase):
                              (ROOT / "index.html").read_bytes())
 
 
+    def test_pages_change_classifier_real_commit_examples(self):
+        """Compare known repo edits without assuming any current deployment filter."""
+        from tools.pages_change_impact import classify
+        # Confirmed status-only commits ac78286, b22cdc6:
+        changed = ["lab_forward/RAPORT.md", "lab_forward/run_status.json"]
+        strict = classify(changed)
+        self.assertEqual(strict["decision"], "PUBLISH_CANDIDATE")
+        opt_in = classify(changed, allow_stale_lab=True)
+        self.assertEqual(opt_in["decision"], "SKIP_CANDIDATE_STALE_LAB")
+        self.assertEqual(opt_in["mode"], "DRY_RUN_ONLY")
+        self.assertEqual(opt_in["lab_observations"], sorted(changed))
+        # #39 changed actual public HTML, so even opt-in must publish.
+        self.assertEqual(classify(
+            ["index.html", "tests/test_demo_cards.mjs"],
+            allow_stale_lab=True)["decision"], "PUBLISH_CANDIDATE")
+        # A new observation and new ledger must publish even in opt-in mode.
+        self.assertEqual(classify(
+            ["lab_forward/ledger.json", "lab_forward/run_status.json"],
+            allow_stale_lab=True)["decision"], "PUBLISH_CANDIDATE")
+        # #42 changed only build/research files (not public data), but a
+        # workflow change requires human review rather than a blind skip.
+        self.assertEqual(classify(
+            [".github/workflows/quality_site.yml",
+             "docs/PAGES_PLAN_DRY_RUN.md",
+             "tools/prepare_pages_bundle.py"])["decision"], "REVIEW_UNKNOWN")
+
+    def test_pages_change_classifier_fails_closed(self):
+        from tools.pages_change_impact import classify
+        for path in ("new/unknown.css", ".github/workflows/deploy.yml", "logo.png",
+                     "lab_forward/new_data.json"):
+            with self.subTest(path=path):
+                result = classify([path], allow_stale_lab=True)
+                self.assertEqual(result["decision"], "REVIEW_UNKNOWN")
+                self.assertEqual(result["unknown"], [path])
+        for path in ("../secret", "/tmp/foo", "a/./x", "a//b", "a\\b",
+                     "", " file ", "./index.html"):
+            with self.subTest(path=path):
+                with self.assertRaises(ValueError):
+                    classify([path])
+        with self.assertRaises(ValueError):
+            classify([])
+        self.assertEqual(classify(
+            ["CNAME"], allow_stale_lab=True)["decision"], "PUBLISH_CANDIDATE")
+        self.assertEqual(classify(
+            ["tools/prepare_pages_bundle.py"])["decision"], "PUBLISH_CANDIDATE")
+        self.assertEqual(classify(
+            ["tools/prepare_pages_bundle.py"])["build_inputs"], ["tools/prepare_pages_bundle.py"])
+        self.assertEqual(classify(
+            ["tests/test_pages_bundle.py", "docs/PAGES_IMPACT_DRY_RUN.md"]
+        )["decision"], "SKIP_CANDIDATE_TECHNICAL")
+        self.assertEqual(classify(
+            ["index.html", "unlisted/new_file.json"],
+            allow_stale_lab=True)["decision"], "REVIEW_UNKNOWN")
+
+
 if __name__ == "__main__":
     unittest.main()
