@@ -160,8 +160,13 @@ def inspect(registry):
         _https(release["forward_time_test_report_url"])
 
     reasons = []
+    expected_identity_links = sum(g["candidate_aliases"] for g in competitions)
     if not records:
         reasons.append("brak indywidualnych, niezaleznie zweryfikowanych ID")
+    if len(records) != expected_identity_links:
+        reasons.append(
+            f"niepelna kontrola ID: {len(records)}/{expected_identity_links} kandydatow"
+        )
     if not release["rights_review_approved"]:
         reasons.append("brak formalnej kontroli praw do wykorzystania danych")
     if not release["forward_time_model_test_approved"]:
