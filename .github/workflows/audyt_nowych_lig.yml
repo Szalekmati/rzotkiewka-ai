@@ -13,6 +13,8 @@ on:
       - 'tests/test_openfootball_history_audit.py'
       - 'ucl_deep_audit.py'
       - 'tests/test_ucl_deep_audit.py'
+      - 'research/fixture_pair_audit.py'
+      - 'tests/test_fixture_pair_audit.py'
       - '.github/workflows/audyt_nowych_lig.yml'
   push:
     branches: [main]
@@ -25,6 +27,8 @@ on:
       - 'tests/test_openfootball_history_audit.py'
       - 'ucl_deep_audit.py'
       - 'tests/test_ucl_deep_audit.py'
+      - 'research/fixture_pair_audit.py'
+      - 'tests/test_fixture_pair_audit.py'
       - '.github/workflows/audyt_nowych_lig.yml'
   schedule:
     # Niedziela 06:23 UTC; zdarzenia scheduled moga sie opoznic.
@@ -56,6 +60,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_league_shortcuts_2025.py' -v
       - name: Testy niezaleznej historii OpenFootball 2025/26 (offline)
         run: python -m unittest discover -s tests -p 'test_openfootball_history_audit.py' -v
+      - name: Testy porownania tozsamosci meczow z dwoch zrodel (offline)
+        run: python -m unittest discover -s tests -p 'test_fixture_pair_audit.py' -v
       - name: Zbadaj zarchiwizowane wyniki OpenFootball CC0 (tylko odczyt)
         if: github.event_name != 'pull_request'
         run: python openfootball_history_audit.py
