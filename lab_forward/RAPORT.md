@@ -1,6 +1,6 @@
 # RZOTKIEWKA — test przedmeczowy 2.1 / 2.2 LAB
 
-Ostatnia obserwacja UTC: 2026-11-18T17:17:11.525984Z
+Ostatnia obserwacja UTC: 2026-11-18T21:33:34.001862Z
 
 Prognozy: 162–168 godzin przed meczem. Pierwszy zapis jest niezmienny.
 Ten protokół różni się od retrospektywnego testu dokładnie 168 h przed meczem.
