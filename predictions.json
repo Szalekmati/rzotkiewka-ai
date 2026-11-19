@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updated_at": "2026-11-14T20:43:19Z",
+  "updated_at": "2026-11-19T20:38:35Z",
   "forecasts": [
     {
       "id": "bl2-2026-83678",
@@ -2068,6 +2068,234 @@
         ]
       },
       "snapshot_sha256": "1f51f6b2be9caf4c75b264c8096753f040dbb5deb04be7627b279b812c4d8ffc",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl2-2026-83707",
+      "snapshot": {
+        "match_id": 83707,
+        "league": "bl2",
+        "season": 2026,
+        "home": "1. FC Heidenheim 1846",
+        "away": "1. FC Nürnberg",
+        "kickoff": "2026-11-27T17:30:00Z",
+        "created_at": "2026-11-19T20:38:35Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.353837,
+          "X": 0.282366,
+          "2": 0.363797
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 99,
+          "draws": 27,
+          "raw_draw_probability": 0.26901,
+          "draw_odds_log_shift": 0.066896
+        },
+        "expected_home_goals": 1.247,
+        "expected_away_goals": 1.269,
+        "league_matches_used": 99,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          83678,
+          83669,
+          83645,
+          83626,
+          83609,
+          83604,
+          83567,
+          83560
+        ],
+        "away_match_ids": [
+          83682,
+          83664,
+          83652,
+          83641,
+          83615,
+          83597,
+          83570,
+          83558
+        ]
+      },
+      "snapshot_sha256": "2a072003ac9477297f095742a4fa746aff4579c464926f53d0d4e417b2e69268",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl2-2026-83709",
+      "snapshot": {
+        "match_id": 83709,
+        "league": "bl2",
+        "season": 2026,
+        "home": "VfL Bochum",
+        "away": "SV Darmstadt 98",
+        "kickoff": "2026-11-27T17:30:00Z",
+        "created_at": "2026-11-19T20:38:35Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.633645,
+          "X": 0.215856,
+          "2": 0.150499
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 99,
+          "draws": 27,
+          "raw_draw_probability": 0.204749,
+          "draw_odds_log_shift": 0.066896
+        },
+        "expected_home_goals": 2.028,
+        "expected_away_goals": 0.871,
+        "league_matches_used": 99,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          83683,
+          83674,
+          83655,
+          83628,
+          83616,
+          83593,
+          83573,
+          83557
+        ],
+        "away_match_ids": [
+          83682,
+          83667,
+          83648,
+          83629,
+          83611,
+          83591,
+          83569,
+          83554
+        ]
+      },
+      "snapshot_sha256": "bef17551da02b0849c06a37778e9dace9e4ba96285ce06b64aa58913b44c562e",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl3-2026-84888",
+      "snapshot": {
+        "match_id": 84888,
+        "league": "bl3",
+        "season": 2026,
+        "home": "Hansa Rostock",
+        "away": "TSV Havelse",
+        "kickoff": "2026-11-27T18:00:00Z",
+        "created_at": "2026-11-19T20:38:35Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.615201,
+          "X": 0.206985,
+          "2": 0.177814
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 130,
+          "draws": 28,
+          "raw_draw_probability": 0.208784,
+          "draw_odds_log_shift": -0.010926
+        },
+        "expected_home_goals": 2.029,
+        "expected_away_goals": 0.992,
+        "league_matches_used": 130,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          84867,
+          84860,
+          84848,
+          84844,
+          84825,
+          84823,
+          84805,
+          84798
+        ],
+        "away_match_ids": [
+          84868,
+          84862,
+          84853,
+          84841,
+          84834,
+          84819,
+          84813,
+          84797
+        ]
+      },
+      "snapshot_sha256": "451718a0a2a4feb9db6362fc3d2ca83f33eb141a6023033b14f2d98627601e57",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl1-2026-83253",
+      "snapshot": {
+        "match_id": 83253,
+        "league": "bl1",
+        "season": 2026,
+        "home": "SV Werder Bremen",
+        "away": "Borussia Mönchengladbach",
+        "kickoff": "2026-11-27T19:30:00Z",
+        "created_at": "2026-11-19T20:38:35Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.659271,
+          "X": 0.177918,
+          "2": 0.162811
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 81,
+          "draws": 17,
+          "raw_draw_probability": 0.172966,
+          "draw_odds_log_shift": 0.034231
+        },
+        "expected_home_goals": 2.57,
+        "expected_away_goals": 1.229,
+        "league_matches_used": 81,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          83230,
+          83225,
+          83216,
+          83207,
+          83192,
+          83189,
+          83181,
+          83171
+        ],
+        "away_match_ids": [
+          83234,
+          83224,
+          83212,
+          83205,
+          83199,
+          83187,
+          83177,
+          83169
+        ]
+      },
+      "snapshot_sha256": "b3029b7bf34212916a0e355003b485d60f6e8f6e394f0e165c7940423f4b46ff",
       "settlement": {
         "state": "pending",
         "score": null,
