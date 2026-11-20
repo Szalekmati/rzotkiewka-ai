@@ -11,6 +11,8 @@ import json
 from pathlib import Path
 from urllib.parse import urlparse
 
+from api_football_official_roster import OFFICIAL
+
 DEFAULT_REGISTRY = Path(__file__).resolve().parent / "data" / "identity_release_registry.json"
 BLOCKED_PROOF_HOSTS = ("api-football.com", "api-sports.io", "github.com", "githubusercontent.com")
 
@@ -42,6 +44,23 @@ def _https(value, independent=False):
     if independent and any(host == domain or host.endswith("." + domain)
                            for domain in BLOCKED_PROOF_HOSTS):
         raise ValueError("Dowod tozsamosci musi byc niezalezny od dostawcy/API i repozytorium.")
+    return value
+
+
+def _club_identity_proof_url(value, official_roster_url):
+    """Reject generic directory URLs; this never verifies a team ID by itself."""
+    _https(value, independent=True)
+    submitted = urlparse(value)
+    official = urlparse(official_roster_url)
+    path = submitted.path.rstrip("/").casefold()
+    official_path = official.path.rstrip("/").casefold()
+    generic_paths = {"/", "", "/clubs", "/en/clubs", "/en-us/laliga-easports/clubs",
+                     "/en/laliga-easports/clubs"}
+    if (path in generic_paths or
+            (submitted.hostname or "").casefold() == (official.hostname or "").casefold()
+            and path == official_path):
+        raise ValueError("Wymagany indywidualny dowod dotyczacy konkretnego klubu.")
+    # A plausible link is not independent verification of a provider team ID.
     return value
 
 
@@ -83,6 +102,11 @@ def inspect(registry):
         _count(group["independently_reviewed_club_ids"], min(name_count, internally_linked))
         _https(group["official_roster_url"])
         _https(group["audit_url"])
+        official = OFFICIAL.get(league_id)
+        expected_season = f"{season}/{(season + 1) % 100:02d}"
+        if (not official or official["season"] != expected_season or
+                group["official_roster_url"] != official["url"]):
+            raise ValueError("Brak odpowiedniego oficjalnego wykazu ligi/sezonu.")
         groups[key] = group
 
     records = registry["reviewed_identity_links"]
@@ -91,6 +115,7 @@ def inspect(registry):
     by_competition = Counter()
     seen_source = set()
     seen_provider_id = set()
+    seen_official_club = set()
     for link in records:
         _required(link, ("league_id", "season", "source_team_name",
                          "official_club_name", "provider_team_id",
@@ -104,13 +129,19 @@ def inspect(registry):
             raise ValueError("Brak jednoznacznej nazwy, ID lub osoby weryfikujacej.")
         if _date(link["reviewed_on"]) > _date(registry["review_date"]):
             raise ValueError("Dowod jest z przyszlosci wobec rejestru.")
-        _https(link["independent_identity_url"], independent=True)
+        _club_identity_proof_url(link["independent_identity_url"], groups[key]["official_roster_url"])
+        official_name = link["official_club_name"].strip()
+        if official_name not in OFFICIAL[key[0]]["clubs"]:
+            raise ValueError("Klub spoza oficjalnego wykazu ligi i sezonu.")
         source = (key, link["source_team_name"].strip().casefold())
         provider = (key, link["provider_team_id"])
-        if source in seen_source or provider in seen_provider_id:
-            raise ValueError("Powtorzony klub albo provider ID w tej samej lidze.")
+        official_club = (key, official_name)
+        if (source in seen_source or provider in seen_provider_id or
+                official_club in seen_official_club):
+            raise ValueError("Powtorzony klub, oficjalna nazwa albo ID w lidze.")
         seen_source.add(source)
         seen_provider_id.add(provider)
+        seen_official_club.add(official_club)
         by_competition[key] += 1
     for key, group in groups.items():
         if by_competition[key] != group["independently_reviewed_club_ids"]:
@@ -129,8 +160,13 @@ def inspect(registry):
         _https(release["forward_time_test_report_url"])
 
     reasons = []
+    expected_identity_links = sum(g["candidate_aliases"] for g in competitions)
     if not records:
         reasons.append("brak indywidualnych, niezaleznie zweryfikowanych ID")
+    if len(records) != expected_identity_links:
+        reasons.append(
+            f"niepelna kontrola ID: {len(records)}/{expected_identity_links} kandydatow"
+        )
     if not release["rights_review_approved"]:
         reasons.append("brak formalnej kontroli praw do wykorzystania danych")
     if not release["forward_time_model_test_approved"]:

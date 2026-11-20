@@ -69,7 +69,7 @@ class ReleaseGateTests(unittest.TestCase):
         r["competitions"][0]["independently_reviewed_club_ids"] = 1
         r["reviewed_identity_links"] = [{
             "league_id": 39, "season": 2026, "source_team_name": "Sample FC",
-            "official_club_name": "Sample", "provider_team_id": 10001,
+            "official_club_name": "Arsenal", "provider_team_id": 10001,
             "independent_identity_url": "https://v3.football.api-sports.io/teams?id=10001",
             "reviewed_by": "reviewer", "reviewed_on": "2026-11-11"
         }]
@@ -81,13 +81,13 @@ class ReleaseGateTests(unittest.TestCase):
         r["competitions"][0]["independently_reviewed_club_ids"] = 2
         template = {
             "league_id": 39, "season": 2026, "source_team_name": "Sample A",
-            "official_club_name": "Sample A", "provider_team_id": 10001,
-            "independent_identity_url": "https://www.premierleague.com/en/clubs",
+            "official_club_name": "Arsenal", "provider_team_id": 10001,
+            "independent_identity_url": "https://example.org/clubs/arsenal",
             "reviewed_by": "reviewer", "reviewed_on": "2026-11-11"
         }
         other = copy.deepcopy(template)
         other["source_team_name"] = "Sample B"
-        other["official_club_name"] = "Sample B"
+        other["official_club_name"] = "Chelsea"
         r["reviewed_identity_links"] = [template, other]
         with self.assertRaises(ValueError):
             inspect(r)
@@ -97,13 +97,104 @@ class ReleaseGateTests(unittest.TestCase):
         r["competitions"][0]["independently_reviewed_club_ids"] = 1
         r["reviewed_identity_links"] = [{
             "league_id": 39, "season": 2026, "source_team_name": "Example FC",
-            "official_club_name": "Example", "provider_team_id": 123456,
-            "independent_identity_url": "https://www.premierleague.com/en/clubs",
+            "official_club_name": "Arsenal", "provider_team_id": 123456,
+            "independent_identity_url": "https://example.org/clubs/arsenal",
             "reviewed_by": "human reviewer", "reviewed_on": "2026-11-11"
         }]
         result = inspect(r)
         self.assertEqual(result["independently_verified_id_links"], 1)
         self.assertFalse(result["production_release_allowed"])
+
+    def test_unknown_official_club_is_rejected(self):
+        r = self.registry()
+        r["competitions"][0]["independently_reviewed_club_ids"] = 1
+        r["reviewed_identity_links"] = [{
+            "league_id": 39, "season": 2026, "source_team_name": "Fake FC",
+            "official_club_name": "Fictional Town", "provider_team_id": 999123,
+            "independent_identity_url": "https://example.org/clubs/arsenal",
+            "reviewed_by": "reviewer", "reviewed_on": "2026-11-11"
+        }]
+        with self.assertRaises(ValueError):
+            inspect(r)
+
+    def test_club_from_other_league_is_rejected(self):
+        r = self.registry()
+        r["competitions"][1]["independently_reviewed_club_ids"] = 1
+        r["reviewed_identity_links"] = [{
+            "league_id": 140, "season": 2026, "source_team_name": "Arsenal",
+            "official_club_name": "Arsenal", "provider_team_id": 123456,
+            "independent_identity_url": "https://example.org/clubs/arsenal",
+            "reviewed_by": "reviewer", "reviewed_on": "2026-11-11"
+        }]
+        with self.assertRaises(ValueError):
+            inspect(r)
+
+    def test_one_official_club_cannot_have_two_provider_ids(self):
+        r = self.registry()
+        r["competitions"][0]["independently_reviewed_club_ids"] = 2
+        r["reviewed_identity_links"] = [
+            {"league_id": 39, "season": 2026, "source_team_name": "Arsenal",
+             "official_club_name": "Arsenal", "provider_team_id": 101,
+             "independent_identity_url": "https://example.org/clubs/arsenal",
+             "reviewed_by": "reviewer", "reviewed_on": "2026-11-11"},
+            {"league_id": 39, "season": 2026, "source_team_name": "Arsenal London",
+             "official_club_name": "Arsenal", "provider_team_id": 102,
+             "independent_identity_url": "https://example.org/clubs/arsenal",
+             "reviewed_by": "reviewer", "reviewed_on": "2026-11-11"},
+        ]
+        with self.assertRaises(ValueError):
+            inspect(r)
+
+    def test_wrong_season_official_roster_is_rejected(self):
+        r = self.registry()
+        r["competitions"][0]["season"] = 2027
+        with self.assertRaises(ValueError):
+            inspect(r)
+
+    def test_wrong_official_roster_url_is_rejected(self):
+        r = self.registry()
+        r["competitions"][0]["official_roster_url"] = "https://example.com/other-league"
+        with self.assertRaises(ValueError):
+            inspect(r)
+
+    def test_generic_official_club_directory_is_not_identity_evidence(self):
+        r = self.registry()
+        r["competitions"][0]["independently_reviewed_club_ids"] = 1
+        r["reviewed_identity_links"] = [{
+            "league_id": 39, "season": 2026,
+            "source_team_name": "Arsenal", "official_club_name": "Arsenal",
+            "provider_team_id": 101,
+            "independent_identity_url": "https://www.premierleague.com/en/clubs",
+            "reviewed_by": "synthetic", "reviewed_on": "2026-11-11"
+        }]
+        with self.assertRaises(ValueError):
+            inspect(r)
+
+    def test_generic_laliga_club_directory_is_not_identity_evidence(self):
+        r = self.registry()
+        r["competitions"][1]["independently_reviewed_club_ids"] = 1
+        r["reviewed_identity_links"] = [{
+            "league_id": 140, "season": 2026,
+            "source_team_name": "FC Barcelona", "official_club_name": "FC Barcelona",
+            "provider_team_id": 101,
+            "independent_identity_url": "https://www.laliga.com/en-US/laliga-easports/clubs",
+            "reviewed_by": "synthetic", "reviewed_on": "2026-11-11"
+        }]
+        with self.assertRaises(ValueError):
+            inspect(r)
+
+    def test_official_roster_overview_is_not_identity_evidence(self):
+        r = self.registry()
+        r["competitions"][0]["independently_reviewed_club_ids"] = 1
+        r["reviewed_identity_links"] = [{
+            "league_id": 39, "season": 2026,
+            "source_team_name": "Arsenal", "official_club_name": "Arsenal",
+            "provider_team_id": 101,
+            "independent_identity_url": r["competitions"][0]["official_roster_url"],
+            "reviewed_by": "synthetic", "reviewed_on": "2026-11-11"
+        }]
+        with self.assertRaises(ValueError):
+            inspect(r)
 
     def test_future_dated_review_is_not_valid(self):
         r = self.registry()
@@ -111,13 +202,26 @@ class ReleaseGateTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             inspect(r)
 
+    def test_partial_id_reviews_explicitly_report_incomplete_coverage(self):
+        r = self.registry()
+        r["competitions"][0]["independently_reviewed_club_ids"] = 1
+        r["reviewed_identity_links"] = [{
+            "league_id": 39, "season": 2026, "source_team_name": "Arsenal",
+            "official_club_name": "Arsenal", "provider_team_id": 123456,
+            "independent_identity_url": "https://example.org/clubs/arsenal",
+            "reviewed_by": "synthetic reviewer", "reviewed_on": "2026-11-11"
+        }]
+        outcome = inspect(r)
+        self.assertFalse(outcome["production_release_allowed"])
+        self.assertTrue(any("1/17" in reason for reason in outcome["blocked_reasons"]))
+
     def test_all_evidence_flags_cannot_override_final_release_gate(self):
         r = self.registry()
         r["competitions"][0]["independently_reviewed_club_ids"] = 1
         r["reviewed_identity_links"] = [{
             "league_id": 39, "season": 2026, "source_team_name": "Example FC",
-            "official_club_name": "Example", "provider_team_id": 123456,
-            "independent_identity_url": "https://www.premierleague.com/en/clubs",
+            "official_club_name": "Arsenal", "provider_team_id": 123456,
+            "independent_identity_url": "https://example.org/clubs/arsenal",
             "reviewed_by": "human reviewer", "reviewed_on": "2026-11-11"
         }]
         release = r["release"]
@@ -129,8 +233,8 @@ class ReleaseGateTests(unittest.TestCase):
             "authorized_by": "human reviewer", "authorized_on": "2026-11-11",
             "decision_url": "https://example.com/release-decision",
         })
-        result = inspect(r)
-        self.assertFalse(result["production_release_allowed"])
+        with self.assertRaisesRegex(ValueError, "niepelna kontrola ID"):
+            inspect(r)
 
 
 if __name__ == "__main__":
