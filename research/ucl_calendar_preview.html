@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>RZOTKIEWKA AI · Liga Mistrzów · podgląd badawczy</title>
+<style>
+:root { color-scheme: dark; font-family: system-ui,-apple-system,sans-serif; background:#0b1519; color:#eaf2ee }
+* { box-sizing:border-box }
+body { margin:0; min-height:100vh; background: radial-gradient(circle at 90% 4%,#244136,#0b1519 48%); }
+main { max-width:960px; padding:26px 18px 70px; margin:auto }
+.header { display:flex; gap:14px; align-items:center; margin-bottom:19px }
+.mark { font-size:35px; background:#22362a; border:1px solid #4a7857; border-radius:17px; padding:11px }
+h1 { margin:4px 0 5px; line-height:1.15; font-size:clamp(27px,5vw,44px) }
+small,.muted { color:#bfd0c6 }
+.label { text-transform:uppercase; letter-spacing:.15em; color:#b9efac; font-weight:800; font-size:11px }
+.warning { border:1px solid #a47d45; background:#2a241b; border-radius:15px; padding:15px 17px; line-height:1.55; margin:18px 0; color:#f8dfb0 }
+.controls { display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end; margin:22px 0 }
+button,select { font:inherit; border-radius:12px; border:1px solid #89ad78; padding:12px 15px; min-height:46px }
+button { background:#c3f299; color:#152418; font-weight:800; cursor:pointer }
+button:disabled { cursor:wait; opacity:.65 }
+button:focus-visible,select:focus-visible,a:focus-visible { outline:3px solid #fff; outline-offset:3px }
+select { background:#142620; color:#f3fff0; min-width:200px }
+label { display:grid; gap:7px; color:#d9e9da; font-size:13px; font-weight:750 }
+#status { color:#d6ead8; margin:12px 0 18px; min-height:1.6em }
+.metrics { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:15px 0 23px }
+.metric { border-radius:14px; border:1px solid #355348; padding:14px; background:#162923 }
+.metric strong { display:block; font-size:26px }
+.metric span { font-size:12px; color:#bcd4c0 }
+.cards { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:13px; margin-top:15px }
+.match { border:1px solid #38584a; background:#14252a; border-radius:16px; padding:17px; overflow-wrap:anywhere }
+.match .date { color:#c6e9b7; font-size:13px; font-weight:800 }
+.match h2 { font-size:18px; margin:10px 0; line-height:1.45 }
+.match .meta { color:#b9c7c2; font-size:12px }
+footer { border-top:1px solid #334c45; padding-top:19px; color:#b6c9c0; font-size:12px; line-height:1.6 }
+footer a { color:#cbf4ad }
+#issues { color:#ffdbab; line-height:1.6 }
+[hidden] { display:none!important }
+@media (max-width:640px) { .cards{grid-template-columns:1fr} .metrics{grid-template-columns:1fr 1fr} .header{align-items:flex-start} }
+</style>
+</head>
+<body>
+<main>
+<div class="header"><div class="mark" aria-hidden="true">🫜</div><div><div class="label">RZOTKIEWKA AI · Laboratorium rozgrywek</div><h1>⚽ Liga Mistrzów UEFA</h1><div class="muted">Sezon 2026/27 · niezależny podgląd roboczy</div></div></div>
+<div class="warning" role="note"><strong>TYLKO BADANIA — NIEOPUBLIKOWANE I NIEZWERYFIKOWANE.</strong>
+Terminarz pochodzi z danych społecznościowych OpenLigaDB. Kontrola techniczna nie potwierdza, że każdy mecz, klub i termin zgadza się z UEFA. Brak prognoz 1X2, kursów, typów i płatności. Ta strona nie jest produkcyjną RZOTKIEWKĄ.</div>
+<p class="muted">Dane pobieramy dopiero po kliknięciu. Jeśli źródło zgłosi niespójność albo pary i terminy kolejek 5–8 nie zgadzają się z datowanym wykazem UEFA, <strong>nie wyświetlimy terminarza</strong>. Daty pokazujemy w czasie polskim (Europe/Warsaw), a grupowanie miesięcy jest według UTC.</p>
+<div class="controls">
+<button id="load" type="button">Pobierz terminarz badawczy</button>
+<label for="month">Miesiąc (UTC)
+<select id="month" disabled><option value="all">Wszystkie przyszłe mecze</option></select></label>
+</div>
+<p id="status" role="status" aria-live="polite">Nie pobrano jeszcze danych. To bezpieczna, nieaktywna wersja testowa.</p>
+<ul id="issues" aria-label="Znalezione problemy" hidden></ul>
+<section id="results" hidden aria-label="Podgląd danych">
+<div class="metrics">
+<div class="metric"><strong id="count-all">—</strong><span>Rekordy źródła</span></div>
+<div class="metric"><strong id="count-past">—</strong><span>Mecze z zapisanym wynikiem</span></div>
+<div class="metric"><strong id="count-next">—</strong><span>Przyszłe spotkania</span></div>
+</div>
+<p class="muted" id="shown"></p>
+<div id="cards" class="cards"></div>
+</section>
+<footer>
+<strong>Stan: wyłącznie podgląd do weryfikacji.</strong> Mecze wymagają osobnego sprawdzenia u organizatora i zgody na udostępnianie danych przed dołączeniem ligi do aplikacji.
+Źródło: <a href="https://www.openligadb.de/" target="_blank" rel="noopener noreferrer">OpenLigaDB</a> ·
+<a href="https://www.openligadb.de/lizenz" target="_blank" rel="noopener noreferrer">ODbL 1.0</a> ·
+<a href="https://github.com/Szalekmati/rzotkiewka-ai/issues/13" target="_blank" rel="noopener noreferrer">Otwarty audyt nowych lig</a>.
+Brak afiliacji z UEFA.
+</footer>
+</main>
+<script src="./ucl_official_matchday5.js"></script>
+<script src="./ucl_calendar_preview.js"></script>
+<script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const source = 'https://api.openligadb.de/getmatchdata/ucl/2026';
+  let snapshot = [];
+  const polish = new Intl.DateTimeFormat('pl-PL', {
+    timeZone: 'Europe/Warsaw', weekday:'short', year:'numeric', month:'short',
+    day:'2-digit', hour:'2-digit', minute:'2-digit'
+  });
+  const textNode = (tag, className, value) => {
+    const element = document.createElement(tag);
+    if (className) element.className = className;
+    element.textContent = value;
+    return element;
+  };
+  function clearView() {
+    snapshot = [];
+    $('results').hidden = true;
+    $('cards').replaceChildren();
+    $('issues').replaceChildren();
+    $('issues').hidden = true;
+    $('month').replaceChildren(new Option('Wszystkie przyszłe mecze','all'));
+    $('month').disabled = true;
+  }
+  function display() {
+    const month = $('month').value;
+    const rows = UclPreview.byMonth(snapshot, month);
+    const cards = $('cards'); cards.replaceChildren();
+    $('shown').textContent = 'Wyświetlamy ' + rows.length + ' z ' + snapshot.length
+      + ' przyszłych spotkań w danych źródła. Wyłącznie weryfikacja badawcza.';
+    for (const item of rows) {
+      const card = textNode('article', 'match','');
+      card.append(textNode('div','date',polish.format(new Date(item.kickoff))));
+      card.append(textNode('h2','',item.home + ' – ' + item.away));
+      card.append(textNode('div','meta',item.phase + ' · ID ' + item.id + ' · data niepotwierdzona przez UEFA'));
+      cards.append(card);
+    }
+  }
+  $('month').addEventListener('change',display);
+  $('load').addEventListener('click',async () => {
+    clearView();
+    const button = $('load');
+    button.disabled = true;
+    $('status').textContent = 'Odczytuję publiczne dane OpenLigaDB…';
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 14000);
+    try {
+      const response = await fetch(source, {cache:'no-store', signal:controller.signal, redirect:'error'});
+      if (!response.ok) throw new Error('HTTP ' + response.status);
+      const length = Number(response.headers.get('content-length') || '0');
+      if (length > 3_000_000) throw new Error('Za duża odpowiedź serwera');
+      const rows = await response.json();
+      const officialCheck = UclOfficialMatchday5.verifyAllUpcoming(rows);
+      if (!officialCheck.ok) {
+        $('status').textContent = 'STOP: Brak pełnej zgodności z 72 spotkaniami UEFA (kolejki 5–8, zapis z 4.11.2026). Dopasowano ' +
+          officialCheck.checked + '/72. Nie pokazujemy terminarza.';
+        for (const issue of officialCheck.issues || []) $('issues').append(textNode('li','',issue));
+        $('issues').hidden = !(officialCheck.issues && officialCheck.issues.length);
+        return;
+      }
+      const report = UclPreview.inspect(rows, new Date().toISOString());
+      if (!report.ok) {
+        $('status').textContent = 'STOP: ' + report.reason + '. Brak publikacji terminarza.';
+        for (const issue of report.issues || []) $('issues').append(textNode('li','',issue));
+        $('issues').hidden = !(report.issues && report.issues.length);
+        return;
+      }
+      snapshot = report.upcoming;
+      $('count-all').textContent = String(report.total);
+      $('count-past').textContent = String(report.finishedWithScore);
+      $('count-next').textContent = String(snapshot.length);
+      for (const value of UclPreview.monthOptions(snapshot)) {
+        $('month').append(new Option(value, value));
+      }
+      $('month').disabled = false;
+      $('results').hidden = false;
+      $('status').textContent = 'Odczyt strukturalny OK; kontrola 72/72 par i godzin kolejek 5–8 względem zapisu UEFA z 4.11.2026 OK. Pełen sezon i ID klubów nadal NIEZWERYFIKOWANE. ' +
+        'Pobrano lokalnie ' + polish.format(new Date()) + '.';
+      display();
+    } catch (error) {
+      $('status').textContent = 'Nie można pobrać danych badawczych (' +
+        (error && error.name === 'AbortError' ? 'upłynął limit 14 sekund' : 'błąd sieci lub blokada CORS') +
+        '). Nie przedstawiamy niepotwierdzonych meczów.';
+    } finally {
+      clearTimeout(timeout);
+      button.disabled = false;
+    }
+  });
+})();
+</script>
+</body>
+</html>

@@ -13,6 +13,18 @@ on:
       - 'tests/test_openfootball_history_audit.py'
       - 'ucl_deep_audit.py'
       - 'tests/test_ucl_deep_audit.py'
+      - 'research/ucl_calendar_preview.html'
+      - 'research/ucl_calendar_preview.js'
+      - 'research/ucl_official_matchday5.js'
+      - 'research/ucl_verify_snapshot.cjs'
+      - 'research/ucl_central_snapshot.cjs'
+      - 'tests/test_ucl_central_snapshot.cjs'
+      - 'tests/test_ucl_verify_snapshot.cjs'
+      - 'tests/test_ucl_official_matchday5.cjs'
+      - 'tests/test_ucl_calendar_preview.cjs'
+      - 'research/ucl_historical_team_id_probe.cjs'
+      - 'tests/test_ucl_historical_team_id_probe.cjs'
+      - 'docs/UCL_KALENDARZ_BADAWCZY.md'
       - '.github/workflows/audyt_nowych_lig.yml'
   push:
     branches: [main]
@@ -25,6 +37,18 @@ on:
       - 'tests/test_openfootball_history_audit.py'
       - 'ucl_deep_audit.py'
       - 'tests/test_ucl_deep_audit.py'
+      - 'research/ucl_calendar_preview.html'
+      - 'research/ucl_calendar_preview.js'
+      - 'research/ucl_official_matchday5.js'
+      - 'research/ucl_verify_snapshot.cjs'
+      - 'research/ucl_central_snapshot.cjs'
+      - 'tests/test_ucl_central_snapshot.cjs'
+      - 'tests/test_ucl_verify_snapshot.cjs'
+      - 'tests/test_ucl_official_matchday5.cjs'
+      - 'tests/test_ucl_calendar_preview.cjs'
+      - 'research/ucl_historical_team_id_probe.cjs'
+      - 'tests/test_ucl_historical_team_id_probe.cjs'
+      - 'docs/UCL_KALENDARZ_BADAWCZY.md'
       - '.github/workflows/audyt_nowych_lig.yml'
   schedule:
     # Niedziela 06:23 UTC; zdarzenia scheduled moga sie opoznic.
@@ -52,6 +76,8 @@ jobs:
         run: python -m unittest discover -s tests -p 'test_league_candidates.py' -v
       - name: Testy pogłębionego audytu Ligi Mistrzow (offline)
         run: python -m unittest discover -s tests -p 'test_ucl_deep_audit.py' -v
+      - name: Testy roboczego kalendarza UCL (Node.js, offline)
+        run: node --test tests/test_ucl_calendar_preview.cjs tests/test_ucl_official_matchday5.cjs tests/test_ucl_verify_snapshot.cjs tests/test_ucl_central_snapshot.cjs tests/test_ucl_team_identity_probe.cjs tests/test_ucl_historical_team_id_probe.cjs
       - name: Testy spisu identyfikatorow lig 2025 (offline)
         run: python -m unittest discover -s tests -p 'test_league_shortcuts_2025.py' -v
       - name: Testy niezaleznej historii OpenFootball 2025/26 (offline)
