@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updated_at": "2026-11-19T20:38:35Z",
+  "updated_at": "2026-11-20T12:55:00Z",
   "forecasts": [
     {
       "id": "bl2-2026-83678",
@@ -2296,6 +2296,177 @@
         ]
       },
       "snapshot_sha256": "b3029b7bf34212916a0e355003b485d60f6e8f6e394f0e165c7940423f4b46ff",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl2-2026-83708",
+      "snapshot": {
+        "match_id": 83708,
+        "league": "bl2",
+        "season": 2026,
+        "home": "Hertha BSC",
+        "away": "Karlsruher SC",
+        "kickoff": "2026-11-28T12:00:00Z",
+        "created_at": "2026-11-20T12:55:00Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.66811,
+          "X": 0.192272,
+          "2": 0.139618
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 99,
+          "draws": 27,
+          "raw_draw_probability": 0.182096,
+          "draw_odds_log_shift": 0.066896
+        },
+        "expected_home_goals": 2.312,
+        "expected_away_goals": 0.96,
+        "league_matches_used": 99,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          83681,
+          83668,
+          83650,
+          83632,
+          83613,
+          83598,
+          83589,
+          83556
+        ],
+        "away_match_ids": [
+          83683,
+          83669,
+          83659,
+          83629,
+          83608,
+          83597,
+          83582,
+          83550
+        ]
+      },
+      "snapshot_sha256": "28ba9767da3170bac501fb3d852ee21e99574b7846a20316c68a978ccbcdf59b",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl2-2026-83710",
+      "snapshot": {
+        "match_id": 83710,
+        "league": "bl2",
+        "season": 2026,
+        "home": "Dynamo Dresden",
+        "away": "FC St. Pauli",
+        "kickoff": "2026-11-28T12:00:00Z",
+        "created_at": "2026-11-20T12:55:00Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.536664,
+          "X": 0.249306,
+          "2": 0.21403
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 99,
+          "draws": 27,
+          "raw_draw_probability": 0.236997,
+          "draw_odds_log_shift": 0.066896
+        },
+        "expected_home_goals": 1.733,
+        "expected_away_goals": 1.002,
+        "league_matches_used": 99,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          83684,
+          83665,
+          83658,
+          83630,
+          83622,
+          83598,
+          83588,
+          83557
+        ],
+        "away_match_ids": [
+          83686,
+          83664,
+          83648,
+          83627,
+          83608,
+          83607,
+          83565,
+          83559
+        ]
+      },
+      "snapshot_sha256": "a6e60c796fedc5f6e2cc9b4a5f46c795258ed3e2a2019cc10dbc538e3898f391",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl2-2026-83712",
+      "snapshot": {
+        "match_id": 83712,
+        "league": "bl2",
+        "season": 2026,
+        "home": "Holstein Kiel",
+        "away": "1. FC Kaiserslautern",
+        "kickoff": "2026-11-28T12:00:00Z",
+        "created_at": "2026-11-20T12:55:00Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.399927,
+          "X": 0.325082,
+          "2": 0.274991
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 99,
+          "draws": 27,
+          "raw_draw_probability": 0.31058,
+          "draw_odds_log_shift": 0.066896
+        },
+        "expected_home_goals": 1.093,
+        "expected_away_goals": 0.851,
+        "league_matches_used": 99,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          83685,
+          83673,
+          83658,
+          83632,
+          83620,
+          83600,
+          83567,
+          83558
+        ],
+        "away_match_ids": [
+          83688,
+          83668,
+          83652,
+          83628,
+          83609,
+          83595,
+          83587,
+          83554
+        ]
+      },
+      "snapshot_sha256": "2b9040a407bbb65f34f7089436cfb83e80eb38cc576d3c31956c5ee4d09f3cc9",
       "settlement": {
         "state": "pending",
         "score": null,
