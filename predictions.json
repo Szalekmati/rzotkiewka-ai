@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updated_at": "2026-11-21T12:40:19Z",
+  "updated_at": "2026-11-21T20:32:02Z",
   "forecasts": [
     {
       "id": "bl2-2026-83678",
@@ -770,10 +770,13 @@
       },
       "snapshot_sha256": "2967222a5ce5e374c4e15a46f385b8728c7447b0c41ae6b27b759adedca4a530",
       "settlement": {
-        "state": "pending",
-        "score": null,
-        "outcome": null,
-        "graded_at": null
+        "state": "graded",
+        "score": [
+          3,
+          0
+        ],
+        "outcome": "1",
+        "graded_at": "2026-11-21T20:32:02Z"
       }
     },
     {
@@ -827,10 +830,13 @@
       },
       "snapshot_sha256": "b49f73c2ff1e49351d0f8051e8d6d27e371cb3f6d05f0eabd4b3977598054e69",
       "settlement": {
-        "state": "pending",
-        "score": null,
-        "outcome": null,
-        "graded_at": null
+        "state": "graded",
+        "score": [
+          2,
+          1
+        ],
+        "outcome": "1",
+        "graded_at": "2026-11-21T20:32:02Z"
       }
     },
     {
@@ -884,10 +890,13 @@
       },
       "snapshot_sha256": "d4029a7d3ad2d11f42e7ac9851132e16eec8621b47f5cc79f24b260ac7f992d9",
       "settlement": {
-        "state": "pending",
-        "score": null,
-        "outcome": null,
-        "graded_at": null
+        "state": "graded",
+        "score": [
+          1,
+          2
+        ],
+        "outcome": "2",
+        "graded_at": "2026-11-21T20:32:02Z"
       }
     },
     {
@@ -941,10 +950,13 @@
       },
       "snapshot_sha256": "6479332855a10b20b56e52f591efdccae8a52e697b00c52d48d920ef5c8ef086",
       "settlement": {
-        "state": "pending",
-        "score": null,
-        "outcome": null,
-        "graded_at": null
+        "state": "graded",
+        "score": [
+          0,
+          3
+        ],
+        "outcome": "2",
+        "graded_at": "2026-11-21T20:32:02Z"
       }
     },
     {
@@ -998,10 +1010,13 @@
       },
       "snapshot_sha256": "1a07b12376a001b5122604621c31e5cf95e5a125da22ac501a7f86bce2f83d89",
       "settlement": {
-        "state": "pending",
-        "score": null,
-        "outcome": null,
-        "graded_at": null
+        "state": "graded",
+        "score": [
+          3,
+          1
+        ],
+        "outcome": "1",
+        "graded_at": "2026-11-21T20:32:02Z"
       }
     },
     {
@@ -1055,10 +1070,13 @@
       },
       "snapshot_sha256": "7e160c556391824fe7da143ff636764a2e2d8c0f02f21b863f329ec7c4765797",
       "settlement": {
-        "state": "pending",
-        "score": null,
-        "outcome": null,
-        "graded_at": null
+        "state": "graded",
+        "score": [
+          2,
+          1
+        ],
+        "outcome": "1",
+        "graded_at": "2026-11-21T20:32:02Z"
       }
     },
     {
@@ -1112,10 +1130,13 @@
       },
       "snapshot_sha256": "6a2a39ed3d8850ca1b813219df090294652de7bae09086bba66bcc606d4adb85",
       "settlement": {
-        "state": "pending",
-        "score": null,
-        "outcome": null,
-        "graded_at": null
+        "state": "graded",
+        "score": [
+          4,
+          0
+        ],
+        "outcome": "1",
+        "graded_at": "2026-11-21T20:32:02Z"
       }
     },
     {
@@ -1169,10 +1190,13 @@
       },
       "snapshot_sha256": "818083f800d9d7b1a3006a2c4c5f2e36b674093220b8f1dd7a44e4243d320146",
       "settlement": {
-        "state": "pending",
-        "score": null,
-        "outcome": null,
-        "graded_at": null
+        "state": "graded",
+        "score": [
+          2,
+          1
+        ],
+        "outcome": "1",
+        "graded_at": "2026-11-21T20:32:02Z"
       }
     },
     {
@@ -1226,10 +1250,13 @@
       },
       "snapshot_sha256": "8253f7794f1d9d003b049a7fd1b178fd6eccf885f0aea56099d77c2d05b45381",
       "settlement": {
-        "state": "pending",
-        "score": null,
-        "outcome": null,
-        "graded_at": null
+        "state": "graded",
+        "score": [
+          4,
+          0
+        ],
+        "outcome": "1",
+        "graded_at": "2026-11-21T20:32:02Z"
       }
     },
     {
@@ -1283,10 +1310,13 @@
       },
       "snapshot_sha256": "620f39b5dcd12f80fd99ac5bbef9bd5273e4faae5bffd3c04e07cecb88da23bb",
       "settlement": {
-        "state": "pending",
-        "score": null,
-        "outcome": null,
-        "graded_at": null
+        "state": "graded",
+        "score": [
+          1,
+          0
+        ],
+        "outcome": "1",
+        "graded_at": "2026-11-21T20:32:02Z"
       }
     },
     {
@@ -1340,10 +1370,13 @@
       },
       "snapshot_sha256": "8cbe93c09ec8c2fb23089362ce04a6df1e33762dc66fe62be90c5d12b97b4cd5",
       "settlement": {
-        "state": "pending",
-        "score": null,
-        "outcome": null,
-        "graded_at": null
+        "state": "graded",
+        "score": [
+          1,
+          5
+        ],
+        "outcome": "2",
+        "graded_at": "2026-11-21T20:32:02Z"
       }
     },
     {
@@ -1397,10 +1430,13 @@
       },
       "snapshot_sha256": "9228060390108ae97643e6fb417aeaddd4532b696495e99139a6d34e873e96db",
       "settlement": {
-        "state": "pending",
-        "score": null,
-        "outcome": null,
-        "graded_at": null
+        "state": "graded",
+        "score": [
+          0,
+          1
+        ],
+        "outcome": "2",
+        "graded_at": "2026-11-21T20:32:02Z"
       }
     },
     {
@@ -1454,10 +1490,13 @@
       },
       "snapshot_sha256": "b4f5ab51d652927953a723a956ebc83eaf6113e0c9559a36752e70aa087f337f",
       "settlement": {
-        "state": "pending",
-        "score": null,
-        "outcome": null,
-        "graded_at": null
+        "state": "graded",
+        "score": [
+          0,
+          1
+        ],
+        "outcome": "2",
+        "graded_at": "2026-11-21T20:32:02Z"
       }
     },
     {
@@ -1511,10 +1550,13 @@
       },
       "snapshot_sha256": "561ebff45a0b1484a31ec7747e3ebb3639a0a603f86138772495e023e3fa72fc",
       "settlement": {
-        "state": "pending",
-        "score": null,
-        "outcome": null,
-        "graded_at": null
+        "state": "graded",
+        "score": [
+          3,
+          0
+        ],
+        "outcome": "1",
+        "graded_at": "2026-11-21T20:32:02Z"
       }
     },
     {
@@ -1568,10 +1610,13 @@
       },
       "snapshot_sha256": "4f5360dfe7f1a727968f281f62712b2304a58f5ea25387f71dc20cacc04a9655",
       "settlement": {
-        "state": "pending",
-        "score": null,
-        "outcome": null,
-        "graded_at": null
+        "state": "graded",
+        "score": [
+          0,
+          0
+        ],
+        "outcome": "X",
+        "graded_at": "2026-11-21T20:32:02Z"
       }
     },
     {
@@ -3391,6 +3436,291 @@
         ]
       },
       "snapshot_sha256": "a2498300386da68938cd25367cf5ac399a22112a7ffc0777c2371015ab021aaf",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl1-2026-83249",
+      "snapshot": {
+        "match_id": 83249,
+        "league": "bl1",
+        "season": 2026,
+        "home": "SC Freiburg",
+        "away": "RB Leipzig",
+        "kickoff": "2026-11-29T14:30:00Z",
+        "created_at": "2026-11-21T20:32:02Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.50511,
+          "X": 0.215165,
+          "2": 0.279725
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 88,
+          "draws": 19,
+          "raw_draw_probability": 0.21033,
+          "draw_odds_log_shift": 0.028865
+        },
+        "expected_home_goals": 2.097,
+        "expected_away_goals": 1.529,
+        "league_matches_used": 88,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          83245,
+          83232,
+          83222,
+          83214,
+          83202,
+          83195,
+          83186,
+          83177
+        ],
+        "away_match_ids": [
+          83241,
+          83229,
+          83226,
+          83211,
+          83201,
+          83193,
+          83185,
+          83175
+        ]
+      },
+      "snapshot_sha256": "b75eb4fc8ee94dbb16cd769c7d8a3ac19ba834cccb005e16803c911402eb0ca8",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl3-2026-84889",
+      "snapshot": {
+        "match_id": 84889,
+        "league": "bl3",
+        "season": 2026,
+        "home": "SV Wehen Wiesbaden",
+        "away": "SV Meppen",
+        "kickoff": "2026-11-29T15:30:00Z",
+        "created_at": "2026-11-21T20:32:02Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.542107,
+          "X": 0.228394,
+          "2": 0.229499
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 137,
+          "draws": 28,
+          "raw_draw_probability": 0.233319,
+          "draw_odds_log_shift": -0.027738
+        },
+        "expected_home_goals": 1.777,
+        "expected_away_goals": 1.073,
+        "league_matches_used": 137,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          84868,
+          84859,
+          84849,
+          84838,
+          84829,
+          84818,
+          84808,
+          84801
+        ],
+        "away_match_ids": [
+          84884,
+          84873,
+          84856,
+          84854,
+          84841,
+          84825,
+          84821,
+          84811
+        ]
+      },
+      "snapshot_sha256": "6f5e15ae7cee8e58bf873a8c5415c68a6155bd948746a37e42afd6f1e1baf641",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl1-2026-83248",
+      "snapshot": {
+        "match_id": 83248,
+        "league": "bl1",
+        "season": 2026,
+        "home": "TSG Hoffenheim",
+        "away": "FC Augsburg",
+        "kickoff": "2026-11-29T16:30:00Z",
+        "created_at": "2026-11-21T20:32:02Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.573606,
+          "X": 0.190748,
+          "2": 0.235646
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 88,
+          "draws": 19,
+          "raw_draw_probability": 0.186332,
+          "draw_odds_log_shift": 0.028865
+        },
+        "expected_home_goals": 2.517,
+        "expected_away_goals": 1.6,
+        "league_matches_used": 88,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          83239,
+          83231,
+          83225,
+          83213,
+          83205,
+          83194,
+          83191,
+          83176
+        ],
+        "away_match_ids": [
+          83229,
+          83222,
+          83215,
+          83209,
+          83196,
+          83189,
+          83178,
+          83168
+        ]
+      },
+      "snapshot_sha256": "926ed9d8073b0a4d959f5ac7e0ac10c99ba5ba91813e532dd8cf87e1b845314b",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl1-2026-83246",
+      "snapshot": {
+        "match_id": 83246,
+        "league": "bl1",
+        "season": 2026,
+        "home": "Borussia Dortmund",
+        "away": "Bayer 04 Leverkusen",
+        "kickoff": "2026-11-29T18:30:00Z",
+        "created_at": "2026-11-21T20:32:02Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.558062,
+          "X": 0.220211,
+          "2": 0.221727
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 88,
+          "draws": 19,
+          "raw_draw_probability": 0.215295,
+          "draw_odds_log_shift": 0.028865
+        },
+        "expected_home_goals": 2.002,
+        "expected_away_goals": 1.191,
+        "league_matches_used": 88,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          83242,
+          83228,
+          83219,
+          83210,
+          83204,
+          83192,
+          83184,
+          83174
+        ],
+        "away_match_ids": [
+          83238,
+          83235,
+          83220,
+          83213,
+          83202,
+          83197,
+          83185,
+          83178
+        ]
+      },
+      "snapshot_sha256": "c7260c9a9af53e33fbe25a56e3f4223ca05ee5bf2a2735f1e8e256b23733b97d",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl3-2026-84892",
+      "snapshot": {
+        "match_id": 84892,
+        "league": "bl3",
+        "season": 2026,
+        "home": "FC Ingolstadt 04",
+        "away": "Jahn Regensburg",
+        "kickoff": "2026-11-29T18:30:00Z",
+        "created_at": "2026-11-21T20:32:02Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.437366,
+          "X": 0.222965,
+          "2": 0.339669
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 137,
+          "draws": 28,
+          "raw_draw_probability": 0.227807,
+          "draw_odds_log_shift": -0.027738
+        },
+        "expected_home_goals": 1.777,
+        "expected_away_goals": 1.546,
+        "league_matches_used": 137,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          84871,
+          84862,
+          84851,
+          84837,
+          84830,
+          84818,
+          84809,
+          84795
+        ],
+        "away_match_ids": [
+          84879,
+          84873,
+          84860,
+          84847,
+          84838,
+          84828,
+          84819,
+          84810
+        ]
+      },
+      "snapshot_sha256": "2babaaa23b39796c7a16190d5b62135ea1a737e5b5da8ee1aac912971c55732e",
       "settlement": {
         "state": "pending",
         "score": null,
