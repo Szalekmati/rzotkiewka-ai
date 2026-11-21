@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updated_at": "2026-11-20T21:50:11Z",
+  "updated_at": "2026-11-21T03:14:02Z",
   "forecasts": [
     {
       "id": "bl2-2026-83678",
@@ -710,10 +710,13 @@
       },
       "snapshot_sha256": "f402eef8471cb887ff497e074d18f79dfa85c54dbff272c660e1db8cf600201a",
       "settlement": {
-        "state": "pending",
-        "score": null,
-        "outcome": null,
-        "graded_at": null
+        "state": "graded",
+        "score": [
+          1,
+          1
+        ],
+        "outcome": "X",
+        "graded_at": "2026-11-21T03:14:02Z"
       }
     },
     {
