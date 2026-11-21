@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updated_at": "2026-11-21T03:14:02Z",
+  "updated_at": "2026-11-21T12:40:19Z",
   "forecasts": [
     {
       "id": "bl2-2026-83678",
@@ -3163,6 +3163,234 @@
         ]
       },
       "snapshot_sha256": "9405165492dd2db9a338a8f9ecb4835d7aa82ce4f9fbf2f5522919a6bc2aeeb3",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl2-2026-83715",
+      "snapshot": {
+        "match_id": 83715,
+        "league": "bl2",
+        "season": 2026,
+        "home": "1. FC Magdeburg",
+        "away": "Energie Cottbus",
+        "kickoff": "2026-11-29T12:30:00Z",
+        "created_at": "2026-11-21T12:40:19Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.645529,
+          "X": 0.198582,
+          "2": 0.155889
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 101,
+          "draws": 27,
+          "raw_draw_probability": 0.189133,
+          "draw_odds_log_shift": 0.060469
+        },
+        "expected_home_goals": 2.261,
+        "expected_away_goals": 1.021,
+        "league_matches_used": 101,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          83705,
+          83686,
+          83667,
+          83659,
+          83630,
+          83617,
+          83606,
+          83587
+        ],
+        "away_match_ids": [
+          83687,
+          83674,
+          83645,
+          83641,
+          83611,
+          83607,
+          83582,
+          83548
+        ]
+      },
+      "snapshot_sha256": "4203150c9716b98ce889da1da3750b8e51a280a94769ff2750cc9b592ade3c8a",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl2-2026-83717",
+      "snapshot": {
+        "match_id": 83717,
+        "league": "bl2",
+        "season": 2026,
+        "home": "Eintracht Braunschweig",
+        "away": "VfL Wolfsburg",
+        "kickoff": "2026-11-29T12:30:00Z",
+        "created_at": "2026-11-21T12:40:19Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.467035,
+          "X": 0.266071,
+          "2": 0.266894
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 101,
+          "draws": 27,
+          "raw_draw_probability": 0.254431,
+          "draw_odds_log_shift": 0.060469
+        },
+        "expected_home_goals": 1.538,
+        "expected_away_goals": 1.098,
+        "league_matches_used": 101,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          83687,
+          83671,
+          83660,
+          83639,
+          83620,
+          83595,
+          83588,
+          83561
+        ],
+        "away_match_ids": [
+          83681,
+          83663,
+          83655,
+          83626,
+          83615,
+          83591,
+          83565,
+          83548
+        ]
+      },
+      "snapshot_sha256": "280b94859c3756554df53a1730a42b4382f7cd24afa12327a86b62f9c055bb67",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl2-2026-83719",
+      "snapshot": {
+        "match_id": 83719,
+        "league": "bl2",
+        "season": 2026,
+        "home": "SpVgg Greuther Fürth",
+        "away": "DSC Arminia Bielefeld",
+        "kickoff": "2026-11-29T12:30:00Z",
+        "created_at": "2026-11-21T12:40:19Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.404601,
+          "X": 0.305825,
+          "2": 0.289574
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 101,
+          "draws": 27,
+          "raw_draw_probability": 0.293141,
+          "draw_odds_log_shift": 0.060469
+        },
+        "expected_home_goals": 1.188,
+        "expected_away_goals": 0.957,
+        "league_matches_used": 101,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          83684,
+          83673,
+          83661,
+          83639,
+          83613,
+          83606,
+          83573,
+          83560
+        ],
+        "away_match_ids": [
+          83705,
+          83685,
+          83671,
+          83650,
+          83635,
+          83616,
+          83604,
+          83569
+        ]
+      },
+      "snapshot_sha256": "80dbbc2cb70b46385cd77ecb1cf8510ccbf95225269f03378040b555901d3644",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl3-2026-84891",
+      "snapshot": {
+        "match_id": 84891,
+        "league": "bl3",
+        "season": 2026,
+        "home": "Viktoria Köln",
+        "away": "Fortuna Köln",
+        "kickoff": "2026-11-29T12:30:00Z",
+        "created_at": "2026-11-21T12:40:19Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.609182,
+          "X": 0.197262,
+          "2": 0.193556
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 131,
+          "draws": 28,
+          "raw_draw_probability": 0.199248,
+          "draw_odds_log_shift": -0.012494
+        },
+        "expected_home_goals": 2.196,
+        "expected_away_goals": 1.165,
+        "league_matches_used": 131,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          84883,
+          84870,
+          84855,
+          84845,
+          84836,
+          84831,
+          84817,
+          84809
+        ],
+        "away_match_ids": [
+          84869,
+          84863,
+          84846,
+          84840,
+          84827,
+          84820,
+          84813,
+          84801
+        ]
+      },
+      "snapshot_sha256": "a2498300386da68938cd25367cf5ac399a22112a7ffc0777c2371015ab021aaf",
       "settlement": {
         "state": "pending",
         "score": null,
