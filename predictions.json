@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updated_at": "2026-11-22T17:50:29Z",
+  "updated_at": "2026-11-22T23:36:58Z",
   "forecasts": [
     {
       "id": "bl2-2026-83678",
@@ -2030,10 +2030,13 @@
       },
       "snapshot_sha256": "5ba3e96724e17d3b01bf1f32411ad8f6a38f7c7df096dafd8ba60e361f9f5c5f",
       "settlement": {
-        "state": "pending",
-        "score": null,
-        "outcome": null,
-        "graded_at": null
+        "state": "graded",
+        "score": [
+          2,
+          1
+        ],
+        "outcome": "1",
+        "graded_at": "2026-11-22T23:36:58Z"
       }
     },
     {
@@ -2087,10 +2090,13 @@
       },
       "snapshot_sha256": "9a02bafecaf907790b9720861058de44744f4c3344f0a54fbc9fef3872a1942a",
       "settlement": {
-        "state": "pending",
-        "score": null,
-        "outcome": null,
-        "graded_at": null
+        "state": "graded",
+        "score": [
+          4,
+          0
+        ],
+        "outcome": "1",
+        "graded_at": "2026-11-22T23:36:58Z"
       }
     },
     {
@@ -2144,10 +2150,13 @@
       },
       "snapshot_sha256": "1f51f6b2be9caf4c75b264c8096753f040dbb5deb04be7627b279b812c4d8ffc",
       "settlement": {
-        "state": "pending",
-        "score": null,
-        "outcome": null,
-        "graded_at": null
+        "state": "graded",
+        "score": [
+          2,
+          0
+        ],
+        "outcome": "1",
+        "graded_at": "2026-11-22T23:36:58Z"
       }
     },
     {
