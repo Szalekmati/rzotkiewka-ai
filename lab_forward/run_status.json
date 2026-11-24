@@ -1,12 +1,12 @@
 {
   "schema": 1,
-  "observed_at": "2026-11-24T04:56:26+00:00",
+  "observed_at": "2026-11-24T16:17:36+00:00",
   "event": "schedule",
   "upstream_event": null,
   "upstream_run_id": null,
-  "run_id": "45329785028",
+  "run_id": "45435343122",
   "run_attempt": "1",
-  "source_commit": "db2a5f5c8a2eeb91f8ab0be5def4de9929ea97bc",
+  "source_commit": "311cb3a61fbd8c49cfec52dc4d381886408e5a1c",
   "observation_outcome": "success",
   "planned_cron_utc": "37 * * * *"
 }
