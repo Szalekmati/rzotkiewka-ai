@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updated_at": "2026-11-22T23:36:58Z",
+  "updated_at": "2026-11-26T21:33:20Z",
   "forecasts": [
     {
       "id": "bl2-2026-83678",
@@ -3748,6 +3748,234 @@
         ]
       },
       "snapshot_sha256": "2babaaa23b39796c7a16190d5b62135ea1a737e5b5da8ee1aac912971c55732e",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl2-2026-83741",
+      "snapshot": {
+        "match_id": 83741,
+        "league": "bl2",
+        "season": 2026,
+        "home": "DSC Arminia Bielefeld",
+        "away": "Dynamo Dresden",
+        "kickoff": "2026-12-04T17:30:00Z",
+        "created_at": "2026-11-26T21:33:20Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.510107,
+          "X": 0.235621,
+          "2": 0.254272
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 108,
+          "draws": 29,
+          "raw_draw_probability": 0.225073,
+          "draw_odds_log_shift": 0.059503
+        },
+        "expected_home_goals": 1.88,
+        "expected_away_goals": 1.269,
+        "league_matches_used": 108,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          83705,
+          83685,
+          83671,
+          83650,
+          83635,
+          83616,
+          83604,
+          83569
+        ],
+        "away_match_ids": [
+          83698,
+          83684,
+          83665,
+          83658,
+          83630,
+          83622,
+          83598,
+          83588
+        ]
+      },
+      "snapshot_sha256": "e9d80ab293835e9da9d11c5844ea5aacf910d99c6c9b36efbdcdbc7a143498ce",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl2-2026-83742",
+      "snapshot": {
+        "match_id": 83742,
+        "league": "bl2",
+        "season": 2026,
+        "home": "Energie Cottbus",
+        "away": "VfL Osnabrück",
+        "kickoff": "2026-12-04T17:30:00Z",
+        "created_at": "2026-11-26T21:33:20Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.368993,
+          "X": 0.302077,
+          "2": 0.32893
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 108,
+          "draws": 29,
+          "raw_draw_probability": 0.289681,
+          "draw_odds_log_shift": 0.059503
+        },
+        "expected_home_goals": 1.149,
+        "expected_away_goals": 1.068,
+        "league_matches_used": 108,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          83706,
+          83687,
+          83674,
+          83645,
+          83641,
+          83611,
+          83607,
+          83582
+        ],
+        "away_match_ids": [
+          83702,
+          83688,
+          83663,
+          83661,
+          83635,
+          83622,
+          83600,
+          83589
+        ]
+      },
+      "snapshot_sha256": "a6ec071e605b3c2eb4f7fb03ca34155230a2cd0367859b59adb8f6cc77528623",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl3-2026-84895",
+      "snapshot": {
+        "match_id": 84895,
+        "league": "bl3",
+        "season": 2026,
+        "home": "MSV Duisburg",
+        "away": "SV Waldhof Mannheim",
+        "kickoff": "2026-12-04T18:00:00Z",
+        "created_at": "2026-11-26T21:33:20Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.541061,
+          "X": 0.203826,
+          "2": 0.255113
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 140,
+          "draws": 28,
+          "raw_draw_probability": 0.209411,
+          "draw_odds_log_shift": -0.034073
+        },
+        "expected_home_goals": 2.109,
+        "expected_away_goals": 1.403,
+        "league_matches_used": 140,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          84877,
+          84865,
+          84857,
+          84851,
+          84836,
+          84833,
+          84816,
+          84808
+        ],
+        "away_match_ids": [
+          84878,
+          84869,
+          84861,
+          84850,
+          84843,
+          84830,
+          84822,
+          84812
+        ]
+      },
+      "snapshot_sha256": "49d41cdd6eee016f1c12cc73c9fd5897756489d9a0371fe99d2f05cbe089129b",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl1-2026-83255",
+      "snapshot": {
+        "match_id": 83255,
+        "league": "bl1",
+        "season": 2026,
+        "home": "FC Bayern München",
+        "away": "SC Paderborn 07",
+        "kickoff": "2026-12-04T19:30:00Z",
+        "created_at": "2026-11-26T21:33:20Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.757714,
+          "X": 0.147777,
+          "2": 0.094509
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 90,
+          "draws": 19,
+          "raw_draw_probability": 0.144475,
+          "draw_odds_log_shift": 0.026461
+        },
+        "expected_home_goals": 2.703,
+        "expected_away_goals": 0.867,
+        "league_matches_used": 90,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          83237,
+          83233,
+          83219,
+          83214,
+          83201,
+          83196,
+          83183,
+          83182
+        ],
+        "away_match_ids": [
+          83238,
+          83236,
+          83224,
+          83218,
+          83207,
+          83200,
+          83191,
+          83174
+        ]
+      },
+      "snapshot_sha256": "13a575d3569ee146830f14a8b5dbf961d73b2db4505262425619eccec0ab94f2",
       "settlement": {
         "state": "pending",
         "score": null,
