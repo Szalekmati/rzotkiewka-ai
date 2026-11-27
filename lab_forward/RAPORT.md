@@ -1,22 +1,22 @@
 # RZOTKIEWKA — test przedmeczowy 2.1 / 2.2 LAB
 
-Ostatnia obserwacja UTC: 2026-11-27T14:14:20.736217Z
+Ostatnia obserwacja UTC: 2026-11-27T22:43:32.289046Z
 
 Prognozy: 162–168 godzin przed meczem. Pierwszy zapis jest niezmienny.
 Ten protokół różni się od retrospektywnego testu dokładnie 168 h przed meczem.
 
-Zapisane pary prognoz: 56.
+Zapisane pary prognoz: 60.
 
 | Liga | Model | Rozliczone | Trafność | Brier ↓ | Log loss ↓ |
 |---|---|---:|---:|---:|---:|
-| Razem | v21 | 28 | 64.29% | 0.55638 | 0.93849 |
-| Razem | v22_lab | 28 | 64.29% | 0.55887 | 0.94279 |
-| bl1 | v21 | 9 | 55.56% | 0.57525 | 0.95694 |
-| bl1 | v22_lab | 9 | 55.56% | 0.57786 | 0.96167 |
-| bl2 | v21 | 9 | 55.56% | 0.61016 | 1.02051 |
-| bl2 | v22_lab | 9 | 55.56% | 0.61575 | 1.02852 |
-| bl3 | v21 | 10 | 80.00% | 0.49099 | 0.84807 |
-| bl3 | v22_lab | 10 | 80.00% | 0.49059 | 0.84865 |
+| Razem | v21 | 32 | 62.50% | 0.55479 | 0.93664 |
+| Razem | v22_lab | 32 | 62.50% | 0.55756 | 0.94152 |
+| bl1 | v21 | 10 | 50.00% | 0.62728 | 1.02949 |
+| bl1 | v22_lab | 10 | 50.00% | 0.62419 | 1.02675 |
+| bl2 | v21 | 11 | 54.55% | 0.57744 | 0.97425 |
+| bl2 | v22_lab | 11 | 54.55% | 0.58659 | 0.98758 |
+| bl3 | v21 | 11 | 81.82% | 0.46623 | 0.81462 |
+| bl3 | v22_lab | 11 | 81.82% | 0.46795 | 0.81799 |
 
 Wyłączone po zmianie terminu lub drużyn: 0.
 
