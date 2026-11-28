@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updated_at": "2026-11-27T22:43:08Z",
+  "updated_at": "2026-11-28T16:53:51Z",
   "forecasts": [
     {
       "id": "bl2-2026-83678",
@@ -2450,10 +2450,13 @@
       },
       "snapshot_sha256": "28ba9767da3170bac501fb3d852ee21e99574b7846a20316c68a978ccbcdf59b",
       "settlement": {
-        "state": "pending",
-        "score": null,
-        "outcome": null,
-        "graded_at": null
+        "state": "graded",
+        "score": [
+          4,
+          0
+        ],
+        "outcome": "1",
+        "graded_at": "2026-11-28T16:53:51Z"
       }
     },
     {
@@ -2507,10 +2510,13 @@
       },
       "snapshot_sha256": "a6e60c796fedc5f6e2cc9b4a5f46c795258ed3e2a2019cc10dbc538e3898f391",
       "settlement": {
-        "state": "pending",
-        "score": null,
-        "outcome": null,
-        "graded_at": null
+        "state": "graded",
+        "score": [
+          2,
+          1
+        ],
+        "outcome": "1",
+        "graded_at": "2026-11-28T16:53:51Z"
       }
     },
     {
@@ -2564,10 +2570,13 @@
       },
       "snapshot_sha256": "2b9040a407bbb65f34f7089436cfb83e80eb38cc576d3c31956c5ee4d09f3cc9",
       "settlement": {
-        "state": "pending",
-        "score": null,
-        "outcome": null,
-        "graded_at": null
+        "state": "graded",
+        "score": [
+          3,
+          0
+        ],
+        "outcome": "1",
+        "graded_at": "2026-11-28T16:53:51Z"
       }
     },
     {
@@ -2621,10 +2630,13 @@
       },
       "snapshot_sha256": "c484232b5138d28d5e4c55707423e4422003b2c58e7d23343f1372201e0277a9",
       "settlement": {
-        "state": "pending",
-        "score": null,
-        "outcome": null,
-        "graded_at": null
+        "state": "graded",
+        "score": [
+          3,
+          2
+        ],
+        "outcome": "1",
+        "graded_at": "2026-11-28T16:53:51Z"
       }
     },
     {
@@ -2678,10 +2690,13 @@
       },
       "snapshot_sha256": "b30abc9ebf24092bfc19e50bbaa8c51f029abcfe005959e967a6507d7bbfe6ad",
       "settlement": {
-        "state": "pending",
-        "score": null,
-        "outcome": null,
-        "graded_at": null
+        "state": "graded",
+        "score": [
+          0,
+          0
+        ],
+        "outcome": "X",
+        "graded_at": "2026-11-28T16:53:51Z"
       }
     },
     {
@@ -2735,10 +2750,13 @@
       },
       "snapshot_sha256": "0d7919302635e0e698b47ab7b0e7d25c680989f1174a7e22218c1a3b4c3f8b27",
       "settlement": {
-        "state": "pending",
-        "score": null,
-        "outcome": null,
-        "graded_at": null
+        "state": "graded",
+        "score": [
+          2,
+          0
+        ],
+        "outcome": "1",
+        "graded_at": "2026-11-28T16:53:51Z"
       }
     },
     {
@@ -2792,10 +2810,13 @@
       },
       "snapshot_sha256": "e3c32ec46e246985ffd0595c87e89d0be6cb97751436e9f1fd045e4c862fa556",
       "settlement": {
-        "state": "pending",
-        "score": null,
-        "outcome": null,
-        "graded_at": null
+        "state": "graded",
+        "score": [
+          1,
+          1
+        ],
+        "outcome": "X",
+        "graded_at": "2026-11-28T16:53:51Z"
       }
     },
     {
@@ -2849,10 +2870,13 @@
       },
       "snapshot_sha256": "14e78f3f12d89bc11baecef92a299de7749aa9ced8d612c2580b6118fcf89811",
       "settlement": {
-        "state": "pending",
-        "score": null,
-        "outcome": null,
-        "graded_at": null
+        "state": "graded",
+        "score": [
+          0,
+          1
+        ],
+        "outcome": "2",
+        "graded_at": "2026-11-28T16:53:51Z"
       }
     },
     {
@@ -4900,6 +4924,405 @@
         ]
       },
       "snapshot_sha256": "75f5cc294adbfa439f2073e387970398ab22e2c92c945f3ef0a74bb2e774c530",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl2-2026-83726",
+      "snapshot": {
+        "match_id": 83726,
+        "league": "bl2",
+        "season": 2026,
+        "home": "VfL Wolfsburg",
+        "away": "1. FC Magdeburg",
+        "kickoff": "2026-12-06T12:30:00Z",
+        "created_at": "2026-11-28T16:53:51Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.575911,
+          "X": 0.230277,
+          "2": 0.193812
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 113,
+          "draws": 29,
+          "raw_draw_probability": 0.221678,
+          "draw_odds_log_shift": 0.049168
+        },
+        "expected_home_goals": 1.894,
+        "expected_away_goals": 1.001,
+        "league_matches_used": 113,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          83689,
+          83681,
+          83663,
+          83655,
+          83626,
+          83615,
+          83591,
+          83565
+        ],
+        "away_match_ids": [
+          83705,
+          83686,
+          83667,
+          83659,
+          83630,
+          83617,
+          83606,
+          83587
+        ]
+      },
+      "snapshot_sha256": "4db902258420cad567017e469f2a3f3d4bc779b17af5b1eaced7b35bb51acbbd",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl2-2026-83729",
+      "snapshot": {
+        "match_id": 83729,
+        "league": "bl2",
+        "season": 2026,
+        "home": "FC St. Pauli",
+        "away": "1. FC Heidenheim 1846",
+        "kickoff": "2026-12-06T12:30:00Z",
+        "created_at": "2026-11-28T16:53:51Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.539537,
+          "X": 0.233024,
+          "2": 0.227439
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 113,
+          "draws": 29,
+          "raw_draw_probability": 0.224352,
+          "draw_odds_log_shift": 0.049168
+        },
+        "expected_home_goals": 1.885,
+        "expected_away_goals": 1.149,
+        "league_matches_used": 113,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          83710,
+          83691,
+          83686,
+          83664,
+          83648,
+          83627,
+          83608,
+          83607
+        ],
+        "away_match_ids": [
+          83707,
+          83697,
+          83678,
+          83669,
+          83645,
+          83626,
+          83609,
+          83604
+        ]
+      },
+      "snapshot_sha256": "a6153e84d12b8374be386cfde7127316e98298864a74743f14e959a289eb4c81",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl2-2026-83732",
+      "snapshot": {
+        "match_id": 83732,
+        "league": "bl2",
+        "season": 2026,
+        "home": "SV Darmstadt 98",
+        "away": "Eintracht Braunschweig",
+        "kickoff": "2026-12-06T12:30:00Z",
+        "created_at": "2026-11-28T16:53:51Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.512537,
+          "X": 0.258844,
+          "2": 0.228619
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 113,
+          "draws": 29,
+          "raw_draw_probability": 0.249524,
+          "draw_odds_log_shift": 0.049168
+        },
+        "expected_home_goals": 1.606,
+        "expected_away_goals": 0.983,
+        "league_matches_used": 113,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          83709,
+          83697,
+          83682,
+          83667,
+          83648,
+          83629,
+          83611,
+          83591
+        ],
+        "away_match_ids": [
+          83699,
+          83687,
+          83671,
+          83660,
+          83639,
+          83620,
+          83595,
+          83588
+        ]
+      },
+      "snapshot_sha256": "b80742385e705af8f5c2ef684a2ff0912a0956635bd84757458eea8fa8a7e179",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl3-2026-84898",
+      "snapshot": {
+        "match_id": 84898,
+        "league": "bl3",
+        "season": 2026,
+        "home": "Jahn Regensburg",
+        "away": "Preußen Münster",
+        "kickoff": "2026-12-06T12:30:00Z",
+        "created_at": "2026-11-28T16:53:51Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.668474,
+          "X": 0.184024,
+          "2": 0.147502
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 146,
+          "draws": 30,
+          "raw_draw_probability": 0.188441,
+          "draw_odds_log_shift": -0.029145
+        },
+        "expected_home_goals": 2.234,
+        "expected_away_goals": 0.948,
+        "league_matches_used": 146,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          84879,
+          84873,
+          84860,
+          84847,
+          84838,
+          84828,
+          84819,
+          84810
+        ],
+        "away_match_ids": [
+          84886,
+          84882,
+          84865,
+          84858,
+          84846,
+          84842,
+          84826,
+          84815
+        ]
+      },
+      "snapshot_sha256": "99a5034b529ef9aeaa3bb7e043bc39dc63bee1a8791c299f145170d5255e0cf7",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl1-2026-83262",
+      "snapshot": {
+        "match_id": 83262,
+        "league": "bl1",
+        "season": 2026,
+        "home": "FC Schalke 04",
+        "away": "Borussia Dortmund",
+        "kickoff": "2026-12-06T14:30:00Z",
+        "created_at": "2026-11-28T16:53:51Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.34433,
+          "X": 0.318055,
+          "2": 0.337615
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 91,
+          "draws": 20,
+          "raw_draw_probability": 0.309349,
+          "draw_odds_log_shift": 0.040443
+        },
+        "expected_home_goals": 1.002,
+        "expected_away_goals": 0.989,
+        "league_matches_used": 91,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          83244,
+          83231,
+          83226,
+          83217,
+          83208,
+          83195,
+          83190,
+          83180
+        ],
+        "away_match_ids": [
+          83242,
+          83228,
+          83219,
+          83210,
+          83204,
+          83192,
+          83184,
+          83174
+        ]
+      },
+      "snapshot_sha256": "83f5d420dd95c8409684033e1565512a768085c594bfa6b4508b4329347cf77f",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl3-2026-84900",
+      "snapshot": {
+        "match_id": 84900,
+        "league": "bl3",
+        "season": 2026,
+        "home": "TSG 1899 Hoffenheim II",
+        "away": "1. FC Saarbrücken",
+        "kickoff": "2026-12-06T15:30:00Z",
+        "created_at": "2026-11-28T16:53:51Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.526236,
+          "X": 0.208845,
+          "2": 0.264919
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 146,
+          "draws": 30,
+          "raw_draw_probability": 0.213701,
+          "draw_odds_log_shift": -0.029145
+        },
+        "expected_home_goals": 2.044,
+        "expected_away_goals": 1.406,
+        "league_matches_used": 146,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          84887,
+          84882,
+          84874,
+          84855,
+          84850,
+          84839,
+          84832,
+          84816
+        ],
+        "away_match_ids": [
+          84893,
+          84881,
+          84870,
+          84861,
+          84853,
+          84835,
+          84833,
+          84820
+        ]
+      },
+      "snapshot_sha256": "1dcd7a63eed28508ca7adb83cf5f626b4932235c0de7b7879c5763283d8887bd",
+      "settlement": {
+        "state": "pending",
+        "score": null,
+        "outcome": null,
+        "graded_at": null
+      }
+    },
+    {
+      "id": "bl1-2026-83263",
+      "snapshot": {
+        "match_id": 83263,
+        "league": "bl1",
+        "season": 2026,
+        "home": "SV 07 Elversberg",
+        "away": "VfB Stuttgart",
+        "kickoff": "2026-12-06T16:30:00Z",
+        "created_at": "2026-11-28T16:53:51Z",
+        "model_version": "2.1.0",
+        "probabilities": {
+          "1": 0.40644,
+          "X": 0.252036,
+          "2": 0.341524
+        },
+        "calibration": {
+          "method": "smoothed_league_draw_logodds_v1",
+          "games": 91,
+          "draws": 20,
+          "raw_draw_probability": 0.244489,
+          "draw_odds_log_shift": 0.040443
+        },
+        "expected_home_goals": 1.55,
+        "expected_away_goals": 1.402,
+        "league_matches_used": 91,
+        "home_matches_used": 8,
+        "away_matches_used": 8,
+        "home_match_ids": [
+          83245,
+          83228,
+          83227,
+          83211,
+          83209,
+          83198,
+          83190,
+          83182
+        ],
+        "away_match_ids": [
+          83244,
+          83230,
+          83220,
+          83212,
+          83206,
+          83200,
+          83184,
+          83176
+        ]
+      },
+      "snapshot_sha256": "7d010950fdac32e521ee859bcd85d3f18918253c562b7e62c7ce64843a158f50",
       "settlement": {
         "state": "pending",
         "score": null,
